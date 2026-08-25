@@ -1,0 +1,1815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PSA Margin Approval Gate — Prototype (FUL-10135)</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#08568B; --blue-d:#064268; --blue-05:rgba(8,86,139,.05); --blue-10:rgba(8,86,139,.10);
+  --page:#FAFAFA; --ink:#121212; --muted:#646566; --line:#E1E5E9; --line-2:#EDEFF1;
+  --amber:#FBB038; --amber-bg:#FFF8EC; --coral:#FF5A5F;
+  --new:#E8730A; --new-bg:#FFF4EA;
+  --ok:#1E7A4B; --ok-bg:#EAF6F0;
+  --warn:#B36B00; --warn-bg:#FFF6E5;
+  --bad:#C0392B; --bad-bg:#FDECEA;
+  --r:4px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'Poppins',system-ui,sans-serif;color:var(--ink);background:#fff;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{margin:0;font-weight:600;line-height:1.3}
+p{margin:0 0 10px}
+table{border-collapse:collapse;width:100%}
+button{font-family:inherit}
+
+/* ── prototype shell ───────────────────────────────── */
+.proto-bar{background:#1A1A1D;color:#fff;padding:9px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:12px;position:sticky;top:0;z-index:400}
+.proto-bar .pb-tag{background:var(--new);color:#fff;font-weight:600;padding:2px 8px;border-radius:3px;letter-spacing:.04em;font-size:10.5px;text-transform:uppercase}
+.proto-bar .pb-t{font-weight:500}
+.proto-bar .pb-sub{color:#9A9AA0;margin-left:auto;font-size:11.5px}
+
+.layout{display:flex;min-height:100vh;align-items:flex-start}
+.rail{width:268px;flex:0 0 268px;background:#F4F6F8;border-right:1px solid var(--line);padding:16px 0 40px;position:sticky;top:37px;max-height:calc(100vh - 37px);overflow-y:auto}
+.rail-h{padding:6px 18px 10px;font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:#8A9099}
+.rail a{display:block;padding:9px 18px 9px 16px;color:#3A4046;text-decoration:none;font-size:13px;border-left:3px solid transparent;cursor:pointer}
+.rail a:hover{background:#E9EDF1}
+.rail a.on{background:#fff;border-left-color:var(--blue);color:var(--blue);font-weight:600}
+.rail a .num{display:inline-block;width:22px;color:#98A0A8;font-weight:500;font-size:11.5px}
+.rail a.on .num{color:var(--blue)}
+.rail .rail-note{padding:14px 18px;font-size:11px;color:#7A828A;line-height:1.5;border-top:1px solid var(--line);margin-top:12px}
+.rail .rail-note b{color:#4A5058}
+
+.stage{flex:1;min-width:0;max-width:100%;overflow-x:hidden;background:var(--page)}
+.screen{display:none}
+.screen.on{display:block}
+
+/* ── DMG control-center chrome ─────────────────────── */
+.cc-top{background:var(--blue);height:64px;display:flex;align-items:center;padding:0 22px;gap:16px;color:#fff}
+.cc-burger{width:20px;display:flex;flex-direction:column;gap:4px;opacity:.95}
+.cc-burger i{display:block;height:2px;background:#fff;border-radius:2px}
+.cc-logo{font-weight:700;letter-spacing:.02em;font-size:17px;line-height:1}
+.cc-logo small{display:block;font-size:8px;font-weight:600;letter-spacing:.22em;opacity:.85;margin-top:1px}
+.cc-user{margin-left:auto;text-align:right;line-height:1.25}
+.cc-user b{font-size:14px;font-weight:500;display:block}
+.cc-user span{font-size:11px;opacity:.82}
+.cc-pill{border:1px solid rgba(255,255,255,.5);border-radius:3px;padding:3px 9px;font-size:11.5px;opacity:.95}
+.cc-accent{height:3px;background:linear-gradient(90deg,var(--blue) 0 6%,#E8730A 6% 100%)}
+
+.cc-body{padding:26px 30px 60px;max-width:1500px;min-width:0}
+.cc-h1{font-size:22px;font-weight:600;letter-spacing:-.01em}
+.cc-head-row{display:flex;align-items:center;gap:18px;margin-bottom:20px;flex-wrap:wrap}
+.cc-crumb{font-size:13px;color:var(--muted);margin-bottom:12px}
+.cc-crumb a{color:var(--blue);text-decoration:none}
+
+.filters{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px}
+.fchip{border:1px solid #C6CDD4;border-radius:var(--r);background:#fff;padding:7px 12px;font-size:12.5px;color:#3A4046;display:inline-flex;align-items:center;gap:7px}
+.fchip:after{content:'⌄';font-size:13px;color:#7A828A;position:relative;top:-3px}
+.fchip.applied{background:var(--blue);border-color:var(--blue);color:#fff}
+.fchip.applied:after{content:'✕';font-size:10px;top:0}
+.search{border:1px solid #C6CDD4;border-radius:var(--r);background:#fff;padding:9px 13px;width:400px;color:#9AA2AA;font-size:13px;margin-bottom:14px}
+
+/* tabs */
+.tabstrip{display:flex;align-items:stretch;border-bottom:1px solid var(--line);margin:18px 0 0}
+.tabs{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+.tabs::-webkit-scrollbar{display:none}
+.tabarrow{flex:0 0 auto;display:flex;align-items:center;padding:0 10px;color:#8A929A;font-size:16px;cursor:pointer;user-select:none;background:#fff}
+.tabarrow:hover{color:var(--blue)}
+.tabarrow.off{opacity:.22;cursor:default}
+.tabarrow.off:hover{color:#8A929A}
+.tab{padding:12px 18px;font-size:15px;font-weight:400;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;cursor:pointer;background:none;border-top:none;border-left:none;border-right:none}
+.tab:hover{color:#3A4046}
+.tab.on{color:var(--blue);font-weight:500;border-bottom-color:var(--blue)}
+.tab.newtab{color:var(--new)}
+.tab.newtab.on{color:var(--new);border-bottom-color:var(--new)}
+.tab .dotnew{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--new);margin-right:6px;vertical-align:1px}
+
+/* cards + tables */
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);margin-bottom:18px}
+.card-h{padding:14px 18px;border-bottom:1px solid var(--line-2);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.card-h h3{font-size:15px;font-weight:600}
+.card-b{padding:18px}
+.card-b.flush{padding:0}
+
+.grid{font-size:13px}
+.grid th{background:#F7F9FA;text-align:left;font-weight:600;font-size:11.5px;color:#4A5058;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap;vertical-align:bottom}
+.grid th.newcol{background:var(--new-bg);color:#8A4508}
+.grid th.grp{background:var(--blue-05);color:var(--blue)}
+.grid td{padding:11px 12px;border-bottom:1px solid var(--line-2);vertical-align:top}
+.grid td.newcol{background:#FFFBF7}
+.grid th.frz2,.grid td.frz2{position:sticky;right:230px;z-index:2;box-shadow:-6px 0 8px -6px rgba(0,0,0,.12)}
+.grid th.frz1,.grid td.frz1{position:sticky;right:0;z-index:2}
+.grid tr:last-child td{border-bottom:none}
+.crow.hid{display:none}
+.prow td{background:#FBFCFD}
+.prow .chev{color:#7A828A;font-size:13px}
+.crow td{font-size:12.5px}
+.grid .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.grid .rowno{color:#98A0A8;font-size:11.5px;width:34px;text-align:center}
+.sub{display:block;color:var(--muted);font-size:11.5px;font-weight:400;margin-top:2px}
+.rangehint{font-size:11px;color:var(--muted);white-space:nowrap}
+/* --- production PAM grid chrome --- */
+.grid th.grp{background:#E5F2F7;color:#1A4D6B}
+.grid th.inc{background:#fff;color:#4A5058;border-left:1px solid var(--line)}
+.grid td.inc{border-left:1px solid var(--line-2)}
+.grid th.chk,.grid td.chk{width:34px;text-align:center;padding-left:6px;padding-right:6px}
+.cbx{width:14px;height:14px;cursor:pointer;border:1px solid #8A929A;border-radius:2px;display:inline-block;vertical-align:middle}
+.cbx.on{background:var(--blue);border-color:var(--blue);position:relative}
+.cbx.on:after{content:'✓';color:#fff;font-size:10px;position:absolute;left:2px;top:-3px}
+.kebab{color:#8A929A;font-size:14px;line-height:1;margin-left:6px;cursor:pointer}
+.upic{display:inline-block;border:1px solid #C6CDD4;border-radius:3px;width:26px;height:22px;text-align:center;line-height:20px;color:#4A5058;font-size:12px}
+.gridsel{width:100%;border:1px solid #C6CDD4;border-radius:3px;padding:5px 7px;font-size:12.5px;font-family:inherit;color:var(--ink);background:#fff}
+.gridtxt{width:100%;border:1px solid #C6CDD4;border-radius:3px;padding:5px 7px;font-size:12.5px;font-family:inherit;color:var(--ink);background:#fff}
+.gridtxt::placeholder{color:#A8B0B8}
+.srch{border:1px solid #C6CDD4;border-radius:var(--r);background:#fff;padding:7px 12px;font-size:12.5px;color:#98A0A8;display:inline-flex;align-items:center;gap:8px;min-width:250px}
+.px{color:#328E0C;font-weight:500}
+.px.bad{color:var(--bad);font-weight:600}
+.prow-line{display:flex;justify-content:space-between;gap:12px;margin-top:3px;align-items:baseline}
+.why{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin:-8px 0 18px}
+.why b{color:var(--ink);font-weight:600}
+.why .sep{color:#C6CDD4}
+.foot{display:flex;align-items:center;gap:10px;margin:20px 0 8px}
+.moneyin{border:1px solid #C6CDD4;border-radius:3px;padding:5px 8px;font-size:13px;display:flex;justify-content:space-between;gap:10px;min-width:104px;background:#fff}
+.moneyin .cur{color:#9AA2AA}
+.moneyin.flag{border-color:var(--coral)}
+
+/* badges */
+.badge{display:inline-block;padding:2.5px 8px;border-radius:11px;font-size:11px;font-weight:600;white-space:nowrap;line-height:1.5}
+.b-ok{background:var(--ok-bg);color:var(--ok)}
+.b-l1{background:var(--warn-bg);color:var(--warn)}
+.b-l2{background:var(--bad-bg);color:var(--bad)}
+.b-na{background:#F0F2F4;color:#6A727A}
+.b-ind{background:#EDE9F7;color:#5B4B9E}
+.b-unk{background:#F0F2F4;color:#6A727A}
+.b-new{background:var(--new-bg);color:#8A4508;border:1px solid #F5C89C}
+.b-rfp{background:#E8F0FA;color:#1A5B96}
+.tipwrap{position:relative}
+.tip{position:absolute;left:0;top:100%;margin-top:6px;z-index:30;background:#2B2B2B;color:#fff;border-radius:4px;padding:10px 12px;font-size:12px;line-height:1.55;width:330px;box-shadow:0 6px 18px rgba(0,0,0,.28)}
+.tip b{color:#fff;font-weight:600}
+.tip .r{display:block;margin-top:6px}
+.flagmark{color:var(--new);font-weight:600}
+.dvrow{display:flex;justify-content:space-between;gap:16px;padding:3px 0;border-top:1px solid rgba(255,255,255,.14)}
+.dvrow span{opacity:.7}
+.dvrow b{font-weight:600;text-align:right;white-space:nowrap}
+.dvrow .d-diff{color:#FFC98A}
+.modal-b .dvrow{border-top:1px solid var(--line);padding:7px 0;font-size:13px}
+.modal-b .dvrow span{opacity:1;color:var(--muted)}
+.modal-b .dvrow .d-diff{color:var(--new)}
+.b-grey{background:#F0F2F4;color:#6A727A}
+
+.m-ok{color:var(--ok);font-weight:600}
+.m-l1{color:var(--warn);font-weight:600}
+.m-l2{color:var(--bad);font-weight:600}
+.mg-ok{color:var(--ok);font-weight:600}
+.mg-low{color:var(--bad);font-weight:600}
+.pricestack{display:inline-flex;flex-direction:column;align-items:stretch;gap:2px}
+.mgs{font-size:11px;text-align:right;padding-right:2px}
+.m-na{color:#8A9099;font-weight:500;font-style:italic}
+
+/* buttons */
+.btn{border:none;border-radius:var(--r);padding:7px 16px;font-size:14px;font-weight:500;cursor:pointer;background:var(--blue);color:#fff}
+.btn:hover{background:var(--blue-d)}
+.btn.sm{padding:5px 12px;font-size:12.5px}
+.btn.out{background:none;color:var(--blue);border:2px solid rgba(8,86,139,.5)}
+.btn.out:hover{background:var(--blue-05)}
+.btn.ghost{background:none;color:var(--blue)}
+.btn.ghost:hover{background:var(--blue-05)}
+.btn.dis{background:#D1D8DC;color:#fff;cursor:default}
+.btn.dis:hover{background:#D1D8DC}
+.btn.newb{background:var(--new)}
+.btn.newb:hover{background:#C55F06}
+.btn.newb.out{background:none;color:var(--new);border:2px solid rgba(232,115,10,.5)}
+.btn.dis,.btn.newb.dis,.btn.out.dis,.btn.newb.out.dis{background:#D1D8DC;color:#fff;border:2px solid #D1D8DC;cursor:default}
+.btn.dis:hover,.btn.newb.dis:hover,.btn.out.dis:hover,.btn.newb.out.dis:hover{background:#D1D8DC}
+.btnrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btnrow.right{justify-content:flex-end}
+
+/* notices */
+.notice{border-radius:var(--r);padding:13px 16px;display:flex;gap:12px;margin-bottom:14px;font-size:13px;align-items:flex-start}
+.notice .ic{font-size:15px;line-height:1.2;flex:0 0 auto}
+.notice b{font-weight:600}
+.notice>div>b:first-child{display:block;margin-bottom:2px;font-size:13.5px}
+.n-amber{background:var(--amber-bg);border:1px solid #F5DDB0;color:#6B4E12}
+.n-red{background:var(--bad-bg);border:1px solid #F5C6C0;color:#8C2A1E}
+.n-blue{background:#EEF4FA;border:1px solid #C9DCF0;color:#1A4D7A}
+.n-new{background:var(--new-bg);border:1px solid #F5C89C;color:#8A4508}
+.n-ok{background:var(--ok-bg);border:1px solid #BEE0CE;color:#155F3A}
+
+/* annotation callouts — prototype voice, not product UI */
+.anno{border-left:3px solid var(--new);background:var(--new-bg);padding:12px 16px;border-radius:0 var(--r) var(--r) 0;font-size:12.5px;color:#6B4108;margin:0 0 20px;line-height:1.55}
+.anno b{color:#8A4508}
+.anno .tag{display:inline-block;background:var(--new);color:#fff;font-size:9.5px;font-weight:700;letter-spacing:.07em;padding:2px 6px;border-radius:2px;text-transform:uppercase;margin-right:8px;vertical-align:1px}
+.anno code{background:#fff;border:1px solid #F0D4B4;padding:1px 5px;border-radius:2px;font-size:11.5px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.anno ul{margin:8px 0 0;padding-left:18px}
+.anno li{margin-bottom:4px}
+
+.srcnote{font-size:11.5px;color:#8A9099;border-top:1px dashed var(--line);padding-top:10px;margin-top:16px;line-height:1.6}
+.srcnote code{background:#F2F4F6;padding:1px 5px;border-radius:2px;font-size:11px;font-family:ui-monospace,Menlo,monospace}
+
+/* overview page */
+.ov-hero{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:28px 30px;margin-bottom:20px}
+.ov-hero h2{font-size:26px;letter-spacing:-.02em;margin-bottom:6px}
+.ov-hero .lede{font-size:14.5px;color:#4A5058;max-width:820px;line-height:1.6}
+.formula{background:#F7F9FA;border:1px solid var(--line);border-radius:var(--r);padding:14px 18px;font-family:ui-monospace,Menlo,monospace;font-size:14px;color:var(--blue);margin:16px 0;text-align:center}
+.tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:14px}
+.tier{border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;background:#fff}
+.tier .t-pct{font-size:20px;font-weight:700;letter-spacing:-.02em}
+.tier .t-n{font-size:13px;font-weight:600;margin:4px 0 3px}
+.tier .t-d{font-size:12px;color:var(--muted);line-height:1.45}
+.tier.ok{border-top:3px solid var(--ok)} .tier.ok .t-pct{color:var(--ok)}
+.tier.l1{border-top:3px solid var(--warn)} .tier.l1 .t-pct{color:var(--warn)}
+.tier.l2{border-top:3px solid var(--bad)} .tier.l2 .t-pct{color:var(--bad)}
+
+.stepflow{display:flex;gap:0;align-items:stretch;flex-wrap:wrap;margin:6px 0 4px}
+.stepflow .sf{flex:1;min-width:132px;border:1px solid var(--line);background:#fff;border-radius:var(--r);padding:12px 13px;position:relative;margin-right:22px}
+.stepflow .sf:last-child{margin-right:0}
+.stepflow .sf:not(:last-child):after{content:'→';position:absolute;right:-17px;top:50%;transform:translateY(-50%);color:#B8C0C8;font-size:15px}
+.stepflow .sf.new{border-color:#F5C89C;background:var(--new-bg)}
+.stepflow .sf .s-n{font-size:12.5px;font-weight:600}
+.stepflow .sf .s-d{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4}
+.stepflow .sf.new .s-n{color:#8A4508}
+
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0;border:1px solid var(--line);border-radius:var(--r);background:#fff;overflow:hidden}
+.kv>div{padding:14px 16px;border-right:1px solid var(--line-2);min-width:0}
+.kv .v{overflow-wrap:anywhere}
+.kv>div:last-child{border-right:none}
+.kv .k{font-size:11px;color:var(--muted);font-weight:500;margin-bottom:3px}
+.kv .v{font-size:14px;font-weight:500}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:1100px){.two{grid-template-columns:1fr}}
+
+/* modal */
+.modal-wrap{position:fixed;inset:0;background:rgba(18,18,18,.45);display:none;align-items:center;justify-content:center;z-index:500;padding:20px}
+.modal-wrap.on{display:flex}
+.modal{background:#fff;border-radius:6px;width:100%;max-width:540px;box-shadow:0 12px 40px rgba(0,0,0,.25);max-height:90vh;overflow:auto}
+.modal-h{padding:18px 22px 12px;font-size:16px;font-weight:600;border-bottom:1px solid var(--line-2)}
+.modal-b{padding:20px 22px}
+.modal-f{padding:14px 22px 20px;display:flex;justify-content:flex-end;gap:10px;align-items:center}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;font-weight:500;color:#4A5058;margin-bottom:5px}
+.field select,.field input,.field textarea{width:100%;border:1px solid #C6CDD4;border-radius:var(--r);padding:9px 11px;font-size:13px;font-family:inherit;color:var(--ink);background:#fff}
+.field textarea{min-height:72px;resize:vertical}
+.field .hint{font-size:11px;color:var(--muted);margin-top:4px}
+.radios label{display:flex;gap:9px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r);margin-bottom:7px;font-size:13px;cursor:pointer;font-weight:400;color:var(--ink)}
+.radios label:hover{background:var(--blue-05);border-color:#B8CBDE}
+.radios input{margin-top:3px;flex:0 0 auto}
+.radios .r-n{font-weight:600;font-size:13px;display:block}
+.radios .r-d{font-size:11.5px;color:var(--muted);margin-top:1px;display:block;line-height:1.45}
+
+/* email mock */
+.mail{border:1px solid var(--line);border-radius:var(--r);background:#fff;overflow:hidden;margin-bottom:16px}
+.mail-h{background:#F7F9FA;padding:11px 16px;border-bottom:1px solid var(--line);font-size:12px;color:var(--muted)}
+.mail-h b{color:var(--ink);font-weight:600;display:block;font-size:13.5px;margin-bottom:3px}
+.mail-b{padding:18px 20px;font-size:13px}
+.mail-b table{font-size:12.5px;margin:12px 0}
+.mail-b th{background:#F7F9FA;padding:7px 10px;text-align:left;font-size:11px;border-bottom:1px solid var(--line)}
+.mail-b td{padding:7px 10px;border-bottom:1px solid var(--line-2)}
+.mail-cta{display:inline-block;background:var(--blue);color:#fff;padding:8px 16px;border-radius:var(--r);font-size:13px;font-weight:500;text-decoration:none;margin-top:6px}
+
+.pill-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:12px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:9px;height:9px;border-radius:2px;display:inline-block}
+
+</style>
+</head>
+<body>
+
+<div class="proto-bar">
+  <span class="pb-tag">Prototype</span>
+  <span class="pb-t">PSA Margin Approval Gate — FUL-10135</span>
+</div>
+
+<div class="layout">
+  <nav class="rail">
+    <div class="rail-h" style="padding-top:16px">Prototype screens</div>
+    <a class="on" data-s="s0"><span class="num">—</span>Overview &amp; the rule</a>
+    <a data-s="s1t"><span class="num">1a</span>Draft — template</a>
+    <a data-s="s1c"><span class="num">1b</span>Draft — pricing</a>
+    <a data-s="s1"><span class="num">1c</span>Pricing — Ready for Negotiation</a>
+    <a data-s="s2"><span class="num">2a</span>Queues — new tabs</a>
+    <a data-s="s2b"><span class="num">2b</span>Active &amp; Upcoming</a>
+    <a data-s="s2c"><span class="num">3</span>Approval — Awaiting Approval</a>
+    <a data-s="s3"><span class="num">4</span>Approval — Level 1</a>
+    <a data-s="s4"><span class="num">5</span>Approval — Level 2 &amp; blocks</a>
+    <a data-s="s5"><span class="num">6</span>RFP / costing review</a>
+    <a data-s="s7"><span class="num">7</span>Rate change request</a>
+    <a data-s="s8"><span class="num">8</span>Threshold configuration</a>
+    <a data-s="s9"><span class="num">9</span>Alerts &amp; chasing</a>
+    <a data-s="s10"><span class="num">10</span>Margin drift after signature</a>
+    
+  </nav>
+
+  <div class="stage">
+
+  <!-- ══════════════════ 0 · OVERVIEW ══════════════════ -->
+  <section class="screen on" id="s0">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Sonal Kumari Thakur</b><span>Product Leader</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+
+      <div class="ov-hero">
+        <h2>Margin decides how much sign-off an agreement needs</h2>
+        <div class="formula">margin % &nbsp;=&nbsp; (customer price &minus; provider price) &divide; customer price</div>
+        <div class="tiers">
+          <div class="tier ok"><div class="t-pct">25% +</div><div class="t-n">Normal approval</div><div class="t-d">No level required</div></div>
+          <div class="tier l1"><div class="t-pct">0% &ndash; 25%</div><div class="t-n">Level 1 &mdash; manager</div><div class="t-d">Level 1 only</div></div>
+          <div class="tier l2"><div class="t-pct">&lt; 0%</div><div class="t-n">Level 2 &mdash; leadership</div><div class="t-d">Level 1, then Level 2</div></div>
+        </div>
+
+        <div class="formula" style="margin-top:22px">contracted volume &nbsp;&mdash;&nbsp; provider visits/yr &nbsp;vs&nbsp; customer visits/yr, per property &times; service type</div>
+        <div class="two" style="margin-top:14px">
+          <div class="tier ok"><div class="t-n">Within contract</div><div class="t-d">Provider visits &le; customer visits. No flag.</div></div>
+          <div class="tier l1"><div class="t-n">Over contract</div><div class="t-d">Needs a written reason before the agreement can be sent for approval.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ 1a · CONFIGURE — TEMPLATE INFORMATION ══════════════════ -->
+  <section class="screen" id="s1t">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Priya Raghavan</b><span>Pricing Analyst</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+
+      <div class="cc-crumb"><a>Provider Agreement Management</a> / 7-Eleven, Inc Landscaping - PUoW 08M (40402) - Draft</div>
+      <div class="cc-head-row"><h1 class="cc-h1">7-Eleven, Inc Landscaping - PUoW 08M (40402) - Draft <span style="color:var(--blue);font-weight:400">↗</span></h1>
+        <div style="margin-left:auto" class="btnrow"><button class="btn out sm">View Service Schedule</button><button class="btn out sm">Preview</button></div></div>
+
+      <div class="tabs" style="margin-top:0">
+        <button class="tab on">Template Information</button>
+        <button class="tab" onclick="go('s1c')">Price Range Information</button>
+      </div>
+
+      <div class="card" style="border-top:none;border-radius:0 0 var(--r) var(--r)">
+        <div class="card-h"><h3>Service Details</h3>
+          <div style="margin-left:auto" class="btnrow"><button class="btn out sm">Separate Agreements</button></div></div>
+        <div class="card-b flush" style="overflow-x:auto">
+          <table class="grid" style="min-width:1320px">
+            <thead><tr>
+              <th>Customer Service Types</th><th>Provider Service Type</th><th>Job Scope</th>
+              <th>Service Months</th><th>Service Interval</th><th class="num">Service Frequency</th>
+              <th>Due Date</th><th>Service Days</th><th class="num">Total Visits</th><th class="newcol num">Customer contracted</th>
+            </tr></thead>
+            <tbody>
+              <tr style="background:#FFFAF6">
+                <td rowspan="2" style="vertical-align:top"><b>Routine Landscaping Service</b> <span class="badge b-grey">+</span>
+                    <div style="margin-top:8px"><span class="badge b-new">&#9873; Contract deviation</span></div></td>
+                <td>Routine Landscaping Service</td><td>Mowing &amp; Cleanup&hellip;</td>
+                <td>Apr&ndash;Sep</td><td>Weekly</td>
+                <td class="num">1</td>
+                <td>&mdash;</td><td>&mdash;</td>
+                <td class="num">26</td><td class="newcol num">26</td></tr>
+              <tr style="background:#FFFAF6">
+                <td>Routine Landscaping Service</td><td>Mowing &amp; Cleanup&hellip;</td>
+                <td style="cursor:pointer;background:#FFF4EA" onclick="openM('m-dev')" title="Customer contracted Mar, Oct — provider has Mar, Oct, November">
+                    Mar, Oct, <b style="color:var(--bad)">Nov</b></td>
+                <td>Every 2 weeks</td>
+                <td class="num" style="cursor:pointer;background:#FFF4EA" onclick="openM('m-dev')" title="32.5 configured against 30.3 contracted">
+                    <span class="moneyin" style="display:inline-flex;min-width:52px;border-color:var(--new);justify-content:center">1</span></td>
+                <td>&mdash;</td><td>&mdash;</td>
+                <td class="num"><span class="m-l2">6</span></td><td class="newcol num"><span class="m-l2">4</span><span class="sub"><b>+2 visits</b><br>+1 month &middot; November</span></td></tr>
+              <tr style="background:#FDF3F2">
+                <td colspan="8" style="text-align:right"><b>Configured 32 visits/yr</b></td>
+                <td class="num"><b>32</b></td><td class="newcol num"><span class="m-l2"><b>30 &middot; +2</b></span></td></tr>
+              <tr>
+                <td><b>Irrigation Shutdown</b></td><td>Irrigation Shutdown</td><td>SHUT DOWN &amp; IS&hellip;</td>
+                <td>Nov</td><td>Seasonal</td><td class="num">1</td><td>11/30</td><td>&mdash;</td>
+                <td class="num">1</td><td class="newcol num">1</td></tr>
+              <tr>
+                <td><b>Fall Cleanup</b></td><td>Fall Cleanup</td><td>- Perform a full-&hellip;</td>
+                <td>Nov</td><td>Seasonal</td><td class="num">1</td><td>11/30</td><td>&mdash;</td>
+                <td class="num">1</td><td class="newcol num">1</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-b" style="border-top:1px solid var(--line-2)">
+          
+          <div class="notice n-new" style="margin:0 0 12px"><span class="ic">&#9873;</span><div><b>Routine Landscaping &mdash; configured beyond the customer contract.</b>Service months: signed <b>Mar &ndash; Oct</b>, configured <b>Mar &ndash; Nov</b> &mdash; <b>+1 month &middot; November</b>, worth +2 visits &middot; $120/yr.<div style="margin-top:10px" class="btnrow"><button class="btn newb sm" onclick="openM('m-dev')">Add reason</button><button class="btn out sm" onclick="openM('m-bulk')">Applies to 11 properties</button></div></div></div>
+          <div class="btnrow right"><button class="btn ghost">Cancel</button><button class="btn">Save</button></div>
+        </div>
+      </div>
+</div>
+  </section>
+
+  <!-- ══════════════════ 1a · CONFIGURE — PRICE RANGE ══════════════════ -->
+  <section class="screen" id="s1c">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Priya Raghavan</b><span>Pricing Analyst</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+      <div class="cc-crumb"><a>Provider Agreement Management</a> / Walgreens Corporate- AR Acct Landscaping - PUW E2E Test - Draft</div>
+      <div class="cc-head-row"><h1 class="cc-h1">Walgreens Corporate- AR Acct Landscaping - PUW E2E Test - Draft <span style="color:var(--blue);font-weight:400">&#8599;</span></h1>
+        <div style="margin-left:auto" class="btnrow"><button class="btn out sm">View Service Schedule</button><button class="btn out sm">Preview</button></div></div>
+
+      <div class="tabs" style="margin-top:0">
+        <button class="tab" onclick="go('s1t')">Template Information</button>
+        <button class="tab on">Price Range Information</button>
+      </div>
+
+      <div class="card" style="border-top:none;border-radius:0 0 var(--r) var(--r)">
+        <div class="card-h">
+          <div class="filters" style="margin:0"><span class="fchip">State</span><span class="fchip">City</span><span class="fchip">Field Owner</span><span class="fchip">Creation Source</span><span class="fchip">Margin</span></div>
+          <div style="margin-left:auto" class="btnrow"><button class="btn out sm">Will Not Price</button><button class="btn out sm">Edit Separately</button><button class="btn out sm">Reset</button><button class="btn out sm">Export &#11015;</button><button class="btn out sm">Import &#11014;</button></div>
+        </div>
+        <div class="card-b flush" style="overflow-x:auto">
+          <table class="grid" style="min-width:1240px">
+            <thead>
+              <tr>
+                <th class="rowno" rowspan="2"></th><th rowspan="2">Property</th><th rowspan="2">Field Owner</th>
+                <th class="grp">Customer Line Item<span class="sub">Tree Pruning</span></th>
+                <th class="grp">Customer Line Item<span class="sub">Routine Landscaping Service</span></th>
+                <th class="grp">Customer Line Item<span class="sub">Irrigation Shutdown</span></th>
+              </tr>
+              <tr>
+                <th class="grp">Provider Line Item<span class="sub">Tree Pruning<span style="display:block;color:#8A4508;font-weight:600;font-size:10px;letter-spacing:.03em;margin-top:3px">PROVIDER PRICE &middot; MARGIN&nbsp;%</span></span></th>
+                <th class="grp">Provider Line Item<span class="sub">Routine Landscaping Service (Jan-Nov)<span style="display:block;color:#8A4508;font-weight:600;font-size:10px;letter-spacing:.03em;margin-top:3px">PROVIDER PRICE &middot; MARGIN&nbsp;%</span></span></th>
+                <th class="grp">Provider Line Item<span class="sub">Irrigation Shutdown<span style="display:block;color:#8A4508;font-weight:600;font-size:10px;letter-spacing:.03em;margin-top:3px">PROVIDER PRICE &middot; MARGIN&nbsp;%</span></span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="rowno">1</td>
+                <td>(00041-W) &mdash; 1805 Greens Road<span class="sub">Houston, TX, 77032</span></td><td>Vinod Baradwaj</td>
+                <td><div class="rangehint">Customer Price $0.00</div><div class="rangehint">Tracking Only</div></td>
+                <td><div class="rangehint">Customer Price $100.00/month</div>
+                    <div style="display:flex;gap:6px;align-items:flex-start;margin-top:4px">
+                      <div class="pricestack"><div class="moneyin" style="min-width:104px"><span class="cur">$</span><span>56</span></div><span class="mg-ok mgs">44%</span></div>
+                      <span style="color:var(--muted);font-size:11px;margin-top:7px">to</span>
+                      <div class="pricestack"><div class="moneyin" style="min-width:104px"><span class="cur">$</span><span>70</span></div><span class="mg-ok mgs">30%</span></div>
+                    </div></td>
+                <td><div class="rangehint">Customer Price $0.00</div><div class="rangehint">Tracking Only</div>
+                    <div style="display:flex;gap:6px;align-items:flex-start;margin-top:4px">
+                      <div class="pricestack"><div class="moneyin" style="min-width:80px"><span class="cur">$</span><span>115</span></div><span class="mgs" style="color:var(--muted)">n/a</span></div>
+                      <span style="color:var(--muted);font-size:11px;margin-top:7px">to</span>
+                      <div class="pricestack"><div class="moneyin" style="min-width:80px"><span class="cur">$</span><span>125</span></div><span class="mgs" style="color:var(--muted)">n/a</span></div>
+                    </div></td></tr>
+              <tr><td class="rowno">2</td>
+                <td>(00052-W) &mdash; 2440 Bay Area Blvd<span class="sub">Houston, TX, 77058</span></td><td>Vinod Baradwaj</td>
+                <td><div class="rangehint">Customer Price $0.00</div><div class="rangehint">Tracking Only</div></td>
+                <td><div class="rangehint">Customer Price $100.00/month</div>
+                    <div style="display:flex;gap:6px;align-items:flex-start;margin-top:4px">
+                      <div class="pricestack"><div class="moneyin" style="min-width:104px"><span class="cur">$</span><span>56</span></div><span class="mg-ok mgs">44%</span></div>
+                      <span style="color:var(--muted);font-size:11px;margin-top:7px">to</span>
+                      <div class="pricestack"><div class="moneyin" style="min-width:104px"><span class="cur">$</span><span>70</span></div><span class="mg-ok mgs">30%</span></div>
+                    </div></td>
+                <td><div class="rangehint">Customer Price $0.00</div><div class="rangehint">Tracking Only</div>
+                    <div style="display:flex;gap:6px;align-items:flex-start;margin-top:4px">
+                      <div class="pricestack"><div class="moneyin" style="min-width:80px"><span class="cur">$</span><span>115</span></div><span class="mgs" style="color:var(--muted)">n/a</span></div>
+                      <span style="color:var(--muted);font-size:11px;margin-top:7px">to</span>
+                      <div class="pricestack"><div class="moneyin" style="min-width:80px"><span class="cur">$</span><span>125</span></div><span class="mgs" style="color:var(--muted)">n/a</span></div>
+                    </div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="border-left:3px solid var(--new)">
+        <div class="card-h" style="background:var(--new-bg)"><h3 style="color:#8A4508">Margin projection</h3>
+          <span class="badge b-grey">Template &mdash; before any PSA is generated</span></div>
+        <div class="card-b flush" style="overflow-x:auto">
+          <table class="grid" style="min-width:1080px">
+            <thead><tr>
+              <th>Service type</th><th class="num">Visits/yr</th>
+              <th class="num">Provider $ low</th><th class="num">Provider $ high</th>
+              <th class="num">Customer contracted $</th>
+              <th class="newcol num">Margin low</th><th class="newcol num">Margin high</th>
+            </tr></thead>
+            <tbody>
+              <tr><td>Routine Landscaping Service<span class="sub">11 visits/yr &middot; Jan&ndash;Nov, monthly</span></td><td class="num">11</td>
+                  <td class="num">$1,232</td><td class="num">$1,540</td><td class="num">$2,200</td>
+                  <td class="newcol num"><span class="mg-ok">+$660</span><span class="sub"><span class="mg-ok">30.0%</span></span></td>
+                  <td class="newcol num"><span class="mg-ok">+$968</span><span class="sub"><span class="mg-ok">44.0%</span></span></td></tr>
+              <tr><td>Irrigation Shutdown<span class="sub">Provider Per Occurrence &middot; customer Tracking Only</span></td><td class="num">1</td>
+                  <td class="num">$230</td><td class="num">$250</td><td class="num">$0</td>
+                  <td class="newcol num"><span class="mg-low">&minus;$250</span><span class="sub">n/a</span></td>
+                  <td class="newcol num"><span class="mg-low">&minus;$230</span><span class="sub">n/a</span></td></tr>
+              <tr><td>Tree Pruning<span class="sub">Tracking Only both sides</span></td><td class="num">&mdash;</td>
+                  <td class="num">&mdash;</td><td class="num">&mdash;</td><td class="num">&mdash;</td>
+                  <td class="newcol num sub" style="margin:0">n/a</td><td class="newcol num sub" style="margin:0">n/a</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ 1 · PRICING ══════════════════ -->
+  <section class="screen" id="s1">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Priya Raghavan</b><span>Pricing Analyst</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+
+      <div class="cc-crumb"><a>Provider Agreement Management</a> / 7-Eleven, Inc Landscaping - PUoW 12M - Ready For Negotiation</div>
+      <div class="cc-head-row"><h1 class="cc-h1">7-Eleven, Inc Landscaping - PUoW 12M - Ready For Negotiation</h1>
+        <span class="badge b-grey">Agreement type: Mixed</span></div>
+
+      <div class="why"><span style="font-weight:600;color:var(--ink)">Sign-off needed</span>
+        <span class="badge b-grey" style="opacity:.4">Normal approval</span><span style="color:#C6CDD4">&rsaquo;</span>
+        <span class="badge b-l1">Level 1 &mdash; manager</span><span style="color:#C6CDD4">&rsaquo;</span>
+        <span class="badge b-l2">Level 2 &mdash; leadership</span><span class="sep">|</span>
+        <span>Worst margin <b class="mg-low">&minus;12.1%</b> &mdash; Kerrville, Routine Landscaping &mdash; <b>below 0%</b>, so both levels</span><span class="sep">|</span>
+        <span>Money at risk <b class="mg-low">&minus;$168/yr</b></span><span class="sep">|</span>
+        <span><b>3 of 6</b> cells priced</span></div>
+
+      <div class="btnrow" style="margin-bottom:6px">
+        <button class="btn out sm">Export ⬇</button>
+        <button class="btn dis sm" title="Save changes before continuing">Send back</button>
+        <button class="btn dis sm" title="Save changes before continuing">Send for approval</button>
+        <button class="btn out sm">Save</button>
+        <button class="btn dis sm" title="1 contract deviation needs a reason before continuing">Save and send for approval (3)</button>
+      </div>
+
+      <div class="card">
+        <div class="card-b flush" style="overflow-x:auto">
+          <table class="grid" style="min-width:1180px">
+            <thead>
+              <tr>
+                <th class="rowno" rowspan="2"></th><th rowspan="2">Property</th><th rowspan="2">Field Owner</th><th rowspan="2">Provider</th>
+                <th class="grp" rowspan="2">Provider Line Item<span class="sub">Routine Landscaping Service Per Visit<br>(Aug, Oct, Dec, Sep, Nov, Jul) &middot; 24/yr<span style="display:block;color:#8A4508;font-weight:600;font-size:10px;letter-spacing:.03em;margin-top:3px">PROVIDER PRICE &middot; MARGIN&nbsp;%</span></span></th>
+                <th class="grp" rowspan="2">Provider Line Item<span class="sub">Tree Pruning<span style="display:block;color:#8A4508;font-weight:600;font-size:10px;letter-spacing:.03em;margin-top:3px">PROVIDER PRICE &middot; MARGIN&nbsp;%</span></span></th>
+                <th colspan="3" style="text-align:center;background:#EEF2F6">Incumbent Data</th>
+              </tr>
+              <tr>
+                <th style="background:#EEF2F6">Routine Landscaping (Jul-Jun)</th>
+                <th style="background:#EEF2F6">Provider</th>
+                <th style="background:#EEF2F6">Contract Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="rowno">1</td>
+                <td>7-Eleven (42424) — 2013 S Bridge St<span class="sub">Brady, TX, 76825</span></td><td>Julie Dominguez</td>
+                <td><div class="rangehint">Select Provider</div><div class="moneyin" style="min-width:118px;color:#9AA2AA"><span>Greenscape TX</span><span>⌄</span></div></td>
+                <td style="background:#FFFBF7"><div class="rangehint">Range $60.00 – $80.00/visit</div>
+                    <div class="rangehint" style="color:var(--new);font-weight:600">Customer $110.00/visit</div>
+                    <div class="pricestack"><div class="moneyin" style="min-width:128px"><span class="cur">$</span><span>68.00</span></div><span class="mg-ok mgs">38%</span></div>
+                    <div style="margin-top:5px;cursor:pointer" onclick="openM('m-dev')"><span class="badge b-new">&#9873; Contract deviation</span></div>
+                    </div></td>
+                <td><div class="rangehint">$0.00</div><div class="rangehint">Tracking Only</div></td>
+                <td class="num">$80.00</td><td>Greenscape TX</td><td><span class="badge b-grey">Active</span></td></tr>
+
+              <tr style="background:#FFFAF6"><td class="rowno">2</td>
+                <td>7-Eleven (42557) — 701 Highway 87<span class="sub">Comfort, TX, 78013</span></td><td>Julie Dominguez</td>
+                <td><div class="rangehint">Select Provider</div><div class="moneyin" style="min-width:118px;color:#9AA2AA"><span>Hill Country LS</span><span>⌄</span></div></td>
+                <td><div class="rangehint">Range $40.00 – $55.00/visit</div>
+                    <div class="rangehint" style="color:var(--new);font-weight:600">Customer $62.00/visit</div>
+                    <div class="pricestack"><div class="moneyin" style="min-width:128px"><span class="cur">$</span><span>49.00</span></div><span class="mg-low mgs">21%</span></div>
+                    <div class="sub" style="margin-top:3px"><b>Drive time</b></div></td>
+                <td><div class="rangehint">$0.00</div><div class="rangehint">Tracking Only</div></td>
+                <td class="num">$47.00</td><td>Hill Country LS</td><td><span class="badge b-grey">Active</span></td></tr>
+
+              <tr style="background:#FDF3F2"><td class="rowno">3</td>
+                <td>7-Eleven (42610) — 1401 Junction Hwy<span class="sub">Kerrville, TX, 78028</span></td><td>Julie Dominguez</td>
+                <td><div class="rangehint">Select Provider</div><div class="moneyin" style="min-width:118px;color:#9AA2AA"><span>Hill Country LS</span><span>⌄</span></div></td>
+                <td><div class="rangehint">Range $45.00 – $60.00/visit</div>
+                    <div class="rangehint" style="color:var(--new);font-weight:600">Customer $58.00/visit</div>
+                    <div class="pricestack"><div class="moneyin flag" style="min-width:128px;cursor:pointer" onclick="openM('m-range')"><span class="cur">$</span><span>65.00</span></div><span class="mg-low mgs">−12%</span></div>
+                    <div class="rangehint" style="color:var(--bad);margin-top:3px">&minus;$168/yr &middot; $7.00 &times; 24 visits</div>
+                    <div class="rangehint" style="color:var(--coral);margin-top:3px">⚠ Outside recommended range</div>
+                    <div class="sub" style="margin-top:3px"><b>Incorrect measurements</b></div></td>
+                <td><div class="rangehint">$0.00</div><div class="rangehint">Tracking Only</div></td>
+                <td class="num">$52.00</td><td>Alamo Grounds</td><td><span class="badge b-grey">Terminated</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="border-left:3px solid var(--new)">
+        <div class="card-h" style="background:var(--new-bg)"><h3 style="color:#8A4508">Margin projection</h3>
+          <span class="badge b-grey">Group total &mdash; 3 properties</span></div>
+        <div class="card-b flush" style="overflow-x:auto">
+          <table class="grid" style="min-width:1080px">
+            <thead><tr>
+              <th>Service type</th><th class="num">Visits/yr</th>
+              <th class="num">Provider $ low</th><th class="num">Provider $ high</th>
+              <th class="num">Customer contracted $</th>
+              <th class="newcol num">Margin low</th><th class="newcol num">Margin high</th>
+            </tr></thead>
+            <tbody>
+              <tr><td>Routine Landscaping Service</td><td class="num">24</td>
+                  <td class="num">$3,480</td><td class="num">$4,680</td><td class="num">$5,520</td>
+                  <td class="newcol num"><span class="mg-low">+$840</span><span class="sub"><span class="mg-low">15.2%</span></span></td><td class="newcol num"><span class="mg-ok">+$2,040</span><span class="sub"><span class="mg-ok">37.0%</span></span></td></tr>
+              <tr style="background:#F7F9FA"><td class="sub" style="margin:0">&mdash; as entered ($4,368)</td><td class="num">24</td>
+                  <td class="num" colspan="2">&mdash;</td><td class="num">$5,520</td>
+                  <td class="newcol num" colspan="2"><span class="mg-low">+$1,152 &middot; 20.9%</span></td></tr>
+              <tr><td>Tree Pruning<span class="sub">Tracking Only both sides</span></td><td class="num">&mdash;</td>
+                  <td class="num">&mdash;</td><td class="num">&mdash;</td><td class="num">&mdash;</td>
+                  <td class="newcol num"><span class="m-na">n/a</span></td><td class="newcol num"><span class="m-na">n/a</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+  </section>
+
+  <!-- ══════════════════ 2 · QUEUES ══════════════════ -->
+  <section class="screen" id="s2">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Sonal Kumari Thakur</b><span>Product Leader</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+
+      <div class="cc-head-row"><h1 class="cc-h1">Provider Agreement Management</h1>
+        <div style="margin-left:auto" class="btnrow"><span style="font-size:13px;color:var(--muted)">Self View</span><span style="width:34px;height:18px;background:var(--blue);border-radius:9px;display:inline-block;position:relative"><i style="position:absolute;right:2px;top:2px;width:14px;height:14px;background:#fff;border-radius:50%;display:block"></i></span><span style="font-size:13px">Team View</span><button class="btn out sm">Create Secondary PSA</button></div>
+      </div>
+
+      <div class="search">&#128269; &nbsp;Search</div>
+      <div class="filters">
+        <span class="fchip">Customer</span><span class="fchip">Provider</span><span class="fchip">Customer Contract Type</span>
+        <span class="fchip">Provider Agreement Type</span><span class="fchip">Status</span><span class="fchip">State</span>
+        <span class="fchip">City</span><span class="fchip">Field Owner</span><span class="fchip">Service Line</span>
+        <span class="fchip">Exclude</span><span class="fchip">Changes</span><span class="fchip">Creation Source</span>
+        <span class="fchip">Agreement Start Date</span>
+        <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Margin</span>
+        <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
+        <span style="font-size:12.5px;color:var(--blue);align-self:center">&#8635; Clear All</span>
+      </div>
+      <div class="pill-row"><span class="fchip applied">Landscaping</span></div>
+
+      <div class="tabstrip"><span class="tabarrow">&lsaquo;</span><div class="tabs">
+        <button class="tab">Draft (1,487)</button>
+        <button class="tab">Ready For Negotiation (375)</button>
+        <button class="tab">Awaiting Approval (10)</button>
+        <button class="tab newtab on"><span class="dotnew"></span>Awaiting Level 1 Approval (4)</button>
+        <button class="tab newtab"><span class="dotnew"></span>Awaiting Level 2 Approval (2)</button>
+        <button class="tab newtab"><span class="dotnew"></span>Awaiting RFP Review (1)</button>
+        <button class="tab">Awaiting Signature (179)</button>
+        <button class="tab">Active and Upcoming (31,303)</button>
+        <button class="tab">Inactive (64,461)</button>
+        <button class="tab">Unspecified (81)</button>
+      </div><span class="tabarrow">&rsaquo;</span></div>
+
+      <div class="card" style="margin-top:0;border-top:none;border-radius:0 0 var(--r) var(--r)">
+        <div class="card-b" style="padding:12px 18px 0"><div class="btnrow" style="gap:22px">
+          <span style="font-size:13px;color:var(--blue);font-weight:500;border-bottom:2px solid var(--blue);padding-bottom:6px">By customer</span>
+          <span style="font-size:13px;color:var(--muted);padding-bottom:6px">By term</span>
+        </div></div>
+        <div class="card-b flush" style="overflow-x:auto">
+          <table class="grid" id="qtbl" style="min-width:1060px">
+            <thead><tr>
+              <th style="width:34px"></th>
+              <th style="min-width:200px">Customer/Customer Terms</th>
+              <th style="min-width:230px">Customer Contract</th>
+              <th style="min-width:230px">Provider Agreement</th>
+              <th>Service Line</th>
+              <th>Status</th>
+              <th class="num">Count</th><th style="width:44px"></th>
+            </tr></thead>
+            <tbody>
+              <tr class="prow" data-g="g1" style="cursor:pointer">
+                <td class="rowno"><span class="chev">&#8964;</span></td>
+                <td><b>7-Eleven, Inc</b></td>
+                <td>Mulching, Routine Landscaping Service,&hellip;</td>
+                <td>Routine Landscaping Service, Tree Prun&hellip;</td>
+                <td>Landscaping</td><td>Awaiting Level 1 Approval</td><td class="num">2</td><td></td>
+              </tr>
+              <tr class="crow g1" style="cursor:pointer" onclick="go('s3')">
+                <td class="num" style="color:var(--blue)">&rsaquo;</td>
+                <td style="padding-left:28px">Landscaping - PUoW 08 Period</td>
+                <td>Mulching, Routine Landscaping Service,&hellip;</td>
+                <td>Routine Landscaping Service, Tree Prun&hellip;</td>
+                <td>Landscaping</td><td>Awaiting Level 1 Approval</td><td class="num">1</td><td class="num" style="color:var(--blue)">&rsaquo;</td>
+              </tr>
+              <tr class="crow g1" style="cursor:pointer" onclick="go('s3')">
+                <td class="num" style="color:var(--blue)">&rsaquo;</td>
+                <td style="padding-left:28px">Landscaping - PUoW 12 Period</td>
+                <td>Mulching, Routine Landscaping Service,&hellip;</td>
+                <td>Routine Landscaping Service, Tree Prun&hellip;</td>
+                <td>Landscaping</td><td>Awaiting Level 1 Approval</td><td class="num">1</td><td class="num" style="color:var(--blue)">&rsaquo;</td>
+              </tr>
+
+              <tr class="prow collapsed" data-g="g2" style="cursor:pointer">
+                <td class="rowno"><span class="chev">&rsaquo;</span></td>
+                <td><b>Best Buy Corporate</b></td>
+                <td>Fall Cleanup, Spring Cleanup, Shrub Pr&hellip;</td>
+                <td>Fall Cleanup, Shrub Pruning, Routine La&hellip;</td>
+                <td>Landscaping</td><td>Awaiting Level 1 Approval</td><td class="num">3</td><td></td>
+              </tr>
+              <tr class="crow g2 hid" style="cursor:pointer" onclick="go('s3')">
+                <td class="num" style="color:var(--blue)">&rsaquo;</td>
+                <td style="padding-left:28px">Landscaping - Routine 08 Period</td>
+                <td>Fall Cleanup, Spring Cleanup, Shrub Pr&hellip;</td>
+                <td>Fall Cleanup, Shrub Pruning, Routine La&hellip;</td>
+                <td>Landscaping</td><td>Awaiting Level 1 Approval</td><td class="num">3</td><td class="num" style="color:var(--blue)">&rsaquo;</td>
+              </tr>
+
+              <tr class="prow collapsed" data-g="g3" style="cursor:pointer">
+                <td class="rowno"><span class="chev">&rsaquo;</span></td>
+                <td><b>CBRE/AT&amp;T</b></td>
+                <td>Fall Cleanup, Spring Cleanup, Shrub Pr&hellip;</td>
+                <td>Fall Cleanup, Shrub Pruning, Routine La&hellip;</td>
+                <td>Landscaping</td><td>Awaiting Level 1 Approval</td><td class="num">3</td><td></td>
+              </tr>
+              <tr class="crow g3 hid" style="cursor:pointer" onclick="go('s3')">
+                <td class="num" style="color:var(--blue)">&rsaquo;</td>
+                <td style="padding-left:28px">Landscaping - AT&amp;T NE 09 Period</td>
+                <td>Fall Cleanup, Spring Cleanup, Shrub Pr&hellip;</td>
+                <td>Fall Cleanup, Shrub Pruning, Routine La&hellip;</td>
+                <td>Landscaping</td><td>Awaiting Level 1 Approval</td><td class="num">3</td><td class="num" style="color:var(--blue)">&rsaquo;</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-b" style="border-top:1px solid var(--line-2);display:flex;align-items:center;gap:16px;font-size:12.5px;color:var(--muted)">
+          <span>View <b style="color:var(--ink)">25</b> rows per page</span>
+          <span style="margin-left:auto">1 &ndash; 3 of 3</span>
+          <span style="border:1px solid #C6CDD4;border-radius:3px;padding:2px 8px;color:var(--ink)">1</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════ 2b · ACTIVE & UPCOMING ══════════════════ -->
+  <section class="screen" id="s2b">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Sonal Kumari Thakur</b><span>Product Leader</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+
+      <div class="cc-crumb"><a>Provider Agreement Management</a> / Albertsons Landscaping - 8 Period - Active and Upcoming</div>
+      <div class="cc-head-row"><h1 class="cc-h1">Albertsons Landscaping - 8 Period - Active and Upcoming <span style="color:var(--blue);font-weight:400">&#8599;</span></h1>
+        <div style="margin-left:auto"><button class="btn dis">Terminate (0)</button></div></div>
+
+      <div class="card">
+        <div class="card-b" style="padding-bottom:0">
+          <div class="filters" style="align-items:center">
+            <span class="srch">&#128269; Search</span>
+            <span class="fchip">City</span><span class="fchip">Field Owner</span>
+            <span class="fchip">State</span><span class="fchip">Provider</span>
+            <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Margin</span>
+          </div>
+        </div>
+        <div class="card-b flush" style="overflow-x:auto">
+          <table class="grid" style="min-width:1080px">
+            <thead><tr>
+              <th class="chk"><span class="cbx"></span></th>
+              <th style="min-width:220px">Property</th>
+              <th>Service Line</th><th>Agreement Type</th>
+              <th>Term Start</th><th>Term End</th>
+              <th>Field Owner</th><th>Status</th><th style="min-width:140px">Provider</th>
+              <th class="newcol num">Contracted margin</th>
+            </tr></thead>
+            <tbody>
+              <tr><td class="chk"><span class="cbx" data-row></span></td>
+                <td>Safeway (1460AS) - 1781 Forest Dr<span class="sub">1781 Forest DR, Annapolis, MD, 21401</span></td>
+                <td>Landscaping</td><td>Mixed</td>
+                <td>Mar 29, 2026</td><td>Oct 31, 2026</td>
+                <td>Tyrone Foster</td><td>Active</td><td>MCA Landscaping LLC</td>
+                <td class="newcol num"><span class="mg-ok">33.2%</span><span class="sub">$4,180 of $12,590</span></td></tr>
+
+              <tr style="background:#FDF3F2"><td class="chk"><span class="cbx" data-row></span></td>
+                <td>Safeway (1620AS) - 20211 Goshen Rd<span class="sub">20211 Goshen RD, Gaithersburg, MD, 20879</span></td>
+                <td>Landscaping</td><td>Mixed</td>
+                <td>Mar 29, 2026</td><td>Oct 31, 2026</td>
+                <td>Matthew Ozsvath</td><td>Active</td><td>Murphy&rsquo;s Lawn Service</td>
+                <td class="newcol num"><span class="mg-low">24.6%</span><span class="sub">$2,910 of $11,830</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-b" style="border-top:1px solid var(--line-2);display:flex;align-items:center;gap:16px;font-size:12.5px;color:var(--muted)">
+          <span>View <b style="color:var(--ink)">25</b> rows per page</span>
+          <span style="margin-left:auto">1 &ndash; 2 of 2</span>
+          <span style="border:1px solid #C6CDD4;border-radius:3px;padding:2px 8px;color:var(--ink)">1</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+<!-- ══════════════════ 3 · AWAITING APPROVAL (existing bucket) ══════════════════ -->
+  <section class="screen" id="s2c" data-agreement="Cadence Education Landscaping - 12M52C w/Irrigation (4 Prunes)">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Daniel Okafor</b><span>Regional Manager &middot; approver</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+
+      <div class="cc-crumb"><a>Provider Agreement Management</a> / Cadence Education Landscaping - 12M52C w/Irrigation (4 Prunes) - Awaiting Approval</div>
+      <div class="cc-head-row"><h1 class="cc-h1">Cadence Education Landscaping - 12M52C w/Irrigation (4 Prunes) - Awaiting Approval <span style="color:var(--blue);font-weight:400">&#8599;</span></h1>
+        <div style="margin-left:auto"><button class="btn out sm">View Service Schedule</button></div></div>
+
+      <div class="why"><span class="badge b-ok">Normal approval &mdash; no level required</span>
+        <span>Worst cell <b class="mg-ok">31.3%</b> &mdash; row 1, Fall Cleanup</span><span class="sep">|</span>
+        <span>At or above <b>25%</b></span><span class="sep">|</span>
+        <span>Submitted by <b>Priya Raghavan</b>, 21 Aug 2026 09:40</span><span class="sep">|</span>
+        <span>Deviations <b>none</b></span><span class="sep">|</span>
+        <span><b>2 days</b> waiting</span></div>
+
+      <div class="kv" style="margin-bottom:18px;grid-template-columns:repeat(7,1fr)">
+        <div><div class="k">Agreement Type</div><div class="v">Mixed</div></div>
+        <div><div class="k">Term Start Date</div><div class="v">09/01/26</div></div>
+        <div><div class="k">Term End Date</div><div class="v">03/31/27</div></div>
+        <div><div class="k">Service Start</div><div class="v">09/01</div></div>
+        <div><div class="k">Service End</div><div class="v">03/31</div></div>
+        <div><div class="k">Billing Start</div><div class="v">09/01</div></div>
+        <div><div class="k">Billing End</div><div class="v">03/31</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-b" style="padding-bottom:0">
+          <div class="filters" style="align-items:center">
+            <span class="srch">&#128269; Search</span>
+            <span class="fchip">State</span><span class="fchip">City</span><span class="fchip">Field Owner</span>
+            <span class="fchip">Creation Source</span><span class="fchip">Range</span><span class="fchip">Provider</span>
+            <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Margin</span>
+            <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
+            <span style="flex:1"></span>
+            <button class="btn sm" data-sel data-base="Send back">Send back (1)</button>
+          </div>
+        </div>
+        <div class="card-b flush" style="overflow-x:auto">
+          <table class="grid" style="min-width:1460px">
+            <thead>
+              <tr>
+                <th class="rowno"></th><th class="chk"><span class="cbx on" data-all></span></th>
+                <th style="min-width:250px">Property</th><th>Field Owner</th><th style="min-width:150px">Provider</th>
+                <th class="grp" style="min-width:210px">Provider Line Item<span class="sub" style="color:#1A4D6B">Routine Landscaping Per Visit (Sep-Mar) &middot; 24/yr</span><span style="display:block;color:#8A4508;font-weight:600;font-size:10px;letter-spacing:.03em;margin-top:3px">PROVIDER PRICE &middot; MARGIN&nbsp;%</span></th>
+                <th class="grp" style="min-width:200px">Provider Line Item<span class="sub" style="color:#1A4D6B">Fall Cleanup Per Visit (Nov) &middot; 1/yr</span><span style="display:block;color:#8A4508;font-weight:600;font-size:10px;letter-spacing:.03em;margin-top:3px">PROVIDER PRICE &middot; MARGIN&nbsp;%</span></th>
+                <th class="inc" style="min-width:190px">Incumbent Data<span class="sub">Routine Landscaping (Sep-Aug)</span></th>
+                <th style="min-width:80px">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-line="Sunbrook Academy (761)" data-svc="Routine Landscaping" data-margin="33.2%" data-risk="" data-reason="&mdash;">
+                <td class="rowno">1</td><td class="chk"><span class="cbx on" data-row></span></td>
+                <td>Cadence Education (761) &mdash; 3947 Hicks Rd<span class="kebab">&#8942;</span><span class="sub">Austell, GA, 30106</span></td>
+                <td>Patrick Craig</td><td>ATL Landscaping &amp; Maintenance</td>
+                <td><div class="rangehint">Range $120.00 - $187.50/visit</div><div class="rangehint">Customer Price $280.00/visit</div>
+                    <div class="prow-line"><span class="px">$187.00/visit</span><span class="mg-ok">33.2%</span></div></td>
+                <td><div class="rangehint">Range $120.00 - $165.00/visit</div><div class="rangehint">Customer Price $240.00/visit</div>
+                    <div class="prow-line"><span class="px">$165.00/visit</span><span class="mg-ok">31.3%</span></div></td>
+                <td class="inc">$187.50 - Provider ATL Landscaping<span class="sub">Active</span></td>
+                <td><span class="upic">&#8593;</span></td></tr>
+
+              <tr data-line="Sunbrook Academy (774)" data-svc="Routine Landscaping" data-margin="32.0%" data-risk="" data-reason="&mdash;">
+                <td class="rowno">2</td><td class="chk"><span class="cbx" data-row></span></td>
+                <td>Cadence Education (774) &mdash; 210 Herrington Rd<span class="kebab">&#8942;</span><span class="sub">Lawrenceville, GA, 30044</span></td>
+                <td>Patrick Craig</td><td>ATL Landscaping &amp; Maintenance</td>
+                <td><div class="rangehint">Range $110.00 - $170.00/visit</div><div class="rangehint">Customer Price $250.00/visit</div>
+                    <div class="prow-line"><span class="px">$170.00/visit</span><span class="mg-ok">32.0%</span></div></td>
+                <td><div class="rangehint">Range $110.00 - $150.00/visit</div><div class="rangehint">Customer Price $230.00/visit</div>
+                    <div class="prow-line"><span class="px">$150.00/visit</span><span class="mg-ok">34.8%</span></div></td>
+                <td class="inc">$172.00 - Provider ATL Landscaping<span class="sub">Active</span></td>
+                <td><span class="upic">&#8593;</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="foot">
+        <button class="btn ghost">Cancel</button>
+        <button class="btn newb out" data-sel data-base="Send to RFP review" onclick="openM('m-rfp')">Send to RFP review (1)</button>
+        <span style="flex:1"></span>
+        <button class="btn dis" data-sel data-base="Send To Active" data-blocked title="No signed agreement on file for this selection.">Send To Active (1)</button>
+        <button class="btn out" data-sel data-base="Move to Level 1" onclick="openM('m-up1')">Move to Level 1 (1)</button>
+        <button class="btn" data-sel data-base="Approve &amp; send to provider" onclick="openM('m-apv')">Approve &amp; send to provider (1)</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════ 3 · APPROVAL L1 ══════════════════ -->
+  <section class="screen" id="s3" data-agreement="Best Buy Corporate Landscaping - Routine 08M (40218)">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Daniel Okafor</b><span>Regional Manager &middot; Level 1 approver</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+
+      <div class="cc-crumb"><a>Provider Agreement Management</a> / Best Buy Corporate Landscaping - Routine 08M (40218) - <span style="color:var(--new)">Awaiting Level 1 Approval</span></div>
+      <div class="cc-head-row"><h1 class="cc-h1">Best Buy Corporate Landscaping - Routine 08M (40218) - <span style="color:var(--new)">Awaiting Level 1 Approval</span> <span style="color:var(--blue);font-weight:400">&#8599;</span></h1>
+        <div style="margin-left:auto"><button class="btn out sm">View Service Schedule</button></div></div>
+
+      <div class="why"><span class="badge b-l1">Level 1 &mdash; manager</span>
+        <span>Worst cell <b class="mg-low">9.1%</b> &mdash; row 1, Routine Landscaping</span><span class="sep">|</span>
+        <span>Threshold in force <b>below 25%</b></span><span class="sep">|</span>
+        <span>Submitted by <b>Priya Raghavan</b>, 18 Aug 2026 14:22</span><span class="sep">|</span>
+        <span>Deviations <b>2 of 2 acknowledged</b></span><span class="sep">|</span>
+        <span><b>6 days</b> waiting</span></div>
+
+      <div class="kv" style="margin-bottom:18px;grid-template-columns:repeat(7,1fr)">
+        <div><div class="k">Agreement Type</div><div class="v">Mixed</div></div>
+        <div><div class="k">Term Start Date</div><div class="v">08/01/26</div></div>
+        <div><div class="k">Term End Date</div><div class="v">11/30/26</div></div>
+        <div><div class="k">Service Start</div><div class="v">08/01</div></div>
+        <div><div class="k">Service End</div><div class="v">11/30</div></div>
+        <div><div class="k">Billing Start</div><div class="v">08/01</div></div>
+        <div><div class="k">Billing End</div><div class="v">11/30</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-b" style="padding-bottom:0">
+          <div class="filters" style="align-items:center">
+            <span class="srch">&#128269; Search</span>
+            <span class="fchip">State</span><span class="fchip">City</span><span class="fchip">Field Owner</span>
+            <span class="fchip">Creation Source</span><span class="fchip">Range</span><span class="fchip">Provider</span>
+            <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Margin</span>
+            <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
+            <span style="flex:1"></span>
+            <button class="btn sm" data-sel data-base="Send back">Send back (1)</button>
+          </div>
+        </div>
+        <div class="card-b flush" style="overflow-x:auto">
+          <table class="grid" style="min-width:1460px">
+            <thead>
+              <tr>
+                <th class="rowno"></th><th class="chk"><span class="cbx on" data-all></span></th>
+                <th style="min-width:250px">Property</th><th>Field Owner</th><th style="min-width:150px">Provider</th>
+                <th class="grp" style="min-width:210px">Provider Line Item<span class="sub" style="color:#1A4D6B">Routine Landscaping Per Visit (Aug-Nov) &middot; 36/yr</span><span style="display:block;color:#8A4508;font-weight:600;font-size:10px;letter-spacing:.03em;margin-top:3px">PROVIDER PRICE &middot; MARGIN&nbsp;%</span></th>
+                <th class="grp" style="min-width:200px">Provider Line Item<span class="sub" style="color:#1A4D6B">Shrub Pruning Per Visit (Sep) &middot; 2/yr</span><span style="display:block;color:#8A4508;font-weight:600;font-size:10px;letter-spacing:.03em;margin-top:3px">PROVIDER PRICE &middot; MARGIN&nbsp;%</span></th>
+                <th class="inc" style="min-width:190px">Incumbent Data<span class="sub">Routine Landscaping (Sep-Aug)</span></th>
+                <th style="min-width:80px">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="background:#FDF3F2" data-line="2050 Green Acres Mall" data-svc="Routine Landscaping" data-margin="9.1%" data-risk="" data-reason="Fair market value"><td class="rowno">1</td><td class="chk"><span class="cbx on" data-row></span></td>
+                <td>Best Buy (2050) &mdash; 2050 Green Acres Mall<span class="kebab">&#8942;</span><span class="sub">Valley Stream, NY, 11581</span></td>
+                <td>Marcus Bell</td><td>Metro Grounds Care</td>
+                <td><div class="rangehint">Range $60.00 - $75.00/visit</div><div class="rangehint">Customer Price $88.00/visit</div>
+                    <div class="prow-line" style="cursor:pointer" onclick="openM('m-range')"><span class="px bad">&#9888; $80.00/visit</span><span class="mg-low">9.1%</span></div>
+                    <div style="margin-top:5px;cursor:pointer" onclick="openM('m-dev')"><span class="flagmark">&#9873; Contract deviation</span></div></td>
+                <td><div class="rangehint">Range $42.00 - $50.00/visit</div><div class="rangehint">Customer Price $76.85/visit</div>
+                    <div class="prow-line"><span class="px">$50.00/visit</span><span class="mg-ok">34.9%</span></div></td>
+                <td class="inc">$92.00 - Provider Metro Grounds Care<span class="sub">Active</span></td>
+                <td><span class="upic">&#8593;</span></td></tr>
+
+              <tr data-line="9015 Queens Blvd" data-svc="Routine Landscaping" data-margin="21.7%" data-risk="" data-reason="Drive time"><td class="rowno">2</td><td class="chk"><span class="cbx on" data-row></span></td>
+                <td>Best Buy (0024) &mdash; 9015 Queens Blvd Spc 0024<span class="kebab">&#8942;</span><span class="sub">Elmhurst, NY, 11373</span></td>
+                <td>Marcus Bell</td><td>Metro Grounds Care</td>
+                <td><div class="rangehint">Range $80.00 - $100.00/visit</div><div class="rangehint">Customer Price $115.00/visit</div>
+                    <div class="prow-line"><span class="px">$90.00/visit</span><span class="mg-low">21.7%</span></div></td>
+                <td><div class="rangehint">Range $80.00 - $100.00/visit</div><div class="rangehint">Customer Price $307.38/visit</div>
+                    <div class="prow-line"><span class="px">$100.00/visit</span><span class="mg-ok">67.5%</span></div></td>
+                <td class="inc">$86.00 - Provider Metro Grounds Care<span class="sub">Active</span></td>
+                <td><span class="upic">&#8593;</span></td></tr>
+
+              <tr data-line="756 Alberta Dr" data-svc="Routine Landscaping" data-margin="40.0%" data-risk="" data-reason="&mdash;"><td class="rowno">3</td><td class="chk"><span class="cbx" data-row></span></td>
+                <td>Best Buy (0459) &mdash; 756 Alberta Dr Ste 459<span class="kebab">&#8942;</span><span class="sub">Amherst, NY, 14226</span></td>
+                <td>Marcus Bell</td><td>Metro Grounds Care</td>
+                <td><div class="rangehint">Range $50.00 - $60.00/visit</div><div class="rangehint">Customer Price $100.00/visit</div>
+                    <div class="prow-line"><span class="px">$60.00/visit</span><span class="mg-ok">40.0%</span></div></td>
+                <td><div class="rangehint">Range $70.00 - $84.00/visit</div><div class="rangehint">Customer Price $140.00/visit</div>
+                    <div class="prow-line"><span class="px">$84.00/visit</span><span class="mg-ok">40.0%</span></div></td>
+                <td class="inc">$58.00 - Provider Metro Grounds Care<span class="sub">Active</span></td>
+                <td><span class="upic">&#8593;</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="border-left:3px solid var(--new)">
+        <div class="card-h" style="background:var(--new-bg)"><h3 style="color:#8A4508">Contract deviations</h3>
+          <span class="badge b-ok">2 of 2 acknowledged at pricing</span><span class="badge b-grey">1 warn only</span></div>
+        <div class="card-b flush" style="overflow-x:auto">
+          <table class="grid" style="min-width:1060px">
+            <thead><tr><th>Service type</th><th>Field</th><th class="num">Customer signed</th><th class="num">Agreement configured</th><th class="newcol">Difference</th><th>Reason given</th><th>Rule</th></tr></thead>
+            <tbody>
+              <tr><td rowspan="3" style="vertical-align:top">Routine Landscaping Service<span class="sub">3 of 8 compared fields differ</span></td>
+                  <td><b>Service months</b><span class="sub">set</span></td>
+                  <td class="num">Aug&ndash;Oct</td><td class="num"><span class="mg-low">Aug&ndash;Nov</span></td>
+                  <td class="newcol"><b>+1 month</b><span class="sub">added: November</span></td>
+                  <td><b style="font-size:12px">Expected under Per Unit of Work</b><span class="sub">P. Raghavan &middot; 18 Aug 14:20</span></td>
+                  <td><span class="badge b-ok">Acknowledged</span></td></tr>
+              <tr><td><b>Visits per season</b><span class="sub">count</span></td>
+                  <td class="num">30</td><td class="num"><span class="mg-low">36</span></td>
+                  <td class="newcol"><b>+6 visits</b><span class="sub">$480/yr at $80</span></td>
+                  <td><b style="font-size:12px">Expected under Per Unit of Work</b><span class="sub">P. Raghavan &middot; 18 Aug 14:21</span></td>
+                  <td><span class="badge b-ok">Acknowledged</span></td></tr>
+              <tr><td><b>Service days</b><span class="sub">set</span></td>
+                  <td class="num">Mon, Thu</td><td class="num">Tue, Fri</td>
+                  <td class="newcol"><b>2 changed</b><span class="sub">removed: Mon, Thu &middot; added: Tue, Fri</span></td>
+                  <td class="sub" style="margin:0">&mdash;</td>
+                  <td><span class="badge b-grey">Warn only</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="border-left:3px solid var(--new)">
+        <div class="card-h" style="background:var(--new-bg)"><h3 style="color:#8A4508">Margin projection</h3>
+          <span class="badge b-grey">Group total &mdash; 3 properties</span></div>
+        <div class="card-b flush" style="overflow-x:auto">
+          <table class="grid" style="min-width:1080px">
+            <thead><tr>
+              <th>Service type</th><th class="num">Visits/yr</th>
+              <th class="num">Provider $ low</th><th class="num">Provider $ high</th>
+              <th class="num">Customer contracted $</th>
+              <th class="newcol num">Margin low</th><th class="newcol num">Margin high</th>
+            </tr></thead>
+            <tbody>
+              <tr><td>Routine Landscaping Service</td><td class="num">36</td>
+                  <td class="num">$6,840</td><td class="num">$8,460</td><td class="num">$10,908</td>
+                  <td class="newcol num"><span class="mg-ok">+$2,448</span><span class="sub"><span class="mg-low">22.4%</span></span></td><td class="newcol num"><span class="mg-ok">+$4,068</span><span class="sub"><span class="mg-ok">37.3%</span></span></td></tr>
+              <tr><td>Shrub Pruning</td><td class="num">2</td>
+                  <td class="num">$384</td><td class="num">$468</td><td class="num">$1,048</td>
+                  <td class="newcol num"><span class="mg-ok">+$580</span><span class="sub"><span class="mg-ok">55.4%</span></span></td><td class="newcol num"><span class="mg-ok">+$664</span><span class="sub"><span class="mg-ok">63.4%</span></span></td></tr>
+              <tr style="background:#FDF3F2"><td colspan="5" class="sub" style="margin:0">Group total is healthy. The gate fires on the <b>worst cell</b> &mdash; 2050 Green Acres Mall, Routine Landscaping at 9.1%.</td>
+                  <td class="newcol num" colspan="2"><span class="mg-low">worst cell 9.1%</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="foot">
+        <button class="btn ghost">Cancel</button>
+        <button class="btn newb out" data-sel data-base="Send to RFP review" onclick="openM('m-rfp')">Send to RFP review (1)</button>
+        <span style="flex:1"></span>
+        <button class="btn dis" data-sel data-base="Send To Active" data-blocked title="No signed agreement on file for this selection.">Send To Active (1)</button>
+        <button class="btn out" data-sel data-base="Move to Level 2" onclick="openM('m-l1up')">Move to Level 2 (1)</button>
+        <button class="btn" data-sel data-base="Approve &amp; send to provider" onclick="openM('m-apv')">Approve &amp; send to provider (1)</button>
+        <!-- when Level 2 is also required the same button reads: Approve &amp; send to Level 2 -->
+      </div>
+    </div>
+  </section>
+
+<!-- ══════════════════ 4 · APPROVAL L2 + BLOCKS ══════════════════ -->
+  <section class="screen" id="s4" data-agreement="Home Depot Corporate Landscaping - National 26M (39114)">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Alexandra Reyes</b><span>VP Operations &middot; Level 2 approver</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+
+      <div class="cc-crumb"><a>Provider Agreement Management</a> / Home Depot Corporate Landscaping - National 26M (39114) - <span style="color:var(--new)">Awaiting Level 2 Approval</span></div>
+      <div class="cc-head-row"><h1 class="cc-h1">Home Depot Corporate Landscaping - National 26M (39114) - <span style="color:var(--new)">Awaiting Level 2 Approval</span> <span style="color:var(--blue);font-weight:400">&#8599;</span></h1>
+        <div style="margin-left:auto"><button class="btn out sm">View Service Schedule</button></div></div>
+
+      <div class="why"><span class="badge b-l2">Level 2 &mdash; leadership</span>
+        <span>Worst cell <b class="mg-low">&minus;2.0%</b> &mdash; row 1, Routine Landscaping</span><span class="sep">|</span>
+        <span>Money at risk <b class="mg-low">&minus;$130/yr</b></span><span class="sep">|</span>
+        <span>Level 1 <b class="mg-ok">&check; D. Okafor</b>, 18 Aug 16:40</span><span class="sep">|</span>
+        <span>Deviations <b>1 of 1 acknowledged</b></span><span class="sep">|</span>
+        <span><b>9 days</b> waiting</span></div>
+
+      <div class="kv" style="margin-bottom:18px;grid-template-columns:repeat(7,1fr)">
+        <div><div class="k">Agreement Type</div><div class="v">Mixed</div></div>
+        <div><div class="k">Term Start Date</div><div class="v">09/01/26</div></div>
+        <div><div class="k">Term End Date</div><div class="v">08/31/27</div></div>
+        <div><div class="k">Service Start</div><div class="v">09/01</div></div>
+        <div><div class="k">Service End</div><div class="v">08/31</div></div>
+        <div><div class="k">Billing Start</div><div class="v">09/01</div></div>
+        <div><div class="k">Billing End</div><div class="v">08/31</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-b" style="padding-bottom:0">
+          <div class="filters" style="align-items:center">
+            <span class="srch">&#128269; Search</span>
+            <span class="fchip">State</span><span class="fchip">City</span><span class="fchip">Field Owner</span>
+            <span class="fchip">Creation Source</span><span class="fchip">Range</span><span class="fchip">Provider</span>
+            <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Margin</span>
+            <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
+            <span style="flex:1"></span>
+            <button class="btn sm" data-sel data-base="Send back">Send back (1)</button>
+          </div>
+        </div>
+        <div class="card-b flush" style="overflow-x:auto">
+          <table class="grid" style="min-width:1460px">
+            <thead>
+              <tr>
+                <th class="rowno"></th><th class="chk"><span class="cbx on" data-all></span></th>
+                <th style="min-width:250px">Property</th><th>Field Owner</th><th style="min-width:150px">Provider</th>
+                <th class="grp" style="min-width:210px">Provider Line Item<span class="sub" style="color:#1A4D6B">Routine Landscaping Per Visit (Sep-Aug) &middot; 26/yr</span><span style="display:block;color:#8A4508;font-weight:600;font-size:10px;letter-spacing:.03em;margin-top:3px">PROVIDER PRICE &middot; MARGIN&nbsp;%</span></th>
+                <th class="grp" style="min-width:200px">Provider Line Item<span class="sub" style="color:#1A4D6B">Snow Removal Per Occurrence (Nov-Mar) &middot; 8/yr</span><span style="display:block;color:#8A4508;font-weight:600;font-size:10px;letter-spacing:.03em;margin-top:3px">PROVIDER PRICE &middot; MARGIN&nbsp;%</span></th>
+                <th class="inc" style="min-width:190px">Incumbent Data<span class="sub">Routine Landscaping (Sep-Aug)</span></th>
+                <th style="min-width:80px">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="background:#FDF3F2" data-line="160 E Sunrise Hwy" data-svc="Routine Landscaping" data-margin="&minus;2.0%" data-risk="&minus;$130/yr" data-reason="Fair market value"><td class="rowno">1</td><td class="chk"><span class="cbx on" data-row></span></td>
+                <td>Home Depot (2011) &mdash; 160 E Sunrise Hwy<span class="kebab">&#8942;</span><span class="sub">Valley Stream, NY, 11581</span></td>
+                <td>Rhea Kapoor</td><td>Empire Site Services</td>
+                <td><div class="rangehint">Range $180.00 - $255.00/visit</div><div class="rangehint">Customer Price $250.00/visit</div>
+                    <div class="prow-line" style="cursor:pointer" onclick="openM('m-range')"><span class="px bad">&#9888; $255.00/visit</span><span class="mg-low">&minus;2.0%</span></div>
+                    <div class="rangehint" style="color:var(--bad);margin-top:3px">&minus;$130/yr &middot; $5.00 &times; 26 visits</div></td>
+                <td><div class="rangehint">Range $400.00 - $520.00/occurrence</div><div class="rangehint">Customer Price $610.00/occurrence</div>
+                    <div class="prow-line"><span class="px">$520.00/occ</span><span class="mg-low">14.8%</span></div></td>
+                <td class="inc">$238.00 - Provider Empire Site Services<span class="sub">Active</span></td>
+                <td><span class="upic">&#8593;</span></td></tr>
+
+              <tr data-line="2450 Hempstead Tpke" data-svc="Routine Landscaping" data-margin="27.3%" data-risk="" data-reason="&mdash;"><td class="rowno">2</td><td class="chk"><span class="cbx" data-row></span></td>
+                <td>Home Depot (2042) &mdash; 2450 Hempstead Tpke<span class="kebab">&#8942;</span><span class="sub">East Meadow, NY, 11554</span></td>
+                <td>Rhea Kapoor</td><td>Empire Site Services</td>
+                <td><div class="rangehint">Range $180.00 - $240.00/visit</div><div class="rangehint">Customer Price $330.00/visit</div>
+                    <div class="prow-line"><span class="px">$240.00/visit</span><span class="mg-low">27.3%</span></div></td>
+                <td><div class="rangehint">Range $400.00 - $500.00/occurrence</div><div class="rangehint">Customer Price $720.00/occurrence</div>
+                    <div class="prow-line"><span class="px">$500.00/occ</span><span class="mg-ok">30.6%</span></div></td>
+                <td class="inc">$225.00 - Provider Empire Site Services<span class="sub">Active</span></td>
+                <td><span class="upic">&#8593;</span></td></tr>
+
+              <tr data-line="977 E Jericho Tpke" data-svc="Routine Landscaping" data-margin="28.2%" data-risk="" data-reason="&mdash;"><td class="rowno">3</td><td class="chk"><span class="cbx" data-row></span></td>
+                <td>Home Depot (2083) &mdash; 977 E Jericho Tpke<span class="kebab">&#8942;</span><span class="sub">Huntington Station, NY, 11746</span></td>
+                <td>Rhea Kapoor</td><td>Empire Site Services</td>
+                <td><div class="rangehint">Range $190.00 - $250.00/visit</div><div class="rangehint">Customer Price $348.00/visit</div>
+                    <div class="prow-line"><span class="px">$250.00/visit</span><span class="mg-low">28.2%</span></div></td>
+                <td><div class="rangehint">Range $420.00 - $540.00/occurrence</div><div class="rangehint">Customer Price $760.00/occurrence</div>
+                    <div class="prow-line"><span class="px">$540.00/occ</span><span class="mg-low">28.9%</span></div></td>
+                <td class="inc">$241.00 - Provider Empire Site Services<span class="sub">Active</span></td>
+                <td><span class="upic">&#8593;</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="border-left:3px solid var(--new)">
+        <div class="card-h" style="background:var(--new-bg)"><h3 style="color:#8A4508">Contract deviations</h3>
+          <span class="badge b-ok">1 of 1 acknowledged at pricing</span><span class="badge b-grey">1 warn only</span></div>
+        <div class="card-b flush" style="overflow-x:auto">
+          <table class="grid" style="min-width:1060px">
+            <thead><tr><th>Service type</th><th>Field</th><th class="num">Customer signed</th><th class="num">Agreement configured</th><th class="newcol">Difference</th><th>Reason given</th><th>Rule</th></tr></thead>
+            <tbody>
+              <tr><td rowspan="2" style="vertical-align:top">Routine Landscaping Service<span class="sub">2 of 8 compared fields differ</span></td>
+                  <td><b>Visits per season</b><span class="sub">count</span></td>
+                  <td class="num">24</td><td class="num"><span class="mg-low">26</span></td>
+                  <td class="newcol"><b>+2 visits</b><span class="sub">$510/yr at $255</span></td>
+                  <td><b style="font-size:12px">Provider increase district wide</b><span class="sub">P. Raghavan &middot; 18 Aug</span></td>
+                  <td><span class="badge b-ok">Acknowledged</span></td></tr>
+              <tr><td><b>Service days</b><span class="sub">set</span></td>
+                  <td class="num">Mon, Thu</td><td class="num">Tue, Fri</td>
+                  <td class="newcol"><b>2 changed</b><span class="sub">removed: Mon, Thu &middot; added: Tue, Fri</span></td>
+                  <td class="sub" style="margin:0">&mdash;</td>
+                  <td><span class="badge b-grey">Warn only</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="foot">
+        <button class="btn ghost">Cancel</button>
+        <span style="flex:1"></span>
+        <button class="btn dis" data-sel data-base="Send To Active" data-blocked title="No signed agreement on file for this selection.">Send To Active (1)</button>
+        <button class="btn" data-sel data-base="Approve &amp; send to provider" onclick="openM('m-l2ok')">Approve &amp; send to provider (1)</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ 5 · RFP REVIEW ══════════════════ -->
+  <section class="screen" id="s5" data-agreement="Best Buy Corporate Landscaping - Routine 08M (40218)">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Tom&aacute;s Herrera</b><span>Costing Team &middot; RFP review</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+
+      <div class="cc-crumb"><a>Provider Agreement Management</a> / Best Buy Corporate Landscaping - Routine 08M (40218) - <span style="color:var(--new)">Awaiting RFP Review</span></div>
+      <div class="cc-head-row"><h1 class="cc-h1">Best Buy Corporate Landscaping - Routine 08M (40218) - <span style="color:var(--new)">Awaiting RFP Review</span> <span style="color:var(--blue);font-weight:400">&#8599;</span></h1>
+        <div style="margin-left:auto"><button class="btn out sm">View Service Schedule</button></div></div>
+
+      <div class="why"><span class="badge b-rfp">RFP review</span>
+        <span>Requested by <b>Daniel Okafor</b>, 17 Aug 2026 11:05</span><span class="sep">|</span>
+        <span>From <b>Level 1 approval</b></span><span class="sep">|</span>
+        <span><b>2 of 3</b> lines under review</span><span class="sep">|</span>
+        <span><b>2 days</b> open</span></div>
+
+      <div class="kv" style="margin-bottom:18px;grid-template-columns:repeat(7,1fr)">
+        <div><div class="k">Agreement Type</div><div class="v">Mixed</div></div>
+        <div><div class="k">Term Start Date</div><div class="v">08/01/26</div></div>
+        <div><div class="k">Term End Date</div><div class="v">11/30/26</div></div>
+        <div><div class="k">Service Start</div><div class="v">08/01</div></div>
+        <div><div class="k">Service End</div><div class="v">11/30</div></div>
+        <div><div class="k">Billing Start</div><div class="v">08/01</div></div>
+        <div><div class="k">Billing End</div><div class="v">11/30</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-b" style="padding-bottom:0">
+          <div class="filters" style="align-items:center">
+            <span class="srch">&#128269; Search</span>
+            <span class="fchip">State</span><span class="fchip">City</span><span class="fchip">Field Owner</span>
+            <span class="fchip">Provider</span>
+            <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Verdict</span>
+          </div>
+        </div>
+        <div class="card-b flush" style="overflow-x:auto">
+          <table class="grid" style="min-width:1620px">
+            <thead>
+              <tr>
+                <th class="rowno"></th><th class="chk"><span class="cbx on" data-all></span></th>
+                <th style="min-width:230px">Property</th><th>Field Owner</th><th style="min-width:150px">Provider</th>
+                <th class="grp" style="min-width:210px">Provider Line Item<span class="sub" style="color:#1A4D6B">Routine Landscaping Per Visit (Aug-Nov) &middot; 36/yr</span><span style="display:block;color:#8A4508;font-weight:600;font-size:10px;letter-spacing:.03em;margin-top:3px">PROVIDER PRICE &middot; MARGIN&nbsp;%</span></th>
+                <th style="min-width:200px">Pricer&rsquo;s reason</th>
+                <th class="newcol frz2" style="min-width:170px;width:170px">Verdict</th>
+                <th class="newcol frz1" style="min-width:230px;width:230px">Comment</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="background:#FDF3F2" data-line="2050 Green Acres Mall"><td class="rowno">1</td><td class="chk"><span class="cbx on" data-row></span></td>
+                <td>Best Buy (2050) &mdash; 2050 Green Acres Mall<span class="kebab">&#8942;</span><span class="sub">Valley Stream, NY, 11581</span></td>
+                <td>Marcus Bell</td><td>Metro Grounds Care</td>
+                <td><div class="rangehint">Range $60.00 - $75.00/visit</div><div class="rangehint">Customer Price $88.00/visit</div>
+                    <div class="prow-line"><span class="px bad">&#9888; $80.00/visit</span><span class="mg-low">9.1%</span></div></td>
+                <td><b style="font-size:12px">Fair market value</b><span class="sub">Priced $5 above the range after a site walk; access is restricted and the lot has been re-measured since the term sheet was cut.</span><span class="sub">P. Raghavan &middot; 16 Aug</span></td>
+                <td class="newcol frz2"><select class="gridsel">
+                    <option>Select verdict</option>
+                    <option>Pricing confirmed</option>
+                    <option selected>Correction supplied</option>
+                    <option>Reopen customer pricing</option>
+                    <option>Decline the property</option>
+                    <option>Not enough information</option></select></td>
+                <td class="newcol frz1"><textarea class="gridtxt" rows="3" placeholder="Required">Our costing has this lot at 4.2 acres, not 6.1 &mdash; the term sheet measurement is stale. At 4.2 acres the rate should land near $71, inside the range.</textarea></td></tr>
+
+              <tr data-line="9015 Queens Blvd"><td class="rowno">2</td><td class="chk"><span class="cbx on" data-row></span></td>
+                <td>Best Buy (0024) &mdash; 9015 Queens Blvd Spc 0024<span class="kebab">&#8942;</span><span class="sub">Elmhurst, NY, 11373</span></td>
+                <td>Marcus Bell</td><td>Metro Grounds Care</td>
+                <td><div class="rangehint">Range $80.00 - $100.00/visit</div><div class="rangehint">Customer Price $115.00/visit</div>
+                    <div class="prow-line"><span class="px">$90.00/visit</span><span class="mg-low">21.7%</span></div></td>
+                <td><b style="font-size:12px">Drive time</b><span class="sub">Nearest crew is 40 minutes out; no closer bench in the district.</span><span class="sub">P. Raghavan &middot; 16 Aug</span></td>
+                <td class="newcol frz2"><select class="gridsel">
+                    <option>Select verdict</option>
+                    <option selected>Pricing confirmed</option>
+                    <option>Correction supplied</option>
+                    <option>Reopen customer pricing</option>
+                    <option>Decline the property</option>
+                    <option>Not enough information</option></select></td>
+                <td class="newcol frz1"><textarea class="gridtxt" rows="3" placeholder="Required">Drive time checked against our route model &mdash; 38 minutes. The rate is right for this location.</textarea></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="foot">
+        <button class="btn ghost">Cancel</button>
+        <span style="flex:1"></span>
+        <button class="btn out" data-sel data-scope="pricing" data-base="Send back to pricing" onclick="openM('m-rfpdone','pricing')">Send back to pricing (0)</button>
+        <button class="btn newb" data-sel data-scope="approver" data-base="Return to approver" title="Every selected line needs a verdict and a comment." onclick="openM('m-rfpdone','approver')">Return to approver (0)</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ 7 · RATE CHANGE ══════════════════ -->
+  <section class="screen" id="s7">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Rhea Kapoor</b><span>Field Operations</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+
+      <div class="two">
+        <div class="card" style="border-left:3px solid var(--new)">
+          <div class="card-h" style="background:var(--new-bg)"><h3 style="color:#8A4508">Request a provider rate change</h3></div>
+          <div class="card-b">
+            <div class="field"><label>Property / site</label><input value="(2984) — 9015 Queens Blvd Spc 0024, Elmhurst, NY"></div>
+            <div class="field"><label>Service type</label><input value="Mowing Per Service"></div>
+            <div class="two" style="gap:12px">
+              <div class="field"><label>Current pay</label><input value="$72.00" style="background:#F7F9FA;color:var(--muted)" readonly></div>
+              <div class="field"><label>Proposed pay <span style="color:var(--coral)">*</span></label><input value="$81.00"></div>
+            </div>
+            <div class="field"><label>Reason <span style="color:var(--coral)">*</span></label>
+              <select><option>Provider increase district wide</option><option>Difficulty of service</option><option>Drive time</option><option>Fair market value</option><option>Provider bench strength needed</option><option>Remote location</option><option>Other</option></select>
+              </div>
+            <div class="field"><label>Comment <span style="color:var(--coral)">*</span></label>
+              <textarea placeholder="Mandatory.">Provider has raised rates across the district effective 1 Oct. Losing them here means a 40-minute drive from the next crew.</textarea></div>
+            <div class="notice n-amber" style="margin:0 0 14px">
+              <span class="ic">⚠</span>
+              <div><b>Term sheet runway to 12/31/28 — 10 months of headroom.</b> A replacement agreement cannot run past the customer&rsquo;s term sheet.</div>
+            </div>
+            <div class="btnrow right"><button class="btn ghost">Cancel</button><button class="btn newb" onclick="openM('m-rate')">Submit request</button></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="card-h"><h3>Rate change requests</h3></div>
+            <div class="card-b flush">
+              <table class="grid">
+                <thead><tr><th>Site</th><th class="num">Current</th><th class="num">Proposed</th><th>State</th><th>Replacement</th></tr></thead>
+                <tbody>
+                  <tr><td>9015 Queens Blvd<span class="sub">Rhea Kapoor · today</span></td><td class="num">$72.00</td><td class="num">$81.00</td><td><span class="badge b-l1">Requested</span></td><td class="sub" style="margin:0">—</td></tr>
+                  <tr><td>2050 Green Acres Mall<span class="sub">Marcus Bell · 14 Aug</span></td><td class="num">$96.00</td><td class="num">$88.00</td><td><span class="badge b-rfp">In progress</span></td><td class="sub" style="margin:0">PA-40218 · Ready for Negotiation</td></tr>
+                  <tr><td>756 Alberta Dr Ste 459<span class="sub">Rhea Kapoor · 09 Aug</span></td><td class="num">$60.00</td><td class="num">$66.00</td><td><span class="badge b-ok">Completed</span></td><td class="sub" style="margin:0">PA-40109 · Active</td></tr>
+                  <tr><td>148 Walt Whitman Rd<span class="sub">Marcus Bell · 02 Aug</span></td><td class="num">$45.00</td><td class="num">$58.00</td><td><span class="badge b-l2">Declined</span></td><td class="sub" style="margin:0">—</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════ 8 · CONFIG ══════════════════ -->
+  <section class="screen" id="s8">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Alexandra Reyes</b><span>VP Operations</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+
+      <div class="cc-head-row"><h1 class="cc-h1">Margin gate configuration</h1>
+        
+        <div style="margin-left:auto" class="btnrow">
+          <span style="font-size:12.5px;color:var(--muted)">Gate enforcement</span>
+          <span style="width:34px;height:18px;background:var(--ok);border-radius:9px;display:inline-block;position:relative"><i style="position:absolute;right:2px;top:2px;width:14px;height:14px;background:#fff;border-radius:50%;display:block"></i></span>
+          <span style="font-size:13px;font-weight:500;color:var(--ok)">On</span>
+        </div>
+      </div>
+
+      <div class="two">
+        <div class="card" style="border-left:3px solid var(--new)">
+          <div class="card-h" style="background:var(--new-bg)"><h3 style="color:#8A4508">Active configuration</h3></div>
+          <div class="card-b">
+            <div class="two" style="gap:12px">
+              <div class="field"><label>Scope</label><select><option>Global</option><option>Customer — Home Depot Corporate</option><option>Service line — Snow Removal</option></select><div class="hint">Most specific wins: customer, then service line, then global.</div></div>
+              <div class="field"><label>Currency</label><select><option>USD</option><option>CAD</option></select></div>
+            </div>
+            <div class="two" style="gap:12px">
+              <div class="field"><label>Level 1 below</label><input value="25.0 %"><div class="hint">Manager sign-off</div></div>
+              <div class="field"><label>Level 2 below</label><input value="0.0 %"><div class="hint">Leadership sign-off</div></div>
+            </div>
+            <div class="two" style="gap:12px">
+              <div class="field"><label>Level 2 money-at-risk floor</label><input value="$25,000.00"></div>
+              <div class="field"><label>Drift tolerance</label><input value="5.0 points"></div>
+            </div>
+            <div class="field"><label>Deviation rule</label>
+              <select><option>A deviation requires a written reason only</option><option>A deviation forces Level 1 approval</option></select></div>
+            <div class="field"><label>Effective from</label><input value="01 Sep 2026"></div>
+            <div class="btnrow right"><button class="btn ghost">Cancel</button><button class="btn newb" onclick="openM('m-cfg')">Save new version</button></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="card-h"><h3>Change history</h3></div>
+            <div class="card-b flush">
+              <table class="grid">
+                <thead><tr><th>Effective from</th><th>Scope</th><th class="num">L1</th><th class="num">L2</th><th>Changed by</th></tr></thead>
+                <tbody>
+                  <tr><td>01 Sep 2026<span class="sub">Pending</span></td><td>Global</td><td class="num">25.0%</td><td class="num">0.0%</td><td>A. Reyes<span class="sub">19 Aug 2026</span></td></tr>
+                  <tr><td>01 Aug 2026</td><td>Snow Removal</td><td class="num">30.0%</td><td class="num">0.0%</td><td>A. Reyes<span class="sub">28 Jul 2026</span></td></tr>
+                  <tr><td>01 Jul 2026</td><td>Global</td><td class="num">25.0%</td><td class="num">0.0%</td><td>M. Singla<span class="sub">24 Jun 2026</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════ 9 · ALERTS ══════════════════ -->
+  <section class="screen" id="s9">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Daniel Okafor</b><span>Regional Manager</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+
+      <div class="two">
+        <div class="mail">
+          <div class="mail-h"><b>Landed in your queue — Level 1 approval</b>To: Daniel Okafor · On arrival · Instant send</div>
+          <div class="mail-b">
+            <p>An agreement needs your approval.</p>
+            <table>
+              <tr><th>Customer</th><td>Best Buy Corporate</td></tr>
+              <tr><th>Property</th><td>9015 Queens Blvd Spc 0024, Elmhurst NY</td></tr>
+              <tr><th>Margin</th><td><span class="mg-low">21.7%</span></td></tr>
+              <tr><th>Money at risk</th><td>—</td></tr>
+            </table>
+            <a class="mail-cta">Open the agreement</a>
+          </div>
+        </div>
+
+        <div class="mail">
+          <div class="mail-h"><b>Daily digest — Level 1 approval</b>To: Daniel Okafor · Once a day at a configured hour</div>
+          <div class="mail-b">
+            <p><b>4 agreements are waiting for your Level 1 approval.</b></p>
+            <table>
+              <thead><tr><th>Customer / property</th><th>Margin</th><th>Days</th></tr></thead>
+              <tbody>
+                <tr><td>7-Eleven — Per Occurrence</td><td>indeterminate</td><td><b>9</b></td></tr>
+                <tr><td>Best Buy — Routine 08M (40218)<span class="sub">worst cell: 2050 Green Acres Mall</span></td><td class="mg-low">9.1%</td><td><b>6</b></td></tr>
+                <tr><td>CBRE/Walmart — Spring Cleanup</td><td class="mg-low">18.4%</td><td>3</td></tr>
+                <tr><td>Walgreens — Fall Cleanup</td><td class="mg-low">23.9%</td><td>1</td></tr>
+              </tbody>
+            </table>
+            <a class="mail-cta">Open the Level 1 queue</a>
+            
+          </div>
+        </div>
+
+        <div class="mail">
+          <div class="mail-h"><b>Costing review still open</b>To: RFP team + Daniel Okafor · Daily while open past a configured age</div>
+          <div class="mail-b">
+            <p><b>2 costing reviews have been open longer than 2 days.</b></p>
+            <table>
+              <thead><tr><th>Property</th><th>Asked by</th><th>Open</th></tr></thead>
+              <tbody>
+                <tr><td>2050 Green Acres Mall</td><td>D. Okafor</td><td><b>2 days</b></td></tr>
+                <tr><td>160 E Sunrise Hwy</td><td>A. Reyes</td><td><b>5 days</b></td></tr>
+              </tbody>
+            </table>
+            <a class="mail-cta">Open the RFP review queue</a>
+          </div>
+        </div>
+
+        <div class="mail">
+          <div class="mail-h"><b>Your approval no longer counts</b>To: Daniel Okafor · On re-price after approval</div>
+          <div class="mail-b">
+            <p>An agreement you approved has been repriced, so your approval has expired and the agreement is back in the queue.</p>
+            <table>
+              <tr><th>Property</th><td>160 E Sunrise Hwy, Home Depot Corporate</td></tr>
+              <tr><th>You approved at</th><td><span class="mg-ok">31.0%</span> — 18 Aug 16:40</td></tr>
+              <tr><th>Repriced to</th><td><span class="mg-low">−2.0%</span> — Priya Raghavan, 19 Aug 09:14</td></tr>
+              <tr><th>Now requires</th><td>Level 1 + Level 2</td></tr>
+            </table>
+            <a class="mail-cta">Review again</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════ 10 · DRIFT ══════════════════ -->
+  <section class="screen" id="s10">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Margin Team</b><span>Reporting</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+
+      <div class="card">
+        <div class="card-h"><h3>Drift list — July 2026 close</h3><span class="badge b-new">Outside 5.0 point tolerance</span></div>
+        <div class="card-b flush" style="overflow-x:auto">
+          <table class="grid" style="min-width:1000px">
+            <thead><tr><th>Agreement lineage</th><th>Customer / property</th><th class="num">Approved margin</th><th class="num">Actual margin</th><th class="num">Drift</th><th class="num">Customer $/yr</th><th class="num">Margin lost/yr</th><th>Origin</th></tr></thead>
+            <tbody>
+              <tr><td>LIN-88214</td><td>Home Depot — 160 E Sunrise Hwy</td><td class="num mg-low">−2.0%</td><td class="num"><span class="mg-low">−11.4%</span></td><td class="num"><span class="mg-low">−9.4 pts</span></td><td class="num">$6,500</td><td class="num"><span class="mg-low">−$611</span></td><td><span class="badge b-grey">Term sheet</span></td></tr>
+              <tr><td>LIN-91077</td><td>CBRE/Walmart — Spring Cleanup</td><td class="num mg-low">18.4%</td><td class="num"><span class="mg-low">9.9%</span></td><td class="num"><span class="mg-low">−8.5 pts</span></td><td class="num">$12,000</td><td class="num"><span class="mg-low">−$1,020</span></td><td><span class="badge b-new">Rate change</span></td></tr>
+              <tr><td>LIN-87330</td><td>Best Buy — 9015 Queens Blvd</td><td class="num mg-low">21.7%</td><td class="num"><span class="mg-low">14.6%</span></td><td class="num"><span class="mg-low">−7.1 pts</span></td><td class="num">$4,140</td><td class="num"><span class="mg-low">−$294</span></td><td><span class="badge b-grey">Term sheet</span></td></tr>
+              <tr><td>LIN-90412</td><td>Walgreens — Fall Cleanup</td><td class="num mg-low">23.9%</td><td class="num"><span class="mg-ok">31.2%</span></td><td class="num"><span class="mg-ok">+7.3 pts</span></td><td class="num">$3,100</td><td class="num"><span class="mg-ok">+$226</span></td><td><span class="badge b-grey">Renegotiation</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h3>What reporting can answer once the gate tables are published</h3></div>
+        <div class="card-b flush">
+          <table class="grid">
+            <thead><tr><th>Question</th><th>Who asks</th><th>Source</th></tr></thead>
+            <tbody>
+              <tr><td>How many agreements escalate, by level, month, service line, customer</td><td>Margin team</td><td>Gate records</td></tr>
+              <tr><td>How long each level takes to act</td><td>Margin team, ops leadership</td><td>Event log timestamps</td></tr>
+              <tr><td>How often pricing comes back, and why</td><td>Pricing managers</td><td>Send-back events with comments</td></tr>
+              <tr><td>How often the costing team corrects versus confirms</td><td>RFP leadership</td><td>Review outcome events</td></tr>
+              <tr><td>Which deviation fields get acknowledged most, for which customers</td><td>Margin team, account owners</td><td>Deviation events</td></tr>
+              <tr><td>Rate changes requested, approved, and their margin effect</td><td>Margin team</td><td>Request records joined to replacement baselines</td></tr>
+              <tr><td>Live agreements drifting from approved margin</td><td>Drift owner <span class="badge b-l1">unassigned</span></td><td>The monthly comparison above</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  </div>
+</div>
+
+<!-- ══════════════════ MODALS ══════════════════ -->
+<div class="modal-wrap" id="m-range" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="modal-h">Price Outside of Recommended Range</div>
+    <div class="modal-b">
+      
+      <div class="field"><label>Why is this price outside of the recommended range?</label>
+        <select><option>Fair market value</option><option>Current rates and spec over target</option><option>Difficulty of service</option><option>Drive time</option><option>Incorrect measurements</option><option>Incorrect specs</option><option>Parcel added</option><option>Pocket area with different rates</option><option>Provider bench strength needed</option><option>Provider costing sheet updates needed</option><option>Provider increase district wide</option><option>Remote location</option><option>Other</option></select></div>
+      <div class="field"><label>Additional Comments</label>
+        <textarea placeholder="Tell us anything else pertaining to the reason this price is outside of the range"></textarea></div>
+      
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn" onclick="closeM()">Save price and reason</button></div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="m-dev" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="modal-h">Contract deviation &mdash; Service months <span class="sub" style="margin-top:4px">Routine Landscaping &middot; 7-Eleven (42424) &mdash; 1 of 1 on this agreement</span></div>
+    <div class="modal-b">
+      
+      <div style="font-size:13px;color:var(--muted);margin:0 0 4px">Each service type on the agreement is compared to the same service type on the customer&rsquo;s signed term sheet. A deviation is raised on any field that does not match.</div>
+      <div style="margin:0 0 16px">
+        <div class="dvrow"><span>Customer signed</span><b>Mar &ndash; Oct</b></div>
+        <div class="dvrow"><span>Configured on this agreement</span><b>Mar &ndash; Nov</b></div>
+        <div class="dvrow"><span>Difference</span><b class="d-diff">+1 month &middot; added November</b></div>
+        <div class="dvrow"><span>Cost of the difference</span><b>+2 visits &middot; $120/yr at $60</b></div>
+        <div class="dvrow"><span>Rule</span><b>Needs a reason to send for approval</b></div>
+      </div>
+      <div class="field"><label>Reason for the deviation</label>
+        <select><option>Expected under Per Unit of Work</option></select>
+        </div>
+      <div class="field"><label>Comment <span style="color:var(--coral)">*</span></label>
+        <textarea>Customer pays per mow; extra visits are billable.</textarea></div>
+      
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn newb" onclick="closeM()">Acknowledge deviation</button></div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="m-bulk" onclick="if(event.target===this)closeM()">
+  <div class="modal" style="max-width:620px">
+    <div class="modal-h">Contract deviation &mdash; 11 properties<span class="sub" style="margin-top:4px">1 of 11 &middot; each needs its own reason</span></div>
+    <div class="modal-b">
+      <div class="notice n-amber" style="margin:0 0 16px"><span class="ic">&#9873;</span>
+        <div><b>(00041-W) &mdash; 1805 Greens Road, Houston TX</b>Routine Landscaping Service &mdash; contracted <b>Mar&ndash;Oct</b>, configured <b>Mar&ndash;Nov</b>.</div></div>
+      <div class="field"><label>Reason for the deviation</label>
+        <select><option>Expected under Per Unit of Work</option></select></div>
+      <div class="field"><label>Comment <span style="color:var(--coral)">*</span></label>
+        <textarea placeholder="Applies to this property only."></textarea></div>
+      <table class="grid" style="border:1px solid var(--line);border-radius:var(--r)">
+        <thead><tr><th>Property</th><th class="num">Contracted</th><th class="num">Configured</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr style="background:#FFFBF7"><td>1805 Greens Road</td><td class="num">30</td><td class="num"><span class="m-l2">32</span></td><td><span class="badge b-l1">Awaiting</span></td></tr>
+          <tr><td>2440 Bay Area Blvd</td><td class="num">30</td><td class="num"><span class="m-l2">32</span></td><td><span class="badge b-grey">Queued</span></td></tr>
+          <tr><td>9550 Spencer Hwy</td><td class="num">30</td><td class="num"><span class="m-l2">32</span></td><td><span class="badge b-grey">Queued</span></td></tr>
+          <tr><td colspan="4" class="sub" style="margin:0">&hellip; 8 more</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn out sm" onclick="closeM()">Apply to all 11</button><button class="btn newb" onclick="closeM()">Save &amp; next</button></div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="m-rfp" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="modal-h">Send to RFP review<span class="sub" style="margin-top:4px" data-fill="head"></span></div>
+    <div class="modal-b">
+      <table class="grid" style="width:100%;margin-bottom:16px">
+        <thead><tr><th>Line</th><th class="num">Margin</th><th>Pricer&rsquo;s reason</th></tr></thead>
+        <tbody data-fill="lines"></tbody>
+      </table>
+      <div class="field"><label>What do you want them to check? <span style="color:var(--coral)">*</span></label>
+        <textarea placeholder="The costing team sees the prices, the margin and the pricer&rsquo;s reason. Tell them what you doubt."></textarea></div>
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn newb" onclick="closeM();go('s5')">Send to RFP review</button></div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="m-l1up" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="modal-h">Move to Level 2<span class="sub" style="margin-top:4px" data-fill="head"></span></div>
+    <div class="modal-b">
+      <div style="font-size:13px;color:var(--muted);margin:0 0 4px">You are passing the decision to leadership instead of approving it. Your review is recorded and travels with the agreement.</div>
+      <div style="margin:0 0 16px">
+        <div class="dvrow"><span>Worst cell</span><b class="mg-low">9.1% &middot; row 1, Routine Landscaping</b></div>
+        <div class="dvrow"><span>Deviations</span><b>2 of 2 acknowledged</b></div>
+        <div class="dvrow"><span>Goes to</span><b>Level 2 &mdash; leadership</b></div>
+        <div class="dvrow"><span>Recorded against</span><b>Pricing version of 18 Aug 14:22</b></div>
+      </div>
+      <div class="field"><label>Comment</label><textarea>Out of range after a site walk and only 9.1% against contract &mdash; I would rather leadership took this one.</textarea></div>
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn out" onclick="closeM()">Move to Level 2</button></div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="m-up1" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="modal-h">Move to Level 1<span class="sub" style="margin-top:4px" data-fill="head"></span></div>
+    <div class="modal-b">
+      <div style="font-size:13px;color:var(--muted);margin:0 0 4px">The margin does not require a level. You are asking for manager sign-off anyway, and that becomes a required level on this agreement.</div>
+      <div style="margin:0 0 16px">
+        <div class="dvrow"><span>Worst cell</span><b class="mg-ok">31.3% &middot; row 1, Fall Cleanup</b></div>
+        <div class="dvrow"><span>Required by the gate</span><b>None &mdash; at or above 25%</b></div>
+        <div class="dvrow"><span>After this</span><b>Level 1 &mdash; manager</b></div>
+      </div>
+      <div class="field"><label>Why does this need a manager? <span style="color:var(--coral)">*</span></label>
+        <textarea placeholder="Recorded on the gate so the escalation can be counted."></textarea></div>
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn out" onclick="closeM()">Move to Level 1</button></div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="m-apv" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="modal-h">Approve and send to provider<span class="sub" style="margin-top:4px" data-fill="head"></span></div>
+    <div class="modal-b">
+      <div style="font-size:13px;color:var(--muted);margin:0 0 4px">Approving at Level 1 releases the agreement for provider signature. Nothing above you is required at this margin.</div>
+      <div style="margin:0 0 16px">
+        <div class="dvrow"><span>Worst cell</span><b class="mg-low">9.1% &middot; row 1, Routine Landscaping</b></div>
+        <div class="dvrow"><span>Approval required</span><b>Level 1 only &mdash; at or above 0%</b></div>
+        <div class="dvrow"><span>Deviations</span><b>2 of 2 acknowledged</b></div>
+        <div class="dvrow"><span>Recorded against</span><b>Pricing version of 18 Aug 14:22</b></div>
+      </div>
+      <div class="field"><label>Comment</label><textarea placeholder="Optional"></textarea></div>
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn" onclick="closeM()">Approve &amp; send to provider</button></div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="m-l2ok" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="modal-h">Approve at Level 2 and send to provider<span class="sub" style="margin-top:4px" data-fill="head"></span></div>
+    <div class="modal-b">
+      <div style="margin:0 0 16px">
+        <div class="dvrow"><span>Worst cell</span><b class="mg-low">&minus;2.0% &middot; row 1, Routine Landscaping</b></div>
+        <div class="dvrow"><span>Money at risk</span><b class="mg-low">&minus;$130/yr</b></div>
+        <div class="dvrow"><span>Level 1</span><b class="mg-ok">&check; D. Okafor, 18 Aug 16:40</b></div>
+        <div class="dvrow"><span>Deviations</span><b>1 of 1 acknowledged</b></div>
+        <div class="dvrow"><span>Recorded against</span><b>Pricing version of 18 Aug 14:22</b></div>
+      </div>
+      <div class="field"><label>Comment</label><textarea>National account; taking the loss on Valley Stream to hold the other 25 sites.</textarea></div>
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn" onclick="closeM()">Approve &amp; send to provider</button></div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="m-rfpdone" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="modal-h" data-fill="title">Return verdict<span class="sub" style="margin-top:4px" data-fill="head"></span></div>
+    <div class="modal-b">
+      <table class="grid" style="width:100%;margin-bottom:16px">
+        <thead><tr><th>Line</th><th>Verdict</th><th>Goes to</th></tr></thead>
+        <tbody data-fill="verdicts"></tbody>
+      </table>
+      <div style="font-size:13px;color:var(--muted)">Each line is recorded on the event log as <b>Review returned</b> with its verdict and comment.</div>
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn newb" onclick="closeM()" data-fill="cta">Return verdict</button></div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="m-rate" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="modal-h">Rate change requested</div>
+    <div class="modal-b">
+      
+      <p style="font-size:13px;color:#4A5058">What happens next</p>
+      <ol style="font-size:13px;color:#4A5058;padding-left:20px;line-height:1.7">
+        <li>The live agreement is terminated, keeping its history.</li>
+        <li>Renegotiation builds a replacement at Draft, carrying the old prices in.</li>
+        <li>The replacement is labelled <b>born from a rate change</b> so reporting can count it.</li>
+        <li>It walks pricing and the margin gate: $81.00 against a $92.00 customer price is <b class="mg-low">12.0%</b> &mdash; <b>Level 1</b>.</li>
+      </ol>
+      
+    </div>
+    <div class="modal-f"><button class="btn" onclick="closeM()">Done</button></div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="m-cfg" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="modal-h">Save a new configuration version</div>
+    <div class="modal-b">
+      
+      <div class="field"><label>Effective from</label><input value="01 Sep 2026"><div class="hint">Agreements assessed before this date keep the thresholds in force then.</div></div>
+      
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn newb" onclick="closeM()">Append version</button></div>
+  </div>
+</div>
+
+<script>
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));
+  document.querySelectorAll('.rail a').forEach(a=>a.classList.toggle('on',a.dataset.s===id));
+  window.scrollTo(0,0);
+  document.querySelectorAll('#'+id+' .tab.on').forEach(t=>{
+    const s=t.parentElement; s.scrollLeft=Math.max(0,t.offsetLeft-s.clientWidth/2+t.offsetWidth/2);
+    syncArrows(s);
+  });
+}
+function syncArrows(strip){
+  const wrap=strip.closest('.tabstrip'); if(!wrap)return;
+  const [left,right]=wrap.querySelectorAll('.tabarrow');
+  const max=strip.scrollWidth-strip.clientWidth;
+  if(left) left.classList.toggle('off',strip.scrollLeft<=1);
+  if(right)right.classList.toggle('off',strip.scrollLeft>=max-1);
+}
+document.querySelectorAll('.tabstrip').forEach(wrap=>{
+  const strip=wrap.querySelector('.tabs');
+  const [left,right]=wrap.querySelectorAll('.tabarrow');
+  const step=()=>Math.max(160,strip.clientWidth*0.7);
+  const nudge=d=>{strip.scrollLeft=Math.max(0,Math.min(strip.scrollWidth-strip.clientWidth,strip.scrollLeft+d*step()));syncArrows(strip);};
+  if(left) left.addEventListener('click',()=>nudge(-1));
+  if(right)right.addEventListener('click',()=>nudge(1));
+  strip.addEventListener('scroll',()=>syncArrows(strip));
+  syncArrows(strip);
+});
+function verdictScope(tr){
+  const sel=tr.querySelector('.gridsel'); if(!sel) return null;
+  if(sel.value==='Select verdict') return 'none';
+  return sel.value==='Correction supplied' ? 'pricing' : 'approver';
+}
+function syncSel(sec){
+  const boxes=[...sec.querySelectorAll('.cbx[data-row]')];
+  const n=boxes.filter(c=>c.classList.contains('on')).length;
+  const all=sec.querySelector('.cbx[data-all]');
+  if(all) all.classList.toggle('on', n>0 && n===boxes.length);
+  const chosen=[...sec.querySelectorAll('tr')].filter(r=>r.querySelector('.cbx[data-row].on'));
+  sec.querySelectorAll('[data-sel]').forEach(b=>{
+    const scope=b.dataset.scope;
+    const count = scope ? chosen.filter(r=>verdictScope(r)===scope).length : n;
+    b.innerHTML=b.dataset.base + (scope ? ' ('+count+')' : (n ? ' ('+n+')' : ''));
+    b.classList.toggle('dis', count===0 || b.hasAttribute('data-blocked'));
+  });
+}
+document.addEventListener('change',e=>{
+  if(e.target.classList && e.target.classList.contains('gridsel')){
+    const sec=e.target.closest('.screen'); if(sec) syncSel(sec);
+  }
+});
+document.querySelectorAll('.cbx[data-row],.cbx[data-all]').forEach(c=>c.addEventListener('click',e=>{
+  e.stopPropagation();
+  const sec=c.closest('.screen');
+  if(c.hasAttribute('data-all')){
+    const on=!c.classList.contains('on');
+    sec.querySelectorAll('.cbx[data-row]').forEach(r=>r.classList.toggle('on',on));
+  } else { c.classList.toggle('on'); }
+  syncSel(sec);
+}));
+document.querySelectorAll('.screen').forEach(sec=>{ if(sec.querySelector('[data-sel]')) syncSel(sec); });
+document.querySelectorAll('.rail a').forEach(a=>a.addEventListener('click',()=>go(a.dataset.s)));
+document.querySelectorAll('.prow').forEach(r=>r.addEventListener('click',e=>{
+  if(e.target.closest('button'))return;
+  const g=r.dataset.g, open=!r.classList.contains('collapsed');
+  r.classList.toggle('collapsed',open);
+  r.querySelector('.chev').textContent = open?'\u203a':'\u2304';
+  document.querySelectorAll('.crow.'+g).forEach(c=>c.classList.toggle('hid',open));
+}));
+document.querySelectorAll('.tabs').forEach(g=>g.addEventListener('click',e=>{
+  if(!e.target.closest('.tab'))return;
+  g.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  e.target.closest('.tab').classList.add('on');
+}));
+function selectedRows(){
+  const sec=[...document.querySelectorAll('.screen')].find(s=>s.classList.contains('on'));
+  if(!sec) return {sec:null,rows:[]};
+  return {sec, rows:[...sec.querySelectorAll('tr[data-line]')].filter(r=>r.querySelector('.cbx[data-row].on'))};
+}
+function fillModal(id){
+  const m=document.getElementById(id), {sec,rows}=selectedRows();
+  if(!m||!sec) return;
+  const title=m.querySelector('[data-fill="title"]');
+  if(title){const t=window.__scope==='pricing'?'Send back to pricing':window.__scope==='approver'?'Return to approver':'Return verdict';
+    title.childNodes[0].nodeValue=t;}
+  const head=m.querySelector('[data-fill="head"]');
+  const scoped=window.__scope?rows.filter(r=>verdictScope(r)===window.__scope):rows;
+  if(head) head.innerHTML=sec.dataset.agreement+' &middot; '+scoped.length+' line'+(scoped.length===1?'':'s');
+  const lines=m.querySelector('[data-fill="lines"]');
+  if(lines) lines.innerHTML=rows.map(r=>{const d=r.dataset;
+    const neg=/^&minus;|^−|^-/.test(d.margin);
+    return '<tr><td>'+d.line+'<span class="sub">'+d.svc+'</span></td>'
+      +'<td class="num"><span class="'+(neg?'mg-low':'mg-ok')+'">'+d.margin+'</span>'
+      +(d.risk?'<span class="sub">'+d.risk+'</span>':'')+'</td>'
+      +'<td>'+d.reason+'</td></tr>';}).join('');
+  const cta=m.querySelector('[data-fill="cta"]');
+  if(cta) cta.textContent = window.__scope==='pricing'?'Send back to pricing':window.__scope==='approver'?'Return to approver':'Return verdict';
+  const vd=m.querySelector('[data-fill="verdicts"]');
+  if(vd) vd.innerHTML=(window.__scope?rows.filter(r=>verdictScope(r)===window.__scope):rows).map(r=>{const sel=r.querySelector('.gridsel');
+    const v=sel?sel.value:'Select verdict';
+    const dest=v==='Correction supplied'?'Pricing &mdash; re-price at the corrected value'
+      :v==='Select verdict'?'<span style="color:var(--bad)">No verdict chosen</span>'
+      :'Back to <b>D. Okafor</b> at Level 1 approval';
+    return '<tr><td>'+r.dataset.line+'</td><td><b style="font-size:12px">'+v+'</b></td>'
+      +'<td class="sub" style="margin:0">'+dest+'</td></tr>';}).join('');
+}
+function openM(id,scope){window.__scope=scope||null;fillModal(id);document.getElementById(id).classList.add('on')}
+
+function closeM(){document.querySelectorAll('.modal-wrap').forEach(m=>m.classList.remove('on'))}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
+</script>
+</body>
+</html>
