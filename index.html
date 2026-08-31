@@ -146,6 +146,11 @@ button{font-family:inherit}
 .tip b{color:#fff;font-weight:600}
 .tip .r{display:block;margin-top:6px}
 .flagmark{color:var(--new);font-weight:600}
+.tag{display:inline-block;padding:1.5px 7px;border-radius:3px;font-size:10.5px;font-weight:600;letter-spacing:.02em;white-space:nowrap}
+.tag-over{background:var(--bad-bg);color:var(--bad);border:1px solid #F5C6C0}
+.tag-under{background:var(--warn-bg);color:var(--warn);border:1px solid #EFDCA8}
+.tag-same{background:#F0F2F4;color:#6A727A;border:1px solid #DDE1E5}
+.tagline{display:block;margin-top:4px}
 .dvrow{display:flex;justify-content:space-between;gap:16px;padding:3px 0;border-top:1px solid rgba(255,255,255,.14)}
 .dvrow span{opacity:.7}
 .dvrow b{font-weight:600;text-align:right;white-space:nowrap}
@@ -994,17 +999,17 @@ button{font-family:inherit}
               <tr><td rowspan="3" style="vertical-align:top">Routine Landscaping Service<span class="sub">3 of 8 compared fields differ</span></td>
                   <td><b>Service months</b><span class="sub">set</span></td>
                   <td class="num">Aug&ndash;Oct</td><td class="num"><span class="mg-low">Aug&ndash;Nov</span></td>
-                  <td class="newcol"><b>+1 month</b><span class="sub">added: November</span></td>
+                  <td class="newcol"><span class="tag tag-over">Over-serviced</span><span class="tagline"><b>+1 month</b></span><span class="sub">added: November</span></td>
                   <td><b style="font-size:12px">Expected under Per Unit of Work</b><span class="sub">P. Raghavan &middot; 18 Aug 14:20</span></td>
                   <td><span class="badge b-ok">Acknowledged</span></td></tr>
               <tr><td><b>Visits per season</b><span class="sub">count</span></td>
                   <td class="num">30</td><td class="num"><span class="mg-low">36</span></td>
-                  <td class="newcol"><b>+6 visits</b><span class="sub">$480/yr at $80</span></td>
+                  <td class="newcol"><span class="tag tag-over">Over-serviced</span><span class="tagline"><b>+6 visits</b></span><span class="sub">$480/yr at $80</span></td>
                   <td><b style="font-size:12px">Expected under Per Unit of Work</b><span class="sub">P. Raghavan &middot; 18 Aug 14:21</span></td>
                   <td><span class="badge b-ok">Acknowledged</span></td></tr>
               <tr><td><b>Service days</b><span class="sub">set</span></td>
                   <td class="num">Mon, Thu</td><td class="num">Tue, Fri</td>
-                  <td class="newcol"><b>2 changed</b><span class="sub">removed: Mon, Thu &middot; added: Tue, Fri</span></td>
+                  <td class="newcol"><span class="tag tag-same">Same count, different days</span><span class="tagline"><b>2 changed</b></span><span class="sub">removed: Mon, Thu &middot; added: Tue, Fri</span></td>
                   <td class="sub" style="margin:0">&mdash;</td>
                   <td><span class="badge b-grey">Warn only</span></td></tr>
             </tbody>
@@ -1109,7 +1114,7 @@ button{font-family:inherit}
 
       <div class="card" style="border-left:3px solid var(--new)">
         <div class="card-h" style="background:var(--new-bg)"><h3 style="color:#8A4508">Contract deviations</h3>
-          <span class="badge b-ok">1 of 1 acknowledged at pricing</span><span class="badge b-grey">1 warn only</span></div>
+          <span class="badge b-ok">1 of 1 acknowledged at pricing</span><span class="badge b-grey">2 warn only</span></div>
         <div class="card-b flush" style="overflow-x:auto">
           <table class="grid" style="min-width:1060px">
             <thead><tr><th>Service type</th><th>Field</th><th class="num">Customer signed</th><th class="num">Agreement configured</th><th class="newcol">Difference</th><th>Reason given</th><th>Rule</th></tr></thead>
@@ -1117,12 +1122,18 @@ button{font-family:inherit}
               <tr><td rowspan="2" style="vertical-align:top">Routine Landscaping Service<span class="sub">2 of 8 compared fields differ</span></td>
                   <td><b>Visits per season</b><span class="sub">count</span></td>
                   <td class="num">24</td><td class="num"><span class="mg-low">26</span></td>
-                  <td class="newcol"><b>+2 visits</b><span class="sub">$510/yr at $255</span></td>
+                  <td class="newcol"><span class="tag tag-over">Over-serviced</span><span class="tagline"><b>+2 visits</b></span><span class="sub">$510/yr at $255</span></td>
                   <td><b style="font-size:12px">Provider increase district wide</b><span class="sub">P. Raghavan &middot; 18 Aug</span></td>
                   <td><span class="badge b-ok">Acknowledged</span></td></tr>
               <tr><td><b>Service days</b><span class="sub">set</span></td>
                   <td class="num">Mon, Thu</td><td class="num">Tue, Fri</td>
-                  <td class="newcol"><b>2 changed</b><span class="sub">removed: Mon, Thu &middot; added: Tue, Fri</span></td>
+                  <td class="newcol"><span class="tag tag-same">Same count, different days</span><span class="tagline"><b>2 changed</b></span><span class="sub">removed: Mon, Thu &middot; added: Tue, Fri</span></td>
+                  <td class="sub" style="margin:0">&mdash;</td>
+                  <td><span class="badge b-grey">Warn only</span></td></tr>
+              <tr><td>Snow Removal<span class="sub">1 of 8 compared fields differ</span></td>
+                  <td><b>Visits per season</b><span class="sub">count</span></td>
+                  <td class="num">10</td><td class="num"><span class="m-l1">8</span></td>
+                  <td class="newcol"><span class="tag tag-under">Under-serviced</span><span class="tagline"><b>&minus;2 occurrences</b></span><span class="sub">customer contracted 10</span></td>
                   <td class="sub" style="margin:0">&mdash;</td>
                   <td><span class="badge b-grey">Warn only</span></td></tr>
             </tbody>
