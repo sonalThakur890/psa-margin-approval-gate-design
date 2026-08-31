@@ -297,10 +297,7 @@ button{font-family:inherit}
     <a data-s="s3"><span class="num">4</span>Approval — Level 1</a>
     <a data-s="s4"><span class="num">5</span>Approval — Level 2 &amp; blocks</a>
     <a data-s="s5"><span class="num">6</span>RFP / costing review</a>
-    <a data-s="s7"><span class="num">7</span>Rate change request</a>
-    <a data-s="s8"><span class="num">8</span>Threshold configuration</a>
-    <a data-s="s9"><span class="num">9</span>Alerts &amp; chasing</a>
-    <a data-s="s10"><span class="num">10</span>Margin drift after signature</a>
+    <a data-s="s8"><span class="num">7</span>Threshold configuration</a>
     
   </nav>
 
@@ -1239,61 +1236,6 @@ button{font-family:inherit}
     </div>
   </section>
 
-  <!-- ══════════════════ 7 · RATE CHANGE ══════════════════ -->
-  <section class="screen" id="s7">
-    <div class="cc-top">
-      <div class="cc-burger"><i></i><i></i><i></i></div>
-      <div class="cc-logo">DMG<small>PRO</small></div>
-      <div class="cc-user"><b>Rhea Kapoor</b><span>Field Operations</span></div>
-    </div>
-    <div class="cc-accent"></div>
-    <div class="cc-body">
-
-      <div class="two">
-        <div class="card" style="border-left:3px solid var(--new)">
-          <div class="card-h" style="background:var(--new-bg)"><h3 style="color:#8A4508">Request a provider rate change</h3></div>
-          <div class="card-b">
-            <div class="field"><label>Property / site</label><input value="(2984) — 9015 Queens Blvd Spc 0024, Elmhurst, NY"></div>
-            <div class="field"><label>Service type</label><input value="Mowing Per Service"></div>
-            <div class="two" style="gap:12px">
-              <div class="field"><label>Current pay</label><input value="$72.00" style="background:#F7F9FA;color:var(--muted)" readonly></div>
-              <div class="field"><label>Proposed pay <span style="color:var(--coral)">*</span></label><input value="$81.00"></div>
-            </div>
-            <div class="field"><label>Reason <span style="color:var(--coral)">*</span></label>
-              <select><option>Provider increase district wide</option><option>Difficulty of service</option><option>Drive time</option><option>Fair market value</option><option>Provider bench strength needed</option><option>Remote location</option><option>Other</option></select>
-              </div>
-            <div class="field"><label>Comment <span style="color:var(--coral)">*</span></label>
-              <textarea placeholder="Mandatory.">Provider has raised rates across the district effective 1 Oct. Losing them here means a 40-minute drive from the next crew.</textarea></div>
-            <div class="notice n-amber" style="margin:0 0 14px">
-              <span class="ic">⚠</span>
-              <div><b>Term sheet runway to 12/31/28 — 10 months of headroom.</b> A replacement agreement cannot run past the customer&rsquo;s term sheet.</div>
-            </div>
-            <div class="btnrow right"><button class="btn ghost">Cancel</button><button class="btn newb" onclick="openM('m-rate')">Submit request</button></div>
-          </div>
-        </div>
-
-        <div>
-          <div class="card">
-            <div class="card-h"><h3>Rate change requests</h3></div>
-            <div class="card-b flush">
-              <table class="grid">
-                <thead><tr><th>Site</th><th class="num">Current</th><th class="num">Proposed</th><th>State</th><th>Replacement</th></tr></thead>
-                <tbody>
-                  <tr><td>9015 Queens Blvd<span class="sub">Rhea Kapoor · today</span></td><td class="num">$72.00</td><td class="num">$81.00</td><td><span class="badge b-l1">Requested</span></td><td class="sub" style="margin:0">—</td></tr>
-                  <tr><td>2050 Green Acres Mall<span class="sub">Marcus Bell · 14 Aug</span></td><td class="num">$96.00</td><td class="num">$88.00</td><td><span class="badge b-rfp">In progress</span></td><td class="sub" style="margin:0">PA-40218 · Ready for Negotiation</td></tr>
-                  <tr><td>756 Alberta Dr Ste 459<span class="sub">Rhea Kapoor · 09 Aug</span></td><td class="num">$60.00</td><td class="num">$66.00</td><td><span class="badge b-ok">Completed</span></td><td class="sub" style="margin:0">PA-40109 · Active</td></tr>
-                  <tr><td>148 Walt Whitman Rd<span class="sub">Marcus Bell · 02 Aug</span></td><td class="num">$45.00</td><td class="num">$58.00</td><td><span class="badge b-l2">Declined</span></td><td class="sub" style="margin:0">—</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-    </div>
-  </section>
-
   <!-- ══════════════════ 8 · CONFIG ══════════════════ -->
   <section class="screen" id="s8">
     <div class="cc-top">
@@ -1351,127 +1293,6 @@ button{font-family:inherit}
             </div>
           </div>
 
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ══════════════════ 9 · ALERTS ══════════════════ -->
-  <section class="screen" id="s9">
-    <div class="cc-top">
-      <div class="cc-burger"><i></i><i></i><i></i></div>
-      <div class="cc-logo">DMG<small>PRO</small></div>
-      <div class="cc-user"><b>Daniel Okafor</b><span>Regional Manager</span></div>
-    </div>
-    <div class="cc-accent"></div>
-    <div class="cc-body">
-
-      <div class="two">
-        <div class="mail">
-          <div class="mail-h"><b>Landed in your queue — Level 1 approval</b>To: Daniel Okafor · On arrival · Instant send</div>
-          <div class="mail-b">
-            <p>An agreement needs your approval.</p>
-            <table>
-              <tr><th>Agreement</th><td>Best Buy Corporate Landscaping - Routine 08M (40218)</td></tr>
-              <tr><th>Worst cell</th><td>2050 Green Acres Mall &mdash; Routine Landscaping</td></tr>
-              <tr><th>Margin</th><td><span class="mg-low">9.1%</span> &mdash; below 25%</td></tr>
-            </table>
-            <a class="mail-cta">Open the agreement</a>
-          </div>
-        </div>
-
-        <div class="mail">
-          <div class="mail-h"><b>Daily digest — Level 1 approval</b>To: Daniel Okafor · Once a day at a configured hour</div>
-          <div class="mail-b">
-            <p><b>4 agreements are waiting for your Level 1 approval.</b></p>
-            <table>
-              <thead><tr><th>Customer / property</th><th>Margin</th><th>Days</th></tr></thead>
-              <tbody>
-                <tr><td>7-Eleven — Per Occurrence</td><td>indeterminate</td><td><b>9</b></td></tr>
-                <tr><td>Best Buy — Routine 08M (40218)<span class="sub">worst cell: 2050 Green Acres Mall</span></td><td class="mg-low">9.1%</td><td><b>6</b></td></tr>
-                <tr><td>CBRE/Walmart — Spring Cleanup</td><td class="mg-low">18.4%</td><td>3</td></tr>
-                <tr><td>Walgreens — Fall Cleanup</td><td class="mg-low">23.9%</td><td>1</td></tr>
-              </tbody>
-            </table>
-            <a class="mail-cta">Open the Level 1 queue</a>
-            
-          </div>
-        </div>
-
-        <div class="mail">
-          <div class="mail-h"><b>Costing review still open</b>To: RFP team + Daniel Okafor · Daily while open past a configured age</div>
-          <div class="mail-b">
-            <p><b>2 costing reviews have been open longer than 2 days.</b></p>
-            <table>
-              <thead><tr><th>Property</th><th>Asked by</th><th>Open</th></tr></thead>
-              <tbody>
-                <tr><td>2050 Green Acres Mall</td><td>D. Okafor</td><td><b>2 days</b></td></tr>
-                <tr><td>160 E Sunrise Hwy</td><td>A. Reyes</td><td><b>5 days</b></td></tr>
-              </tbody>
-            </table>
-            <a class="mail-cta">Open the RFP review queue</a>
-          </div>
-        </div>
-
-        <div class="mail">
-          <div class="mail-h"><b>Your approval no longer counts</b>To: Daniel Okafor · On re-price after approval</div>
-          <div class="mail-b">
-            <p>An agreement you approved has been repriced, so your approval has expired and the agreement is back in the queue.</p>
-            <table>
-              <tr><th>Property</th><td>160 E Sunrise Hwy, Home Depot Corporate</td></tr>
-              <tr><th>You approved at</th><td><span class="mg-ok">31.0%</span> — 18 Aug 16:40</td></tr>
-              <tr><th>Repriced to</th><td><span class="mg-low">−2.0%</span> — Priya Raghavan, 19 Aug 09:14</td></tr>
-              <tr><th>Now requires</th><td>Level 1 + Level 2</td></tr>
-            </table>
-            <a class="mail-cta">Review again</a>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ══════════════════ 10 · DRIFT ══════════════════ -->
-  <section class="screen" id="s10">
-    <div class="cc-top">
-      <div class="cc-burger"><i></i><i></i><i></i></div>
-      <div class="cc-logo">DMG<small>PRO</small></div>
-      <div class="cc-user"><b>Margin Team</b><span>Reporting</span></div>
-    </div>
-    <div class="cc-accent"></div>
-    <div class="cc-body">
-
-      <div class="card">
-        <div class="card-h"><h3>Drift list — July 2026 close</h3><span class="badge b-new">Outside 5.0 point tolerance</span></div>
-        <div class="card-b flush" style="overflow-x:auto">
-          <table class="grid" style="min-width:1000px">
-            <thead><tr><th>Agreement lineage</th><th>Customer / property</th><th class="num">Approved margin</th><th class="num">Actual margin</th><th class="num">Drift</th><th class="num">Customer $/yr</th><th class="num">Margin lost/yr</th><th>Origin</th></tr></thead>
-            <tbody>
-              <tr><td>LIN-88214</td><td>Home Depot — 160 E Sunrise Hwy</td><td class="num mg-low">−2.0%</td><td class="num"><span class="mg-low">−11.4%</span></td><td class="num"><span class="mg-low">−9.4 pts</span></td><td class="num">$6,500</td><td class="num"><span class="mg-low">−$611</span></td><td><span class="badge b-grey">Term sheet</span></td></tr>
-              <tr><td>LIN-91077</td><td>CBRE/Walmart — Spring Cleanup</td><td class="num mg-low">18.4%</td><td class="num"><span class="mg-low">9.9%</span></td><td class="num"><span class="mg-low">−8.5 pts</span></td><td class="num">$12,000</td><td class="num"><span class="mg-low">−$1,020</span></td><td><span class="badge b-new">Rate change</span></td></tr>
-              <tr><td>LIN-87330</td><td>Best Buy — 9015 Queens Blvd</td><td class="num mg-low">21.7%</td><td class="num"><span class="mg-low">14.6%</span></td><td class="num"><span class="mg-low">−7.1 pts</span></td><td class="num">$4,140</td><td class="num"><span class="mg-low">−$294</span></td><td><span class="badge b-grey">Term sheet</span></td></tr>
-              <tr><td>LIN-90412</td><td>Walgreens — Fall Cleanup</td><td class="num mg-low">23.9%</td><td class="num"><span class="mg-ok">31.2%</span></td><td class="num"><span class="mg-ok">+7.3 pts</span></td><td class="num">$3,100</td><td class="num"><span class="mg-ok">+$226</span></td><td><span class="badge b-grey">Renegotiation</span></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-h"><h3>What reporting can answer once the gate tables are published</h3></div>
-        <div class="card-b flush">
-          <table class="grid">
-            <thead><tr><th>Question</th><th>Who asks</th><th>Source</th></tr></thead>
-            <tbody>
-              <tr><td>How many agreements escalate, by level, month, service line, customer</td><td>Margin team</td><td>Gate records</td></tr>
-              <tr><td>How long each level takes to act</td><td>Margin team, ops leadership</td><td>Event log timestamps</td></tr>
-              <tr><td>How often pricing comes back, and why</td><td>Pricing managers</td><td>Send-back events with comments</td></tr>
-              <tr><td>How often the costing team corrects versus confirms</td><td>RFP leadership</td><td>Review outcome events</td></tr>
-              <tr><td>Which deviation fields get acknowledged most, for which customers</td><td>Margin team, account owners</td><td>Deviation events</td></tr>
-              <tr><td>Rate changes requested, approved, and their margin effect</td><td>Margin team</td><td>Request records joined to replacement baselines</td></tr>
-              <tr><td>Live agreements drifting from approved margin</td><td>Drift owner <span class="badge b-l1">unassigned</span></td><td>The monthly comparison above</td></tr>
-            </tbody>
-          </table>
         </div>
       </div>
 
@@ -1636,24 +1457,6 @@ button{font-family:inherit}
       <div style="font-size:13px;color:var(--muted)">Each line is recorded on the event log as <b>Review returned</b> with its verdict and comment.</div>
     </div>
     <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn newb" onclick="closeM()" data-fill="cta">Return verdict</button></div>
-  </div>
-</div>
-
-<div class="modal-wrap" id="m-rate" onclick="if(event.target===this)closeM()">
-  <div class="modal">
-    <div class="modal-h">Rate change requested</div>
-    <div class="modal-b">
-      
-      <p style="font-size:13px;color:#4A5058">What happens next</p>
-      <ol style="font-size:13px;color:#4A5058;padding-left:20px;line-height:1.7">
-        <li>The live agreement is terminated, keeping its history.</li>
-        <li>Renegotiation builds a replacement at Draft, carrying the old prices in.</li>
-        <li>The replacement is labelled <b>born from a rate change</b> so reporting can count it.</li>
-        <li>It walks pricing and the margin gate: $81.00 against a $92.00 customer price is <b class="mg-low">12.0%</b> &mdash; <b>Level 1</b>.</li>
-      </ol>
-      
-    </div>
-    <div class="modal-f"><button class="btn" onclick="closeM()">Done</button></div>
   </div>
 </div>
 
