@@ -330,9 +330,10 @@ button{font-family:inherit}
         </div>
 
         <div class="formula" style="margin-top:22px">contracted volume &nbsp;&mdash;&nbsp; provider visits/yr &nbsp;vs&nbsp; customer visits/yr, per property &times; service type</div>
-        <div class="two" style="margin-top:14px">
-          <div class="tier ok"><div class="t-n">Within contract</div><div class="t-d">Provider visits &le; customer visits. No flag.</div></div>
-          <div class="tier l1"><div class="t-n">Over contract</div><div class="t-d">Needs a written reason before the agreement can be sent for approval.</div></div>
+        <div class="tiers" style="margin-top:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+          <div class="tier ok"><div class="t-n">Within contract</div><div class="t-d">Provider = customer. No flag.</div></div>
+          <div class="tier l2"><div class="t-n">Over-serviced</div><div class="t-d">Provider &gt; customer. Written reason required before the agreement can be sent for approval.</div></div>
+          <div class="tier l1"><div class="t-n">Under-serviced</div><div class="t-d">Provider &lt; customer. Warns; a reason may be given but is not required.</div></div>
         </div>
       </div>
     </div>
@@ -1030,7 +1031,7 @@ button{font-family:inherit}
 
       <div class="card" style="border-left:3px solid var(--new)">
         <div class="card-h" style="background:var(--new-bg)"><h3 style="color:#8A4508">Contract deviations</h3>
-          <span class="badge b-ok">2 of 2 acknowledged at pricing</span><span class="badge b-grey">1 warn only</span></div>
+          <span class="badge b-ok">2 of 2 required reasons given</span><span class="badge b-l1">1 reason optional</span><span class="badge b-grey">1 warn only</span></div>
         <div class="card-b flush" style="overflow-x:auto">
           <table class="grid" style="min-width:1060px">
             <thead><tr><th>Service type</th><th>Field</th><th class="num">Customer signed</th><th class="num">Agreement configured</th><th class="newcol">Difference</th><th>Reason given</th><th>Rule</th></tr></thead>
@@ -1051,6 +1052,12 @@ button{font-family:inherit}
                   <td class="newcol"><span class="tag tag-same">Same count, different days</span><span class="tagline"><b>2 changed</b></span><span class="sub">removed: Mon, Thu &middot; added: Tue, Fri</span></td>
                   <td class="sub" style="margin:0">&mdash;</td>
                   <td><span class="badge b-grey">Warn only</span></td></tr>
+              <tr><td>Shrub Pruning<span class="sub">1 of 8 compared fields differ</span></td>
+                  <td><b>Visits per season</b><span class="sub">count</span></td>
+                  <td class="num">4</td><td class="num"><span class="m-l1">2</span></td>
+                  <td class="newcol"><span class="tag tag-under">Under-serviced</span><span class="tagline"><b>&minus;2 visits</b></span><span class="sub">customer contracted 4</span></td>
+                  <td><b style="font-size:12px">Shrubs replaced with low-maintenance planting</b><span class="sub">P. Raghavan &middot; 18 Aug &middot; optional</span></td>
+                  <td><span class="badge b-l1">Reason optional</span></td></tr>
             </tbody>
           </table>
         </div>
@@ -1118,7 +1125,7 @@ button{font-family:inherit}
                 <th class="rowno"></th><th class="chk"><span class="cbx on" data-all></span></th>
                 <th style="min-width:250px">Property</th><th>Field Owner</th><th style="min-width:150px">Provider</th>
                 <th class="grp" style="min-width:210px">Provider Line Item<span class="sub" style="color:#1A4D6B">Routine Landscaping Per Visit (Sep-Aug) &middot; 26/yr</span><span style="display:block;color:#8A4508;font-weight:600;font-size:10px;letter-spacing:.03em;margin-top:3px">PROVIDER PRICE &middot; MARGIN&nbsp;%</span></th>
-                <th class="grp" style="min-width:200px">Provider Line Item<span class="sub" style="color:#1A4D6B">Snow Removal Per Occurrence (Nov-Mar) &middot; 8/yr</span><span style="display:block;color:#8A4508;font-weight:600;font-size:10px;letter-spacing:.03em;margin-top:3px">PROVIDER PRICE &middot; MARGIN&nbsp;%</span></th>
+                <th class="grp" style="min-width:200px">Provider Line Item<span class="sub" style="color:#1A4D6B">Fall Cleanup Per Visit (Nov) &middot; 2/yr</span><span style="display:block;color:#8A4508;font-weight:600;font-size:10px;letter-spacing:.03em;margin-top:3px">PROVIDER PRICE &middot; MARGIN&nbsp;%</span></th>
                 <th class="inc" style="min-width:190px">Incumbent Data<span class="sub">Routine Landscaping (Sep-Aug)</span></th>
                 <th style="min-width:80px">Actions</th>
               </tr>
@@ -1129,8 +1136,8 @@ button{font-family:inherit}
                 <td>Rhea Kapoor</td><td>Empire Site Services</td>
                 <td><div class="rangehint">Range $180.00 - $255.00/visit</div><div class="rangehint">Customer Price $250.00/visit</div>
                     <div class="prow-line" style="cursor:pointer" onclick="openM('m-range')"><span class="px bad">&#9888; $255.00/visit</span><span class="mg-low">&minus;2.0%</span></div></td>
-                <td><div class="rangehint">Range $400.00 - $520.00/occurrence</div><div class="rangehint">Customer Price $610.00/occurrence</div>
-                    <div class="prow-line"><span class="px">$520.00/occ</span><span class="mg-low">14.8%</span></div></td>
+                <td><div class="rangehint">Range $193.28 - $241.60/visit</div><div class="rangehint">Customer Price $304.00/visit</div>
+                    <div class="prow-line"><span class="px">$225.00/visit</span><span class="mg-low">26.0%</span></div></td>
                 <td class="inc">$238.00 - Provider Empire Site Services<span class="sub">Active</span></td>
                 <td><span class="upic">&#8593;</span></td></tr>
 
@@ -1139,8 +1146,8 @@ button{font-family:inherit}
                 <td>Rhea Kapoor</td><td>Empire Site Services</td>
                 <td><div class="rangehint">Range $180.00 - $240.00/visit</div><div class="rangehint">Customer Price $330.00/visit</div>
                     <div class="prow-line"><span class="px">$240.00/visit</span><span class="mg-low">27.3%</span></div></td>
-                <td><div class="rangehint">Range $400.00 - $500.00/occurrence</div><div class="rangehint">Customer Price $720.00/occurrence</div>
-                    <div class="prow-line"><span class="px">$500.00/occ</span><span class="mg-ok">30.6%</span></div></td>
+                <td><div class="rangehint">Range $180.00 - $230.00/visit</div><div class="rangehint">Customer Price $320.00/visit</div>
+                    <div class="prow-line"><span class="px">$220.00/visit</span><span class="mg-ok">31.2%</span></div></td>
                 <td class="inc">$225.00 - Provider Empire Site Services<span class="sub">Active</span></td>
                 <td><span class="upic">&#8593;</span></td></tr>
 
@@ -1149,8 +1156,8 @@ button{font-family:inherit}
                 <td>Rhea Kapoor</td><td>Empire Site Services</td>
                 <td><div class="rangehint">Range $190.00 - $250.00/visit</div><div class="rangehint">Customer Price $348.00/visit</div>
                     <div class="prow-line"><span class="px">$250.00/visit</span><span class="mg-low">28.2%</span></div></td>
-                <td><div class="rangehint">Range $420.00 - $540.00/occurrence</div><div class="rangehint">Customer Price $760.00/occurrence</div>
-                    <div class="prow-line"><span class="px">$540.00/occ</span><span class="mg-low">28.9%</span></div></td>
+                <td><div class="rangehint">Range $190.00 - $240.00/visit</div><div class="rangehint">Customer Price $330.00/visit</div>
+                    <div class="prow-line"><span class="px">$230.00/visit</span><span class="mg-ok">30.3%</span></div></td>
                 <td class="inc">$241.00 - Provider Empire Site Services<span class="sub">Active</span></td>
                 <td><span class="upic">&#8593;</span></td></tr>
             </tbody>
@@ -1160,7 +1167,7 @@ button{font-family:inherit}
 
       <div class="card" style="border-left:3px solid var(--new)">
         <div class="card-h" style="background:var(--new-bg)"><h3 style="color:#8A4508">Contract deviations</h3>
-          <span class="badge b-ok">1 of 1 acknowledged at pricing</span><span class="badge b-grey">2 warn only</span></div>
+          <span class="badge b-ok">1 of 1 required reason given</span><span class="badge b-l1">1 reason optional</span><span class="badge b-grey">1 warn only</span></div>
         <div class="card-b flush" style="overflow-x:auto">
           <table class="grid" style="min-width:1060px">
             <thead><tr><th>Service type</th><th>Field</th><th class="num">Customer signed</th><th class="num">Agreement configured</th><th class="newcol">Difference</th><th>Reason given</th><th>Rule</th></tr></thead>
@@ -1176,12 +1183,12 @@ button{font-family:inherit}
                   <td class="newcol"><span class="tag tag-same">Same count, different days</span><span class="tagline"><b>2 changed</b></span><span class="sub">removed: Mon, Thu &middot; added: Tue, Fri</span></td>
                   <td class="sub" style="margin:0">&mdash;</td>
                   <td><span class="badge b-grey">Warn only</span></td></tr>
-              <tr><td>Snow Removal<span class="sub">1 of 8 compared fields differ</span></td>
+              <tr><td>Fall Cleanup<span class="sub">1 of 8 compared fields differ</span></td>
                   <td><b>Visits per season</b><span class="sub">count</span></td>
-                  <td class="num">10</td><td class="num"><span class="m-l1">8</span></td>
-                  <td class="newcol"><span class="tag tag-under">Under-serviced</span><span class="tagline"><b>&minus;2 occurrences</b></span><span class="sub">customer contracted 10</span></td>
-                  <td class="sub" style="margin:0">&mdash;</td>
-                  <td><span class="badge b-grey">Warn only</span></td></tr>
+                  <td class="num">2</td><td class="num"><span class="m-l1">1</span></td>
+                  <td class="newcol"><span class="tag tag-under">Under-serviced</span><span class="tagline"><b>&minus;1 visit</b></span><span class="sub">customer contracted 2</span></td>
+                  <td><b style="font-size:12px">Site consolidated to one autumn pass</b><span class="sub">P. Raghavan &middot; 18 Aug &middot; optional</span></td>
+                  <td><span class="badge b-l1">Reason optional</span></td></tr>
             </tbody>
           </table>
         </div>
