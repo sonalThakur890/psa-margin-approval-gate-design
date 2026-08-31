@@ -372,7 +372,7 @@ body.showly .lycard{display:block}
 
       <div class="cc-crumb"><a>Provider Agreement Management</a> / 7-Eleven, Inc Landscaping - PUoW 08M (40402) - Draft</div>
       <div class="cc-head-row"><h1 class="cc-h1">7-Eleven, Inc Landscaping - PUoW 08M (40402) - Draft <span style="color:var(--blue);font-weight:400">↗</span></h1>
-        <div style="margin-left:auto" class="btnrow"><button class="btn out sm">View Service Schedule</button><button class="btn out sm">Preview</button></div></div>
+        <div style="margin-left:auto" class="btnrow"><button class="btn out sm" onclick="go('d2')">View Service Schedule</button><button class="btn out sm">Preview</button></div></div>
 
       <div class="tabs" style="margin-top:0">
         <button class="tab on">Template Information</button>
@@ -413,7 +413,7 @@ body.showly .lycard{display:block}
             <tbody>
               <tr style="background:#FFFAF6">
                 <td rowspan="2" style="vertical-align:top"><b>Routine Landscaping Service</b> <span class="badge b-grey">+</span>
-                    <div style="margin-top:8px"><span class="badge b-new">&#9873; Contract deviation</span></div></td>
+                    <div style="margin-top:8px"><span class="flagmark">&#9873; Contract deviation</span><span class="tag tag-over">Over-serviced</span></div></td>
                 <td>Routine Landscaping Service</td><td>Mowing &amp; Cleanup&hellip;</td>
                 <td>Apr&ndash;Sep</td><td>Weekly</td>
                 <td class="num">1</td>
@@ -462,7 +462,7 @@ body.showly .lycard{display:block}
     <div class="cc-body">
       <div class="cc-crumb"><a>Provider Agreement Management</a> / Walgreens Corporate- AR Acct Landscaping - PUW E2E Test - Draft</div>
       <div class="cc-head-row"><h1 class="cc-h1">Walgreens Corporate- AR Acct Landscaping - PUW E2E Test - Draft <span style="color:var(--blue);font-weight:400">&#8599;</span></h1>
-        <div style="margin-left:auto" class="btnrow"><button class="btn out sm">View Service Schedule</button><button class="btn out sm">Preview</button></div></div>
+        <div style="margin-left:auto" class="btnrow"><button class="btn out sm" onclick="go('d2')">View Service Schedule</button><button class="btn out sm">Preview</button></div></div>
 
       <div class="tabs" style="margin-top:0">
         <button class="tab" onclick="go('s1t')">Template Information</button>
@@ -703,7 +703,7 @@ body.showly .lycard{display:block}
                 <td style="background:#FFFBF7"><div class="rangehint">Range $60.00 – $80.00/visit</div>
                     <div class="rangehint" style="color:var(--new);font-weight:600">Customer $110.00/visit</div>
                     <div class="pricestack"><div class="moneyin" style="min-width:128px"><span class="cur">$</span><span>68.00</span></div><span class="mg-ok mgs">38%</span></div>
-                    <div style="margin-top:5px;cursor:pointer" onclick="openM('m-dev')"><span class="badge b-new">&#9873; Contract deviation</span></div>
+                    <div style="margin-top:5px;cursor:pointer" onclick="openM('m-dev')"><span class="flagmark">&#9873; Contract deviation</span><span class="tag tag-over">Over-serviced</span></div>
                     </div></td>
                 <td><div class="rangehint">$0.00</div><div class="rangehint">Tracking Only</div></td>
                 <td class="num">$80.00</td><td>Greenscape TX</td><td><span class="badge b-grey">Active</span></td></tr>
@@ -810,14 +810,14 @@ body.showly .lycard{display:block}
                 <td class="num" style="color:var(--blue)">&rsaquo;</td>
                 <td style="padding-left:28px">Landscaping - PUoW 08 Period</td>
                 <td>Mulching, Routine Landscaping Service,&hellip;</td>
-                <td>Routine Landscaping Service, Tree Prun&hellip;<span class="tagline" style="margin-top:4px;display:block"><span class="tag tag-over">Over-serviced</span></span></td>
+                <td>Routine Landscaping Service, Tree Prun&hellip;<span class="tagline" style="margin-top:4px;display:block"><span class="flagmark" style="margin-right:6px">&#9873; Contract deviation</span><span class="tag tag-over">Over-serviced</span></span></td>
                 <td>Landscaping</td><td>Awaiting Level 1 Approval</td><td class="num">1</td><td class="num" style="color:var(--blue)">&rsaquo;</td>
               </tr>
               <tr data-dev="over" class="crow g1" style="cursor:pointer" onclick="go('s3')" data-worst="21.7">
                 <td class="num" style="color:var(--blue)">&rsaquo;</td>
                 <td style="padding-left:28px">Landscaping - PUoW 12 Period</td>
                 <td>Mulching, Routine Landscaping Service,&hellip;</td>
-                <td>Routine Landscaping Service, Tree Prun&hellip;<span class="tagline" style="margin-top:4px;display:block"><span class="tag tag-over">Over-serviced</span></span></td>
+                <td>Routine Landscaping Service, Tree Prun&hellip;<span class="tagline" style="margin-top:4px;display:block"><span class="flagmark" style="margin-right:6px">&#9873; Contract deviation</span><span class="tag tag-over">Over-serviced</span></span></td>
                 <td>Landscaping</td><td>Awaiting Level 1 Approval</td><td class="num">1</td><td class="num" style="color:var(--blue)">&rsaquo;</td>
               </tr>
 
@@ -832,7 +832,7 @@ body.showly .lycard{display:block}
                 <td class="num" style="color:var(--blue)">&rsaquo;</td>
                 <td style="padding-left:28px">Landscaping - Routine 08 Period</td>
                 <td>Fall Cleanup, Spring Cleanup, Shrub Pr&hellip;</td>
-                <td>Fall Cleanup, Shrub Pruning, Routine La&hellip;<span class="tagline" style="margin-top:4px;display:block"><span class="tag tag-over">Over-serviced</span><span class="tag tag-under">Under-serviced</span><span class="tag tag-same">Same count, different days</span></span></td>
+                <td>Fall Cleanup, Shrub Pruning, Routine La&hellip;<span class="tagline" style="margin-top:4px;display:block"><span class="flagmark" style="margin-right:6px">&#9873; Contract deviation</span><span class="tag tag-over">Over-serviced</span><span class="tag tag-under">Under-serviced</span><span class="tag tag-same">Same count, different days</span></span></td>
                 <td>Landscaping</td><td>Awaiting Level 1 Approval</td><td class="num">3</td><td class="num" style="color:var(--blue)">&rsaquo;</td>
               </tr>
 
@@ -847,7 +847,7 @@ body.showly .lycard{display:block}
                 <td class="num" style="color:var(--blue)">&rsaquo;</td>
                 <td style="padding-left:28px">Landscaping - AT&amp;T NE 09 Period</td>
                 <td>Fall Cleanup, Spring Cleanup, Shrub Pr&hellip;</td>
-                <td>Fall Cleanup, Shrub Pruning, Routine La&hellip;<span class="tagline" style="margin-top:4px;display:block"><span class="tag tag-under">Under-serviced</span></span></td>
+                <td>Fall Cleanup, Shrub Pruning, Routine La&hellip;<span class="tagline" style="margin-top:4px;display:block"><span class="flagmark" style="margin-right:6px">&#9873; Contract deviation</span><span class="tag tag-under">Under-serviced</span></span></td>
                 <td>Landscaping</td><td>Awaiting Level 1 Approval</td><td class="num">3</td><td class="num" style="color:var(--blue)">&rsaquo;</td>
               </tr>
             </tbody>
@@ -875,7 +875,7 @@ body.showly .lycard{display:block}
 
       <div class="cc-crumb"><a>Provider Agreement Management</a> / AAA Club Alliance Landscaping - Standard 2026 - Active and Upcoming</div>
       <div class="cc-head-row"><h1 class="cc-h1">AAA Club Alliance Landscaping - Standard 2026 - Active and Upcoming <span style="color:var(--blue);font-weight:400">&#8599;</span></h1>
-        <div style="margin-left:auto"><button class="btn dis">Terminate (0)</button></div></div>
+        <div style="margin-left:auto"><button class="btn dis" data-sel data-base="Terminate" onclick="openM('m-term')">Terminate</button></div></div>
 
       <div class="card">
         <div class="card-b" style="padding-bottom:0">
@@ -1231,7 +1231,7 @@ body.showly .lycard{display:block}
 
       <div class="cc-crumb"><a>Provider Agreement Management</a> / Cadence Education Landscaping - 12M52C w/Irrigation (4 Prunes) - Awaiting Approval</div>
       <div class="cc-head-row"><h1 class="cc-h1">Cadence Education Landscaping - 12M52C w/Irrigation (4 Prunes) - Awaiting Approval <span style="color:var(--blue);font-weight:400">&#8599;</span></h1>
-        <div style="margin-left:auto"><button class="btn out sm">View Service Schedule</button></div></div>
+        <div style="margin-left:auto"><button class="btn out sm" onclick="go('d2')">View Service Schedule</button></div></div>
 
       <div class="kv" style="margin-bottom:18px;grid-template-columns:repeat(7,1fr)">
         <div><div class="k">Agreement Type</div><div class="v">Mixed</div></div>
@@ -1259,7 +1259,7 @@ body.showly .lycard{display:block}
               </div></span>
             <span class="fwrap"><span class="fchip fdev" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span><div class="fdrop"><label data-dev="over"><span class="cbx"></span>Over-serviced</label><label data-dev="under"><span class="cbx"></span>Under-serviced</label><label data-dev="other"><span class="cbx"></span>Others</label><div class="fclear">Clear</div></div></span>
             <span style="flex:1"></span>
-            <button class="btn sm" data-sel data-base="Send back">Send back (1)</button>
+            <button class="btn sm" data-sel data-base="Send back" onclick="openM('m-back')">Send back (1)</button>
           </div>
         </div>
         <div class="card-b flush">
@@ -1305,7 +1305,7 @@ body.showly .lycard{display:block}
         <button class="btn ghost">Cancel</button>
         <button class="btn newb out" data-sel data-base="Send to RFP review" onclick="openM('m-rfp')">Send to RFP review (1)</button>
         <span style="flex:1"></span>
-        <button class="btn dis" data-sel data-base="Send To Active" data-blocked title="No signed agreement on file for this selection.">Send To Active (1)</button>
+        <button class="btn dis" data-sel data-base="Send To Active" data-blocked title="No signed agreement on file for this selection." onclick="openM('m-active')">Send To Active (1)</button>
         <button class="btn out" data-sel data-base="Move to Level 1" onclick="openM('m-up1')">Move to Level 1 (1)</button>
         <button class="btn" data-sel data-base="Approve &amp; send to provider" onclick="openM('m-apv')">Approve &amp; send to provider (1)</button>
       </div>
@@ -1325,7 +1325,7 @@ body.showly .lycard{display:block}
 
       <div class="cc-crumb"><a>Provider Agreement Management</a> / Best Buy Corporate Landscaping - Routine 08M (40218) - <span style="color:var(--new)">Awaiting Level 1 Approval</span></div>
       <div class="cc-head-row"><h1 class="cc-h1">Best Buy Corporate Landscaping - Routine 08M (40218) - <span style="color:var(--new)">Awaiting Level 1 Approval</span> <span style="color:var(--blue);font-weight:400">&#8599;</span></h1>
-        <div style="margin-left:auto"><button class="btn out sm">View Service Schedule</button></div></div>
+        <div style="margin-left:auto"><button class="btn out sm" onclick="go('d2')">View Service Schedule</button></div></div>
 
       <div class="kv" style="margin-bottom:18px;grid-template-columns:repeat(7,1fr)">
         <div><div class="k">Agreement Type</div><div class="v">Mixed</div></div>
@@ -1378,7 +1378,7 @@ body.showly .lycard{display:block}
               </div></span>
             <span class="fwrap"><span class="fchip fdev" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span><div class="fdrop"><label data-dev="over"><span class="cbx"></span>Over-serviced</label><label data-dev="under"><span class="cbx"></span>Under-serviced</label><label data-dev="other"><span class="cbx"></span>Others</label><div class="fclear">Clear</div></div></span>
             <span style="flex:1"></span>
-            <button class="btn sm" data-sel data-base="Send back">Send back (1)</button>
+            <button class="btn sm" data-sel data-base="Send back" onclick="openM('m-back')">Send back (1)</button>
           </div>
         </div>
         <div class="card-b flush">
@@ -1467,7 +1467,7 @@ body.showly .lycard{display:block}
         <button class="btn ghost">Cancel</button>
         <button class="btn newb out" data-sel data-base="Send to RFP review" onclick="openM('m-rfp')">Send to RFP review (1)</button>
         <span style="flex:1"></span>
-        <button class="btn dis" data-sel data-base="Send To Active" data-blocked title="No signed agreement on file for this selection.">Send To Active (1)</button>
+        <button class="btn dis" data-sel data-base="Send To Active" data-blocked title="No signed agreement on file for this selection." onclick="openM('m-active')">Send To Active (1)</button>
         <button class="btn out" data-sel data-base="Move to Level 2" onclick="openM('m-l1up')">Move to Level 2 (1)</button>
         <button class="btn" data-sel data-base="Approve &amp; send to provider" onclick="openM('m-apv')">Approve &amp; send to provider (1)</button>
         <!-- when Level 2 is also required the same button reads: Approve &amp; send to Level 2 -->
@@ -1487,7 +1487,7 @@ body.showly .lycard{display:block}
 
       <div class="cc-crumb"><a>Provider Agreement Management</a> / Home Depot Corporate Landscaping - National 26M (39114) - <span style="color:var(--new)">Awaiting Level 2 Approval</span></div>
       <div class="cc-head-row"><h1 class="cc-h1">Home Depot Corporate Landscaping - National 26M (39114) - <span style="color:var(--new)">Awaiting Level 2 Approval</span> <span style="color:var(--blue);font-weight:400">&#8599;</span></h1>
-        <div style="margin-left:auto"><button class="btn out sm">View Service Schedule</button></div></div>
+        <div style="margin-left:auto"><button class="btn out sm" onclick="go('d2')">View Service Schedule</button></div></div>
 
       <div class="kv" style="margin-bottom:18px;grid-template-columns:repeat(7,1fr)">
         <div><div class="k">Agreement Type</div><div class="v">Mixed</div></div>
@@ -1515,7 +1515,7 @@ body.showly .lycard{display:block}
               </div></span>
             <span class="fwrap"><span class="fchip fdev" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span><div class="fdrop"><label data-dev="over"><span class="cbx"></span>Over-serviced</label><label data-dev="under"><span class="cbx"></span>Under-serviced</label><label data-dev="other"><span class="cbx"></span>Others</label><div class="fclear">Clear</div></div></span>
             <span style="flex:1"></span>
-            <button class="btn sm" data-sel data-base="Send back">Send back (1)</button>
+            <button class="btn sm" data-sel data-base="Send back" onclick="openM('m-back')">Send back (1)</button>
           </div>
         </div>
         <div class="card-b flush">
@@ -1597,7 +1597,7 @@ body.showly .lycard{display:block}
       <div class="foot">
         <button class="btn ghost">Cancel</button>
         <span style="flex:1"></span>
-        <button class="btn dis" data-sel data-base="Send To Active" data-blocked title="No signed agreement on file for this selection.">Send To Active (1)</button>
+        <button class="btn dis" data-sel data-base="Send To Active" data-blocked title="No signed agreement on file for this selection." onclick="openM('m-active')">Send To Active (1)</button>
         <button class="btn" data-sel data-base="Approve &amp; send to provider" onclick="openM('m-l2ok')">Approve &amp; send to provider (1)</button>
       </div>
     </div>
@@ -1615,7 +1615,7 @@ body.showly .lycard{display:block}
 
       <div class="cc-crumb"><a>Provider Agreement Management</a> / Best Buy Corporate Landscaping - Routine 08M (40218) - <span style="color:var(--new)">Awaiting RFP Review</span></div>
       <div class="cc-head-row"><h1 class="cc-h1">Best Buy Corporate Landscaping - Routine 08M (40218) - <span style="color:var(--new)">Awaiting RFP Review</span> <span style="color:var(--blue);font-weight:400">&#8599;</span></h1>
-        <div style="margin-left:auto"><button class="btn out sm">View Service Schedule</button></div></div>
+        <div style="margin-left:auto"><button class="btn out sm" onclick="go('d2')">View Service Schedule</button></div></div>
 
       <div class="kv" style="margin-bottom:18px;grid-template-columns:repeat(7,1fr)">
         <div><div class="k">Agreement Type</div><div class="v">Mixed</div></div>
@@ -1843,8 +1843,8 @@ body.showly .lycard{display:block}
     <div class="modal-h">Move to Level 2<span class="sub" style="margin-top:4px" data-fill="head"></span></div>
     <div class="modal-b">
       <div style="margin:0 0 16px">
-        <div class="dvrow"><span>Worst cell</span><b class="mg-low">9.1% &middot; row 1, Routine Landscaping</b></div>
-        <div class="dvrow"><span>Deviations</span><b>2 of 2 acknowledged</b></div>
+        <div class="dvrow"><span>Worst cell</span><b data-fill="worst"></b></div>
+        <div class="dvrow"><span>Deviations</span><b data-fill="devs"></b></div>
         <div class="dvrow"><span>Goes to</span><b>Level 2 &mdash; leadership</b></div>
         <div class="dvrow"><span>Recorded against</span><b>Pricing version of 18 Aug 14:22</b></div>
       </div>
@@ -1854,13 +1854,63 @@ body.showly .lycard{display:block}
   </div>
 </div>
 
+<div class="modal-wrap" id="m-term" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="modal-h">Terminate<span class="sub" style="margin-top:4px" data-fill="head"></span></div>
+    <div class="modal-b">
+      <div style="margin:0 0 16px">
+        <div class="dvrow"><span>Effect</span><b>The agreement stops serving these properties</b></div>
+        <div class="dvrow"><span>Work already scheduled</span><b>Stays as it is</b></div>
+      </div>
+      <div class="field"><label>Termination reason <span style="color:var(--coral)">*</span></label>
+        <textarea placeholder="Recorded against the agreement."></textarea></div>
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn out" onclick="closeM()">Terminate</button></div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="m-back" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="modal-h">Send back to pricing<span class="sub" style="margin-top:4px" data-fill="head"></span></div>
+    <div class="modal-b">
+      <div style="margin:0 0 16px">
+        <div class="dvrow"><span>Worst cell</span><b data-fill="worst"></b></div>
+        <div class="dvrow"><span>Deviations</span><b data-fill="devs"></b></div>
+        <div class="dvrow"><span>Goes to</span><b>Pricing &mdash; Ready for Negotiation</b></div>
+      </div>
+      <table class="grid sm"><thead><tr><th>Line</th><th class="num">Margin</th></tr></thead>
+        <tbody data-fill="lines"></tbody></table>
+      <div class="field" style="margin-top:14px"><label>What needs to change? <span style="color:var(--coral)">*</span></label>
+        <textarea placeholder="Goes back with the agreement so pricing knows what to fix."></textarea></div>
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn out" onclick="closeM()">Send back</button></div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="m-active" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="modal-h">Send to Active<span class="sub" style="margin-top:4px" data-fill="head"></span></div>
+    <div class="modal-b">
+      <div style="margin:0 0 16px">
+        <div class="dvrow"><span>Worst cell</span><b data-fill="worst"></b></div>
+        <div class="dvrow"><span>Required by the gate</span><b data-fill="gate"></b></div>
+        <div class="dvrow"><span>Deviations</span><b data-fill="devs"></b></div>
+      </div>
+      <table class="grid sm"><thead><tr><th>Line</th><th class="num">Margin</th></tr></thead>
+        <tbody data-fill="lines"></tbody></table>
+      <div class="field" style="margin-top:14px"><label>Comment</label><textarea placeholder="Optional"></textarea></div>
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn" onclick="closeM()">Send To Active</button></div>
+  </div>
+</div>
+
 <div class="modal-wrap" id="m-up1" onclick="if(event.target===this)closeM()">
   <div class="modal">
     <div class="modal-h">Move to Level 1<span class="sub" style="margin-top:4px" data-fill="head"></span></div>
     <div class="modal-b">
       <div style="margin:0 0 16px">
-        <div class="dvrow"><span>Worst cell</span><b class="mg-ok">31.3% &middot; row 1, Fall Cleanup</b></div>
-        <div class="dvrow"><span>Required by the gate</span><b>None &mdash; at or above 25%</b></div>
+        <div class="dvrow"><span>Worst cell</span><b data-fill="worst"></b></div>
+        <div class="dvrow"><span>Required by the gate</span><b data-fill="gate"></b></div>
         <div class="dvrow"><span>After this</span><b>Level 1 &mdash; manager</b></div>
       </div>
       <div class="field"><label>Why does this need a manager? <span style="color:var(--coral)">*</span></label>
@@ -1875,9 +1925,9 @@ body.showly .lycard{display:block}
     <div class="modal-h">Approve and send to provider<span class="sub" style="margin-top:4px" data-fill="head"></span></div>
     <div class="modal-b">
       <div style="margin:0 0 16px">
-        <div class="dvrow"><span>Worst cell</span><b class="mg-low">9.1% &middot; row 1, Routine Landscaping</b></div>
-        <div class="dvrow"><span>Required by the gate</span><b>Level 1</b></div>
-        <div class="dvrow"><span>Deviations</span><b>2 of 2 acknowledged</b></div>
+        <div class="dvrow"><span>Worst cell</span><b data-fill="worst"></b></div>
+        <div class="dvrow"><span>Required by the gate</span><b data-fill="gate"></b></div>
+        <div class="dvrow"><span>Deviations</span><b data-fill="devs"></b></div>
         <div class="dvrow"><span>Recorded against</span><b>Pricing version of 18 Aug 14:22</b></div>
       </div>
       <div class="field"><label>Comment</label><textarea placeholder="Optional"></textarea></div>
@@ -1891,9 +1941,9 @@ body.showly .lycard{display:block}
     <div class="modal-h">Approve at Level 2 and send to provider<span class="sub" style="margin-top:4px" data-fill="head"></span></div>
     <div class="modal-b">
       <div style="margin:0 0 16px">
-        <div class="dvrow"><span>Worst cell</span><b class="mg-low">&minus;2.0% &middot; row 1, Routine Landscaping</b></div>
+        <div class="dvrow"><span>Worst cell</span><b data-fill="worst"></b></div>
         <div class="dvrow"><span>Level 1</span><b class="mg-ok">&check; D. Okafor, 18 Aug 16:40</b></div>
-        <div class="dvrow"><span>Deviations</span><b>1 of 1 acknowledged</b></div>
+        <div class="dvrow"><span>Deviations</span><b data-fill="devs"></b></div>
         <div class="dvrow"><span>Recorded against</span><b>Pricing version of 18 Aug 14:22</b></div>
       </div>
       <div class="field"><label>Comment</label><textarea>National account; taking the loss on Valley Stream to hold the other 25 sites.</textarea></div>
@@ -2098,7 +2148,7 @@ document.querySelectorAll('.tabs').forEach(g=>g.addEventListener('click',e=>{
 function selectedRows(){
   const sec=[...document.querySelectorAll('.screen')].find(s=>s.classList.contains('on'));
   if(!sec) return {sec:null,rows:[]};
-  return {sec, rows:[...sec.querySelectorAll('tr[data-line]')].filter(r=>r.querySelector('.cbx[data-row].on'))};
+  return {sec, rows:[...sec.querySelectorAll('tr')].filter(r=>r.querySelector('.cbx[data-row].on'))};
 }
 function fillModal(id){
   const m=document.getElementById(id), {sec,rows}=selectedRows();
@@ -2108,10 +2158,36 @@ function fillModal(id){
     title.childNodes[0].nodeValue=t;}
   const head=m.querySelector('[data-fill="head"]');
   const scoped=window.__scope?rows.filter(r=>verdictScope(r)===window.__scope):rows;
-  if(head) head.innerHTML=sec.dataset.agreement+' &middot; '+scoped.length+' line'+(scoped.length===1?'':'s');
+  const who = sec.dataset.agreement || (sec.querySelector('h1') ? sec.querySelector('h1').childNodes[0].nodeValue.trim() : '');
+  if(head) head.innerHTML=who+' &middot; '+scoped.length+' line'+(scoped.length===1?'':'s');
+  const num = r => parseFloat(String(r.dataset.margin).replace(/[−–—]/g,'-').replace('%',''));
+  const worst = m.querySelector('[data-fill="worst"]');
+  if(worst){
+    if(!scoped.length){ worst.textContent='\u2014'; worst.className=''; }
+    else{
+      const w = scoped.reduce((a,b)=> num(b)<num(a)?b:a);
+      const no = w.querySelector('.rowno') ? w.querySelector('.rowno').textContent.trim() : '';
+      worst.className = num(w)<30 ? 'mg-low' : 'mg-ok';
+      worst.innerHTML = w.dataset.margin + ' &middot; row ' + no + ', ' + w.dataset.svc;
+    }
+  }
+  const devs = m.querySelector('[data-fill="devs"]');
+  if(devs){
+    const k = scoped.filter(r=>(r.dataset.dev||'').trim()).length;
+    devs.innerHTML = k ? k+' of '+scoped.length+' selected line'+(scoped.length===1?'':'s')
+                       : 'none on the selected line'+(scoped.length===1?'':'s');
+  }
+  const gate = m.querySelector('[data-fill="gate"]');
+  if(gate){
+    const lo = scoped.length ? Math.min(...scoped.map(num)) : null;
+    gate.innerHTML = lo===null ? '&mdash;'
+      : lo < 0   ? 'Level 1, then Level 2'
+      : lo < 25  ? 'Level 1 &mdash; manager'
+      :            'None &mdash; at or above 25%';
+  }
   const lines=m.querySelector('[data-fill="lines"]');
-  if(lines) lines.innerHTML=rows.map(r=>{const d=r.dataset;
-    const neg=/^&minus;|^−|^-/.test(d.margin);
+  if(lines) lines.innerHTML=rows.filter(r=>r.dataset.line).map(r=>{const d=r.dataset;
+    const neg = num(r) < 30;
     return '<tr><td>'+d.line+'<span class="sub">'+d.svc+'</span></td>'
       +'<td class="num"><span class="'+(neg?'mg-low':'mg-ok')+'">'+d.margin+'</span>'
       +(d.risk?'<span class="sub">'+d.risk+'</span>':'')+'</td>'
