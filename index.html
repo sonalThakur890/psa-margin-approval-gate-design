@@ -117,6 +117,11 @@ button{font-family:inherit}
 .scrollx::-webkit-scrollbar-thumb:hover{background:#8A929A}
 .scrollhint{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted);padding:6px 18px 0}
 .scrollhint b{color:var(--blue);font-weight:600}
+.lastyr{font-size:11px;color:#7A828A;white-space:nowrap;border-left:2px solid #D8DCE0;padding-left:6px;margin-top:3px;font-weight:400}
+.lastyr b{color:#4A5058;font-weight:600}
+.lastyr .d{font-weight:600}
+.lastyr .up{color:var(--bad)} .lastyr .dn{color:var(--warn)}
+body.hidelast .lastyr{display:none}
 .grid th.frz1,.grid td.frz1{position:sticky;right:0;z-index:2}
 .grid tr:last-child td{border-bottom:none}
 .crow.hid{display:none}
@@ -390,7 +395,7 @@ button{font-family:inherit}
                 <td>Apr&ndash;Sep</td><td>Weekly</td>
                 <td class="num">1</td>
                 <td>&mdash;</td><td>&mdash;</td>
-                <td class="num">26</td><td class="newcol num">26</td></tr>
+                <td class="num">26<div class="lastyr"><b>LY</b> 24 <span class="d up">+2</span></div></td><td class="newcol num">26</td></tr>
               <tr style="background:#FFFAF6">
                 <td>Routine Landscaping Service</td><td>Mowing &amp; Cleanup&hellip;</td>
                 <td style="cursor:pointer;background:#FFF4EA" onclick="openM('m-dev')" title="Customer contracted Mar, Oct — provider has Mar, Oct, November">
@@ -501,6 +506,7 @@ button{font-family:inherit}
                 <td>(00041-W) &mdash; 1805 Greens Road<span class="sub">Houston, TX, 77032</span></td><td>Vinod Baradwaj</td>
                 <td><div class="rangehint">Customer Price $0.00</div><div class="rangehint">Tracking Only</div></td>
                 <td><div class="rangehint">Customer Price $100.00/month</div>
+                    <div class="lastyr"><b>LY</b> $52.00/visit &middot; 11 visits</div>
                     <div style="display:flex;gap:6px;align-items:flex-start;margin-top:4px">
                       <div class="pricestack"><div class="moneyin" style="min-width:104px"><span class="cur">$</span><span>56</span></div><span class="mg-ok mgs">44%</span></div>
                       <span style="color:var(--muted);font-size:11px;margin-top:7px">to</span>
@@ -516,6 +522,7 @@ button{font-family:inherit}
                 <td>(00052-W) &mdash; 2440 Bay Area Blvd<span class="sub">Houston, TX, 77058</span></td><td>Vinod Baradwaj</td>
                 <td><div class="rangehint">Customer Price $0.00</div><div class="rangehint">Tracking Only</div></td>
                 <td><div class="rangehint">Customer Price $100.00/month</div>
+                    <div class="lastyr"><b>LY</b> $52.00/visit &middot; 11 visits</div>
                     <div style="display:flex;gap:6px;align-items:flex-start;margin-top:4px">
                       <div class="pricestack"><div class="moneyin" style="min-width:104px"><span class="cur">$</span><span>56</span></div><span class="mg-ok mgs">44%</span></div>
                       <span style="color:var(--muted);font-size:11px;margin-top:7px">to</span>
@@ -605,6 +612,7 @@ button{font-family:inherit}
                 <td><div class="rangehint">Select Provider</div><div class="moneyin" style="min-width:118px;color:#9AA2AA"><span>Greenscape TX</span><span>⌄</span></div></td>
                 <td style="background:#FFFBF7"><div class="rangehint">Range $60.00 – $80.00/visit</div>
                     <div class="rangehint" style="color:var(--new);font-weight:600">Customer $110.00/visit</div>
+                    <div class="lastyr"><b>LY</b> $64.00/visit &middot; 24 visits</div>
                     <div class="pricestack"><div class="moneyin" style="min-width:128px"><span class="cur">$</span><span>68.00</span></div><span class="mg-ok mgs">38%</span></div>
                     <div style="margin-top:5px;cursor:pointer" onclick="openM('m-dev')"><span class="badge b-new">&#9873; Contract deviation</span></div>
                     </div></td>
@@ -616,6 +624,7 @@ button{font-family:inherit}
                 <td><div class="rangehint">Select Provider</div><div class="moneyin" style="min-width:118px;color:#9AA2AA"><span>Hill Country LS</span><span>⌄</span></div></td>
                 <td><div class="rangehint">Range $40.00 – $55.00/visit</div>
                     <div class="rangehint" style="color:var(--new);font-weight:600">Customer $62.00/visit</div>
+                    <div class="lastyr"><b>LY</b> $45.00/visit &middot; 24 visits</div>
                     <div class="pricestack"><div class="moneyin" style="min-width:128px"><span class="cur">$</span><span>49.00</span></div><span class="mg-low mgs">21%</span></div>
                     <div class="sub" style="margin-top:3px"><b>Drive time</b></div></td>
                 <td><div class="rangehint">$0.00</div><div class="rangehint">Tracking Only</div></td>
@@ -626,6 +635,7 @@ button{font-family:inherit}
                 <td><div class="rangehint">Select Provider</div><div class="moneyin" style="min-width:118px;color:#9AA2AA"><span>Hill Country LS</span><span>⌄</span></div></td>
                 <td><div class="rangehint">Range $45.00 – $60.00/visit</div>
                     <div class="rangehint" style="color:var(--new);font-weight:600">Customer $58.00/visit</div>
+                    <div class="lastyr"><b>LY</b> $50.00/visit &middot; 20 visits <span class="d dn">&minus;4</span></div>
                     <div class="pricestack"><div class="moneyin flag" style="min-width:128px;cursor:pointer" onclick="openM('m-range')"><span class="cur">$</span><span>65.00</span></div><span class="mg-low mgs">−12%</span></div>
                     <div class="rangehint" style="color:var(--coral);margin-top:3px">⚠ Outside recommended range</div>
                     <div class="sub" style="margin-top:3px"><b>Incorrect measurements</b></div></td>
@@ -667,7 +677,7 @@ button{font-family:inherit}
                 <label data-band="gte30"><span class="cbx"></span>30% and above</label>
                 <div class="fclear">Clear</div>
               </div></span>
-        <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
+        <span class="fchip lytoggle applied" style="background:var(--new);border-color:var(--new)">Last season</span><span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
         <span style="font-size:12.5px;color:var(--blue);align-self:center">&#8635; Clear All</span>
       </div>
       <div class="pill-row"><span class="fchip applied">Landscaping</span></div>
@@ -1160,7 +1170,7 @@ button{font-family:inherit}
                 <label data-band="gte30"><span class="cbx"></span>30% and above</label>
                 <div class="fclear">Clear</div>
               </div></span>
-            <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
+            <span class="fchip lytoggle applied" style="background:var(--new);border-color:var(--new)">Last season</span><span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
             <span style="flex:1"></span>
             <button class="btn sm" data-sel data-base="Send back">Send back (1)</button>
           </div>
@@ -1186,7 +1196,7 @@ button{font-family:inherit}
                     <div class="prow-line"><span class="px">$187.00/visit</span><span class="mg-ok">33.2%</span></div></td>
                 <td><div class="rangehint">Range $120.00 - $165.00/visit</div><div class="rangehint">Customer Price $240.00/visit</div>
                     <div class="prow-line"><span class="px">$165.00/visit</span><span class="mg-ok">31.3%</span></div></td>
-                <td class="inc">$187.50 - Provider ATL Landscaping<span class="sub">Active</span></td>
+                <td class="inc">$187.50 - Provider ATL Landscaping<span class="sub" style="margin:0">Active</span><div class="lastyr"><b>LY</b> 24 visits &middot; Aug&ndash;Nov</div></td>
                 <td><span class="upic">&#8593;</span></td></tr>
 
               <tr data-line="Sunbrook Academy (774)" data-svc="Routine Landscaping" data-margin="32.0%" data-risk="" data-reason="&mdash;">
@@ -1197,7 +1207,7 @@ button{font-family:inherit}
                     <div class="prow-line"><span class="px">$170.00/visit</span><span class="mg-ok">32.0%</span></div></td>
                 <td><div class="rangehint">Range $110.00 - $150.00/visit</div><div class="rangehint">Customer Price $230.00/visit</div>
                     <div class="prow-line"><span class="px">$150.00/visit</span><span class="mg-ok">34.8%</span></div></td>
-                <td class="inc">$172.00 - Provider ATL Landscaping<span class="sub">Active</span></td>
+                <td class="inc">$172.00 - Provider ATL Landscaping<span class="sub" style="margin:0">Active</span><div class="lastyr"><b>LY</b> 24 visits &middot; Aug&ndash;Nov</div></td>
                 <td><span class="upic">&#8593;</span></td></tr>
             </tbody>
           </table>
@@ -1279,7 +1289,7 @@ button{font-family:inherit}
                 <label data-band="gte30"><span class="cbx"></span>30% and above</label>
                 <div class="fclear">Clear</div>
               </div></span>
-            <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
+            <span class="fchip lytoggle applied" style="background:var(--new);border-color:var(--new)">Last season</span><span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
             <span style="flex:1"></span>
             <button class="btn sm" data-sel data-base="Send back">Send back (1)</button>
           </div>
@@ -1305,7 +1315,7 @@ button{font-family:inherit}
                     <div style="margin-top:5px;cursor:pointer" onclick="openM('m-dev')"><span class="flagmark">&#9873; Contract deviation</span></div></td>
                 <td><div class="rangehint">Range $42.00 - $50.00/visit</div><div class="rangehint">Customer Price $76.85/visit</div>
                     <div class="prow-line"><span class="px">$50.00/visit</span><span class="mg-ok">34.9%</span></div></td>
-                <td class="inc">$92.00 - Provider Metro Grounds Care<span class="sub">Active</span></td>
+                <td class="inc">$92.00 - Provider Metro Grounds Care<span class="sub" style="margin:0">Active</span><div class="lastyr"><b>LY</b> 24 visits &middot; Aug&ndash;Nov</div></td>
                 <td><span class="upic">&#8593;</span></td></tr>
 
               <tr data-line="9015 Queens Blvd" data-svc="Routine Landscaping" data-margin="21.7%" data-risk="" data-reason="Drive time"><td class="rowno">2</td><td class="chk"><span class="cbx on" data-row></span></td>
@@ -1315,7 +1325,7 @@ button{font-family:inherit}
                     <div class="prow-line"><span class="px">$90.00/visit</span><span class="mg-low">21.7%</span></div></td>
                 <td><div class="rangehint">Range $80.00 - $100.00/visit</div><div class="rangehint">Customer Price $307.38/visit</div>
                     <div class="prow-line"><span class="px">$100.00/visit</span><span class="mg-ok">67.5%</span></div></td>
-                <td class="inc">$86.00 - Provider Metro Grounds Care<span class="sub">Active</span></td>
+                <td class="inc">$86.00 - Provider Metro Grounds Care<span class="sub" style="margin:0">Active</span><div class="lastyr"><b>LY</b> 24 visits &middot; Aug&ndash;Nov</div></td>
                 <td><span class="upic">&#8593;</span></td></tr>
 
               <tr data-line="756 Alberta Dr" data-svc="Routine Landscaping" data-margin="40.0%" data-risk="" data-reason="&mdash;"><td class="rowno">3</td><td class="chk"><span class="cbx" data-row></span></td>
@@ -1325,7 +1335,7 @@ button{font-family:inherit}
                     <div class="prow-line"><span class="px">$60.00/visit</span><span class="mg-ok">40.0%</span></div></td>
                 <td><div class="rangehint">Range $70.00 - $84.00/visit</div><div class="rangehint">Customer Price $140.00/visit</div>
                     <div class="prow-line"><span class="px">$84.00/visit</span><span class="mg-ok">40.0%</span></div></td>
-                <td class="inc">$58.00 - Provider Metro Grounds Care<span class="sub">Active</span></td>
+                <td class="inc">$58.00 - Provider Metro Grounds Care<span class="sub" style="margin:0">Active</span><div class="lastyr"><b>LY</b> 24 visits &middot; Aug&ndash;Nov</div></td>
                 <td><span class="upic">&#8593;</span></td></tr>
             </tbody>
           </table>
@@ -1416,7 +1426,7 @@ button{font-family:inherit}
                 <label data-band="gte30"><span class="cbx"></span>30% and above</label>
                 <div class="fclear">Clear</div>
               </div></span>
-            <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
+            <span class="fchip lytoggle applied" style="background:var(--new);border-color:var(--new)">Last season</span><span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
             <span style="flex:1"></span>
             <button class="btn sm" data-sel data-base="Send back">Send back (1)</button>
           </div>
@@ -1441,7 +1451,7 @@ button{font-family:inherit}
                     <div class="prow-line" style="cursor:pointer" onclick="openM('m-range')"><span class="px bad">&#9888; $255.00/visit</span><span class="mg-low">&minus;2.0%</span></div></td>
                 <td><div class="rangehint">Range $193.28 - $241.60/visit</div><div class="rangehint">Customer Price $304.00/visit</div>
                     <div class="prow-line"><span class="px">$225.00/visit</span><span class="mg-low">26.0%</span></div></td>
-                <td class="inc">$238.00 - Provider Empire Site Services<span class="sub">Active</span></td>
+                <td class="inc">$238.00 - Provider Empire Site Services<span class="sub" style="margin:0">Active</span><div class="lastyr"><b>LY</b> 24 visits &middot; Aug&ndash;Nov</div></td>
                 <td><span class="upic">&#8593;</span></td></tr>
 
               <tr data-line="2450 Hempstead Tpke" data-svc="Routine Landscaping" data-margin="27.3%" data-risk="" data-reason="&mdash;"><td class="rowno">2</td><td class="chk"><span class="cbx" data-row></span></td>
@@ -1451,7 +1461,7 @@ button{font-family:inherit}
                     <div class="prow-line"><span class="px">$240.00/visit</span><span class="mg-low">27.3%</span></div></td>
                 <td><div class="rangehint">Range $180.00 - $230.00/visit</div><div class="rangehint">Customer Price $320.00/visit</div>
                     <div class="prow-line"><span class="px">$220.00/visit</span><span class="mg-ok">31.2%</span></div></td>
-                <td class="inc">$225.00 - Provider Empire Site Services<span class="sub">Active</span></td>
+                <td class="inc">$225.00 - Provider Empire Site Services<span class="sub" style="margin:0">Active</span><div class="lastyr"><b>LY</b> 24 visits &middot; Aug&ndash;Nov</div></td>
                 <td><span class="upic">&#8593;</span></td></tr>
 
               <tr data-line="977 E Jericho Tpke" data-svc="Routine Landscaping" data-margin="28.2%" data-risk="" data-reason="&mdash;"><td class="rowno">3</td><td class="chk"><span class="cbx" data-row></span></td>
@@ -1461,7 +1471,7 @@ button{font-family:inherit}
                     <div class="prow-line"><span class="px">$250.00/visit</span><span class="mg-low">28.2%</span></div></td>
                 <td><div class="rangehint">Range $190.00 - $240.00/visit</div><div class="rangehint">Customer Price $330.00/visit</div>
                     <div class="prow-line"><span class="px">$230.00/visit</span><span class="mg-ok">30.3%</span></div></td>
-                <td class="inc">$241.00 - Provider Empire Site Services<span class="sub">Active</span></td>
+                <td class="inc">$241.00 - Provider Empire Site Services<span class="sub" style="margin:0">Active</span><div class="lastyr"><b>LY</b> 24 visits &middot; Aug&ndash;Nov</div></td>
                 <td><span class="upic">&#8593;</span></td></tr>
             </tbody>
           </table>
@@ -1888,6 +1898,12 @@ function markScrollable(){
 window.addEventListener('load',markScrollable);
 window.addEventListener('resize',markScrollable);
 const _go=go; go=function(id){_go(id);setTimeout(markScrollable,0);};
+document.querySelectorAll('.lytoggle').forEach(c=>c.addEventListener('click',e=>{
+  e.stopPropagation();
+  const off=document.body.classList.toggle('hidelast');
+  document.querySelectorAll('.lytoggle').forEach(x=>x.classList.toggle('applied',!off));
+  setTimeout(markScrollable,0);
+}));
 document.querySelectorAll('.fwrap').forEach(wrap=>{
   const chip=wrap.querySelector('.fmargin'); if(!chip) return;
   chip.addEventListener('click',e=>{e.stopPropagation();
