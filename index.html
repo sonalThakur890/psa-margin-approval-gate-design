@@ -117,11 +117,13 @@ button{font-family:inherit}
 .scrollx::-webkit-scrollbar-thumb:hover{background:#8A929A}
 .scrollhint{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted);padding:6px 18px 0}
 .scrollhint b{color:var(--blue);font-weight:600}
-.lastyr{font-size:11px;color:#7A828A;white-space:nowrap;border-left:2px solid #D8DCE0;padding-left:6px;margin-top:3px;font-weight:400}
-.lastyr b{color:#4A5058;font-weight:600}
-.lastyr .d{font-weight:600}
-.lastyr .up{color:var(--bad)} .lastyr .dn{color:var(--warn)}
-body.hidelast .lastyr{display:none}
+.lycard{display:none;border-left:3px solid #8A929A}
+body.showly .lycard{display:block}
+.lycard .card-h{background:#F2F4F6}
+.lycard h3{color:#4A5058}
+.lyrow td{background:#FAFBFC}
+.lynow td{border-top:2px solid var(--line)}
+.lydelta td{background:#F2F4F6;font-weight:600}
 .grid th.frz1,.grid td.frz1{position:sticky;right:0;z-index:2}
 .grid tr:last-child td{border-bottom:none}
 .crow.hid{display:none}
@@ -377,10 +379,28 @@ body.hidelast .lastyr{display:none}
         <button class="tab" onclick="go('s1c')">Price Range Information</button>
       </div>
 
+            <div class="btnrow" style="margin:-6px 0 16px"><button class="btn out sm lytoggle">Compare to last season</button></div>
+      <div class="card lycard">
+        <div class="card-h"><h3>Last season</h3>
+          <span class="badge b-grey">PSA-250305-00071</span>
+          <span style="margin-left:auto;font-size:11.5px;color:var(--muted)">Same property, same service types</span></div>
+        <div class="card-b flush">
+          <table class="grid" style="min-width:880px">
+            <thead><tr><th style="min-width:210px">Service type</th><th class="num">Visits/yr</th><th>Service months</th><th class="num">Provider $</th><th class="num">Customer $</th><th class="num">Margin</th></tr></thead>
+            <tbody>
+              <tr class="lyrow"><td>Routine Landscaping Service</td><td class="num">26</td><td>Apr&ndash;Sep</td><td class="num">&mdash;</td><td class="num">&mdash;</td><td class="num"><span class="sub" style="margin:0">not priced yet</span></td></tr>
+              <tr class="lyrow"><td>Fall Cleanup</td><td class="num">1</td><td>Nov</td><td class="num">&mdash;</td><td class="num">&mdash;</td><td class="num"><span class="sub" style="margin:0">not priced yet</span></td></tr>
+              <tr class="lynow"><td><b>This season</b></td><td class="num">32</td><td>Mar&ndash;Nov</td><td class="num">&mdash;</td><td class="num">&mdash;</td><td class="num">&mdash;</td></tr>
+              <tr class="lydelta"><td>Change</td><td class="num"><span class="mg-low">+6 visits</span></td><td><span class="mg-low">+2 months</span></td><td class="num">&mdash;</td><td class="num">&mdash;</td><td class="num">&mdash;</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <div class="card" style="border-top:none;border-radius:0 0 var(--r) var(--r)">
         <div class="card-h"><h3>Service Details</h3>
           <div style="margin-left:auto" class="btnrow"><button class="btn out sm">Separate Agreements</button></div></div>
-        <div class="card-b flush" style="overflow-x:auto">
+        <div class="card-b flush">
           <table class="grid" style="min-width:1320px">
             <thead><tr>
               <th>Customer Service Types</th><th>Provider Service Type</th><th>Job Scope</th>
@@ -395,7 +415,7 @@ body.hidelast .lastyr{display:none}
                 <td>Apr&ndash;Sep</td><td>Weekly</td>
                 <td class="num">1</td>
                 <td>&mdash;</td><td>&mdash;</td>
-                <td class="num">26<div class="lastyr"><b>LY</b> 24 <span class="d up">+2</span></div></td><td class="newcol num">26</td></tr>
+                <td class="num">26</td><td class="newcol num">26</td></tr>
               <tr style="background:#FFFAF6">
                 <td>Routine Landscaping Service</td><td>Mowing &amp; Cleanup&hellip;</td>
                 <td style="cursor:pointer;background:#FFF4EA" onclick="openM('m-dev')" title="Customer contracted Mar, Oct — provider has Mar, Oct, November">
@@ -446,10 +466,28 @@ body.hidelast .lastyr{display:none}
         <button class="tab on">Price Range Information</button>
       </div>
 
+            <div class="btnrow" style="margin:-6px 0 16px"><button class="btn out sm lytoggle">Compare to last season</button></div>
+      <div class="card lycard">
+        <div class="card-h"><h3>Last season</h3>
+          <span class="badge b-grey">PSA-250228-00019</span>
+          <span style="margin-left:auto;font-size:11.5px;color:var(--muted)">Same properties, same service types</span></div>
+        <div class="card-b flush">
+          <table class="grid" style="min-width:880px">
+            <thead><tr><th style="min-width:210px">Service type</th><th class="num">Visits/yr</th><th>Service months</th><th class="num">Provider $</th><th class="num">Customer $</th><th class="num">Margin</th></tr></thead>
+            <tbody>
+              <tr class="lyrow"><td>Routine Landscaping Service</td><td class="num">11</td><td>Jan&ndash;Nov</td><td class="num">$1,144</td><td class="num">$2,200</td><td class="num"><span class="mg-ok">48.0%</span></td></tr>
+              <tr class="lyrow"><td>Irrigation Shutdown<span class="sub" style="margin:0">Provider Per Occurrence</span></td><td class="num">1</td><td>Nov</td><td class="num">$210</td><td class="num">$0</td><td class="num"><span class="sub" style="margin:0">n/a</span></td></tr>
+              <tr class="lynow"><td><b>This season</b><span class="sub" style="margin:0">at the range low &ndash; high</span></td><td class="num">11</td><td>Jan&ndash;Nov</td><td class="num">$1,232 &ndash; $1,540</td><td class="num">$2,200</td><td class="num"><span class="mg-ok">44.0%</span> &ndash; <span class="mg-ok">30.0%</span></td></tr>
+              <tr class="lydelta"><td>Change</td><td class="num">&mdash;</td><td>&mdash;</td><td class="num"><span class="mg-low">+$88 to +$396</span></td><td class="num">&mdash;</td><td class="num"><span class="mg-low">&minus;4.0 to &minus;18.0 pts</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <div class="card" style="border-left:3px solid var(--new)">
         <div class="card-h" style="background:var(--new-bg)"><h3 style="color:#8A4508">Margin projection</h3>
           <span class="badge b-grey">Template &mdash; before any PSA is generated</span></div>
-        <div class="card-b flush" style="overflow-x:auto">
+        <div class="card-b flush">
           <table class="grid" style="min-width:1080px">
             <thead><tr>
               <th>Service type</th><th class="num">Visits/yr</th>
@@ -486,7 +524,7 @@ body.hidelast .lastyr{display:none}
               </div></span></div>
           <div style="margin-left:auto" class="btnrow"><button class="btn out sm">Will Not Price</button><button class="btn out sm">Edit Separately</button><button class="btn out sm">Reset</button><button class="btn out sm">Export &#11015;</button><button class="btn out sm">Import &#11014;</button></div>
         </div>
-        <div class="card-b flush" style="overflow-x:auto">
+        <div class="card-b flush">
           <table class="grid" data-filterable style="min-width:1240px">
             <thead>
               <tr>
@@ -506,7 +544,6 @@ body.hidelast .lastyr{display:none}
                 <td>(00041-W) &mdash; 1805 Greens Road<span class="sub">Houston, TX, 77032</span></td><td>Vinod Baradwaj</td>
                 <td><div class="rangehint">Customer Price $0.00</div><div class="rangehint">Tracking Only</div></td>
                 <td><div class="rangehint">Customer Price $100.00/month</div>
-                    <div class="lastyr"><b>LY</b> $52.00/visit &middot; 11 visits</div>
                     <div style="display:flex;gap:6px;align-items:flex-start;margin-top:4px">
                       <div class="pricestack"><div class="moneyin" style="min-width:104px"><span class="cur">$</span><span>56</span></div><span class="mg-ok mgs">44%</span></div>
                       <span style="color:var(--muted);font-size:11px;margin-top:7px">to</span>
@@ -522,7 +559,6 @@ body.hidelast .lastyr{display:none}
                 <td>(00052-W) &mdash; 2440 Bay Area Blvd<span class="sub">Houston, TX, 77058</span></td><td>Vinod Baradwaj</td>
                 <td><div class="rangehint">Customer Price $0.00</div><div class="rangehint">Tracking Only</div></td>
                 <td><div class="rangehint">Customer Price $100.00/month</div>
-                    <div class="lastyr"><b>LY</b> $52.00/visit &middot; 11 visits</div>
                     <div style="display:flex;gap:6px;align-items:flex-start;margin-top:4px">
                       <div class="pricestack"><div class="moneyin" style="min-width:104px"><span class="cur">$</span><span>56</span></div><span class="mg-ok mgs">44%</span></div>
                       <span style="color:var(--muted);font-size:11px;margin-top:7px">to</span>
@@ -564,10 +600,28 @@ body.hidelast .lastyr{display:none}
         <button class="btn dis sm" title="1 contract deviation needs a reason before continuing">Save and send for approval (3)</button>
       </div>
 
+            <div class="btnrow" style="margin:-6px 0 16px"><button class="btn out sm lytoggle">Compare to last season</button></div>
+      <div class="card lycard">
+        <div class="card-h"><h3>Last season</h3>
+          <span class="badge b-grey">PSA-250312-00044</span>
+          <span style="margin-left:auto;font-size:11.5px;color:var(--muted)">Same 3 properties, same service types</span></div>
+        <div class="card-b flush">
+          <table class="grid" style="min-width:880px">
+            <thead><tr><th style="min-width:230px">Service type</th><th class="num">Visits/yr</th><th>Service months</th><th class="num">Provider $</th><th class="num">Customer $</th><th class="num">Margin</th></tr></thead>
+            <tbody>
+              <tr class="lyrow"><td>Routine Landscaping Service<span class="sub" style="margin:0">provider $ from Incumbent Data below</span></td><td class="num">24</td><td>Jul&ndash;Jun</td><td class="num">$4,296</td><td class="num">$5,520</td><td class="num"><span class="mg-low">22.2%</span></td></tr>
+              <tr class="lyrow"><td>Tree Pruning<span class="sub" style="margin:0">Tracking Only both sides</span></td><td class="num">&mdash;</td><td>&mdash;</td><td class="num">&mdash;</td><td class="num">&mdash;</td><td class="num"><span class="sub" style="margin:0">n/a</span></td></tr>
+              <tr class="lynow"><td><b>This season</b><span class="sub" style="margin:0">as entered</span></td><td class="num">24</td><td>Aug&ndash;Jul</td><td class="num">$4,368</td><td class="num">$5,520</td><td class="num"><span class="mg-low">20.9%</span></td></tr>
+              <tr class="lydelta"><td>Change</td><td class="num">&mdash;</td><td>&mdash;</td><td class="num"><span class="mg-low">+$72</span></td><td class="num">&mdash;</td><td class="num"><span class="mg-low">&minus;1.3 pts</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <div class="card" style="border-left:3px solid var(--new)">
         <div class="card-h" style="background:var(--new-bg)"><h3 style="color:#8A4508">Margin projection</h3>
           <span class="badge b-grey">Group total &mdash; 3 properties</span></div>
-        <div class="card-b flush" style="overflow-x:auto">
+        <div class="card-b flush">
           <table class="grid" style="min-width:1080px">
             <thead><tr>
               <th>Service type</th><th class="num">Visits/yr</th>
@@ -591,7 +645,7 @@ body.hidelast .lastyr{display:none}
       </div>
 
       <div class="card">
-        <div class="card-b flush" style="overflow-x:auto">
+        <div class="card-b flush">
           <table class="grid" style="min-width:1180px">
             <thead>
               <tr>
@@ -612,7 +666,6 @@ body.hidelast .lastyr{display:none}
                 <td><div class="rangehint">Select Provider</div><div class="moneyin" style="min-width:118px;color:#9AA2AA"><span>Greenscape TX</span><span>⌄</span></div></td>
                 <td style="background:#FFFBF7"><div class="rangehint">Range $60.00 – $80.00/visit</div>
                     <div class="rangehint" style="color:var(--new);font-weight:600">Customer $110.00/visit</div>
-                    <div class="lastyr"><b>LY</b> $64.00/visit &middot; 24 visits</div>
                     <div class="pricestack"><div class="moneyin" style="min-width:128px"><span class="cur">$</span><span>68.00</span></div><span class="mg-ok mgs">38%</span></div>
                     <div style="margin-top:5px;cursor:pointer" onclick="openM('m-dev')"><span class="badge b-new">&#9873; Contract deviation</span></div>
                     </div></td>
@@ -624,7 +677,6 @@ body.hidelast .lastyr{display:none}
                 <td><div class="rangehint">Select Provider</div><div class="moneyin" style="min-width:118px;color:#9AA2AA"><span>Hill Country LS</span><span>⌄</span></div></td>
                 <td><div class="rangehint">Range $40.00 – $55.00/visit</div>
                     <div class="rangehint" style="color:var(--new);font-weight:600">Customer $62.00/visit</div>
-                    <div class="lastyr"><b>LY</b> $45.00/visit &middot; 24 visits</div>
                     <div class="pricestack"><div class="moneyin" style="min-width:128px"><span class="cur">$</span><span>49.00</span></div><span class="mg-low mgs">21%</span></div>
                     <div class="sub" style="margin-top:3px"><b>Drive time</b></div></td>
                 <td><div class="rangehint">$0.00</div><div class="rangehint">Tracking Only</div></td>
@@ -635,7 +687,6 @@ body.hidelast .lastyr{display:none}
                 <td><div class="rangehint">Select Provider</div><div class="moneyin" style="min-width:118px;color:#9AA2AA"><span>Hill Country LS</span><span>⌄</span></div></td>
                 <td><div class="rangehint">Range $45.00 – $60.00/visit</div>
                     <div class="rangehint" style="color:var(--new);font-weight:600">Customer $58.00/visit</div>
-                    <div class="lastyr"><b>LY</b> $50.00/visit &middot; 20 visits <span class="d dn">&minus;4</span></div>
                     <div class="pricestack"><div class="moneyin flag" style="min-width:128px;cursor:pointer" onclick="openM('m-range')"><span class="cur">$</span><span>65.00</span></div><span class="mg-low mgs">−12%</span></div>
                     <div class="rangehint" style="color:var(--coral);margin-top:3px">⚠ Outside recommended range</div>
                     <div class="sub" style="margin-top:3px"><b>Incorrect measurements</b></div></td>
@@ -677,7 +728,7 @@ body.hidelast .lastyr{display:none}
                 <label data-band="gte30"><span class="cbx"></span>30% and above</label>
                 <div class="fclear">Clear</div>
               </div></span>
-        <span class="fchip lytoggle applied" style="background:var(--new);border-color:var(--new)">Last season</span><span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
+        <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
         <span style="font-size:12.5px;color:var(--blue);align-self:center">&#8635; Clear All</span>
       </div>
       <div class="pill-row"><span class="fchip applied">Landscaping</span></div>
@@ -700,7 +751,7 @@ body.hidelast .lastyr{display:none}
           <span style="font-size:13px;color:var(--blue);font-weight:500;border-bottom:2px solid var(--blue);padding-bottom:6px">By customer</span>
           <span style="font-size:13px;color:var(--muted);padding-bottom:6px">By term</span>
         </div></div>
-        <div class="card-b flush" style="overflow-x:auto">
+        <div class="card-b flush">
           <table class="grid" data-filterable id="qtbl" style="min-width:1060px">
             <thead><tr>
               <th style="width:34px"></th>
@@ -806,7 +857,7 @@ body.hidelast .lastyr{display:none}
               </div></span>
           </div>
         </div>
-        <div class="card-b flush" style="overflow-x:auto">
+        <div class="card-b flush">
           <table class="grid" data-filterable style="min-width:1080px">
             <thead><tr>
               <th class="chk"><span class="cbx"></span></th>
@@ -877,7 +928,7 @@ body.hidelast .lastyr{display:none}
 
       <div class="card">
         <div class="card-h"><h3>Scope of Work &mdash; Pricing</h3></div>
-        <div class="card-b flush" style="overflow-x:auto">
+        <div class="card-b flush">
           <table class="grid" style="min-width:1100px">
             <thead><tr>
               <th style="min-width:200px">Service Type</th><th>Service Schedule</th><th>Price</th>
@@ -955,7 +1006,7 @@ body.hidelast .lastyr{display:none}
       </div><span class="tabarrow">&rsaquo;</span></div>
 
       <div class="card" style="margin-top:0;border-top:none;border-radius:0 0 var(--r) var(--r)">
-        <div class="card-b flush" style="overflow-x:auto">
+        <div class="card-b flush">
           <table class="grid" style="min-width:1240px">
             <thead><tr>
               <th class="chk"><span class="cbx"></span></th><th class="rowno"></th>
@@ -1047,7 +1098,7 @@ body.hidelast .lastyr{display:none}
             <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Provider invoice status</span>
           </div>
         </div>
-        <div class="card-b flush" style="overflow-x:auto">
+        <div class="card-b flush">
           <table class="grid" style="min-width:1500px">
             <thead><tr>
               <th class="frzL1" style="min-width:92px">Start Date</th><th class="frzL2" style="min-width:92px">End Date</th><th style="min-width:60px">Due Date</th>
@@ -1170,12 +1221,12 @@ body.hidelast .lastyr{display:none}
                 <label data-band="gte30"><span class="cbx"></span>30% and above</label>
                 <div class="fclear">Clear</div>
               </div></span>
-            <span class="fchip lytoggle applied" style="background:var(--new);border-color:var(--new)">Last season</span><span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
+            <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
             <span style="flex:1"></span>
             <button class="btn sm" data-sel data-base="Send back">Send back (1)</button>
           </div>
         </div>
-        <div class="card-b flush" style="overflow-x:auto">
+        <div class="card-b flush">
           <table class="grid" data-filterable style="min-width:1460px">
             <thead>
               <tr>
@@ -1196,7 +1247,7 @@ body.hidelast .lastyr{display:none}
                     <div class="prow-line"><span class="px">$187.00/visit</span><span class="mg-ok">33.2%</span></div></td>
                 <td><div class="rangehint">Range $120.00 - $165.00/visit</div><div class="rangehint">Customer Price $240.00/visit</div>
                     <div class="prow-line"><span class="px">$165.00/visit</span><span class="mg-ok">31.3%</span></div></td>
-                <td class="inc">$187.50 - Provider ATL Landscaping<span class="sub" style="margin:0">Active</span><div class="lastyr"><b>LY</b> 24 visits &middot; Aug&ndash;Nov</div></td>
+                <td class="inc">$187.50 - Provider ATL Landscaping<span class="sub" style="margin:0">Active</span></td>
                 <td><span class="upic">&#8593;</span></td></tr>
 
               <tr data-line="Sunbrook Academy (774)" data-svc="Routine Landscaping" data-margin="32.0%" data-risk="" data-reason="&mdash;">
@@ -1207,7 +1258,7 @@ body.hidelast .lastyr{display:none}
                     <div class="prow-line"><span class="px">$170.00/visit</span><span class="mg-ok">32.0%</span></div></td>
                 <td><div class="rangehint">Range $110.00 - $150.00/visit</div><div class="rangehint">Customer Price $230.00/visit</div>
                     <div class="prow-line"><span class="px">$150.00/visit</span><span class="mg-ok">34.8%</span></div></td>
-                <td class="inc">$172.00 - Provider ATL Landscaping<span class="sub" style="margin:0">Active</span><div class="lastyr"><b>LY</b> 24 visits &middot; Aug&ndash;Nov</div></td>
+                <td class="inc">$172.00 - Provider ATL Landscaping<span class="sub" style="margin:0">Active</span></td>
                 <td><span class="upic">&#8593;</span></td></tr>
             </tbody>
           </table>
@@ -1253,7 +1304,7 @@ body.hidelast .lastyr{display:none}
       <div class="card" style="border-left:3px solid var(--new)">
         <div class="card-h" style="background:var(--new-bg)"><h3 style="color:#8A4508">Margin projection</h3>
           <span class="badge b-grey">Group total &mdash; 3 properties</span></div>
-        <div class="card-b flush" style="overflow-x:auto">
+        <div class="card-b flush">
           <table class="grid" style="min-width:1080px">
             <thead><tr>
               <th>Service type</th><th class="num">Visits/yr</th>
@@ -1289,12 +1340,12 @@ body.hidelast .lastyr{display:none}
                 <label data-band="gte30"><span class="cbx"></span>30% and above</label>
                 <div class="fclear">Clear</div>
               </div></span>
-            <span class="fchip lytoggle applied" style="background:var(--new);border-color:var(--new)">Last season</span><span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
+            <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
             <span style="flex:1"></span>
             <button class="btn sm" data-sel data-base="Send back">Send back (1)</button>
           </div>
         </div>
-        <div class="card-b flush" style="overflow-x:auto">
+        <div class="card-b flush">
           <table class="grid" data-filterable style="min-width:1460px">
             <thead>
               <tr>
@@ -1315,7 +1366,7 @@ body.hidelast .lastyr{display:none}
                     <div style="margin-top:5px;cursor:pointer" onclick="openM('m-dev')"><span class="flagmark">&#9873; Contract deviation</span></div></td>
                 <td><div class="rangehint">Range $42.00 - $50.00/visit</div><div class="rangehint">Customer Price $76.85/visit</div>
                     <div class="prow-line"><span class="px">$50.00/visit</span><span class="mg-ok">34.9%</span></div></td>
-                <td class="inc">$92.00 - Provider Metro Grounds Care<span class="sub" style="margin:0">Active</span><div class="lastyr"><b>LY</b> 24 visits &middot; Aug&ndash;Nov</div></td>
+                <td class="inc">$92.00 - Provider Metro Grounds Care<span class="sub" style="margin:0">Active</span></td>
                 <td><span class="upic">&#8593;</span></td></tr>
 
               <tr data-line="9015 Queens Blvd" data-svc="Routine Landscaping" data-margin="21.7%" data-risk="" data-reason="Drive time"><td class="rowno">2</td><td class="chk"><span class="cbx on" data-row></span></td>
@@ -1325,7 +1376,7 @@ body.hidelast .lastyr{display:none}
                     <div class="prow-line"><span class="px">$90.00/visit</span><span class="mg-low">21.7%</span></div></td>
                 <td><div class="rangehint">Range $80.00 - $100.00/visit</div><div class="rangehint">Customer Price $307.38/visit</div>
                     <div class="prow-line"><span class="px">$100.00/visit</span><span class="mg-ok">67.5%</span></div></td>
-                <td class="inc">$86.00 - Provider Metro Grounds Care<span class="sub" style="margin:0">Active</span><div class="lastyr"><b>LY</b> 24 visits &middot; Aug&ndash;Nov</div></td>
+                <td class="inc">$86.00 - Provider Metro Grounds Care<span class="sub" style="margin:0">Active</span></td>
                 <td><span class="upic">&#8593;</span></td></tr>
 
               <tr data-line="756 Alberta Dr" data-svc="Routine Landscaping" data-margin="40.0%" data-risk="" data-reason="&mdash;"><td class="rowno">3</td><td class="chk"><span class="cbx" data-row></span></td>
@@ -1335,7 +1386,7 @@ body.hidelast .lastyr{display:none}
                     <div class="prow-line"><span class="px">$60.00/visit</span><span class="mg-ok">40.0%</span></div></td>
                 <td><div class="rangehint">Range $70.00 - $84.00/visit</div><div class="rangehint">Customer Price $140.00/visit</div>
                     <div class="prow-line"><span class="px">$84.00/visit</span><span class="mg-ok">40.0%</span></div></td>
-                <td class="inc">$58.00 - Provider Metro Grounds Care<span class="sub" style="margin:0">Active</span><div class="lastyr"><b>LY</b> 24 visits &middot; Aug&ndash;Nov</div></td>
+                <td class="inc">$58.00 - Provider Metro Grounds Care<span class="sub" style="margin:0">Active</span></td>
                 <td><span class="upic">&#8593;</span></td></tr>
             </tbody>
           </table>
@@ -1345,7 +1396,7 @@ body.hidelast .lastyr{display:none}
       <div class="card" style="border-left:3px solid var(--new)">
         <div class="card-h" style="background:var(--new-bg)"><h3 style="color:#8A4508">Contract deviations</h3>
           <span class="badge b-ok">2 of 2 required reasons given</span><span class="badge b-l1">1 reason optional</span><span class="badge b-grey">1 warn only</span></div>
-        <div class="card-b flush" style="overflow-x:auto">
+        <div class="card-b flush">
           <table class="grid" style="min-width:1060px">
             <thead><tr><th>Service type</th><th>Field</th><th class="num">Customer signed</th><th class="num">Agreement configured</th><th class="newcol">Difference</th><th>Reason given</th><th>Rule</th></tr></thead>
             <tbody>
@@ -1426,12 +1477,12 @@ body.hidelast .lastyr{display:none}
                 <label data-band="gte30"><span class="cbx"></span>30% and above</label>
                 <div class="fclear">Clear</div>
               </div></span>
-            <span class="fchip lytoggle applied" style="background:var(--new);border-color:var(--new)">Last season</span><span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
+            <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
             <span style="flex:1"></span>
             <button class="btn sm" data-sel data-base="Send back">Send back (1)</button>
           </div>
         </div>
-        <div class="card-b flush" style="overflow-x:auto">
+        <div class="card-b flush">
           <table class="grid" data-filterable style="min-width:1460px">
             <thead>
               <tr>
@@ -1451,7 +1502,7 @@ body.hidelast .lastyr{display:none}
                     <div class="prow-line" style="cursor:pointer" onclick="openM('m-range')"><span class="px bad">&#9888; $255.00/visit</span><span class="mg-low">&minus;2.0%</span></div></td>
                 <td><div class="rangehint">Range $193.28 - $241.60/visit</div><div class="rangehint">Customer Price $304.00/visit</div>
                     <div class="prow-line"><span class="px">$225.00/visit</span><span class="mg-low">26.0%</span></div></td>
-                <td class="inc">$238.00 - Provider Empire Site Services<span class="sub" style="margin:0">Active</span><div class="lastyr"><b>LY</b> 24 visits &middot; Aug&ndash;Nov</div></td>
+                <td class="inc">$238.00 - Provider Empire Site Services<span class="sub" style="margin:0">Active</span></td>
                 <td><span class="upic">&#8593;</span></td></tr>
 
               <tr data-line="2450 Hempstead Tpke" data-svc="Routine Landscaping" data-margin="27.3%" data-risk="" data-reason="&mdash;"><td class="rowno">2</td><td class="chk"><span class="cbx" data-row></span></td>
@@ -1461,7 +1512,7 @@ body.hidelast .lastyr{display:none}
                     <div class="prow-line"><span class="px">$240.00/visit</span><span class="mg-low">27.3%</span></div></td>
                 <td><div class="rangehint">Range $180.00 - $230.00/visit</div><div class="rangehint">Customer Price $320.00/visit</div>
                     <div class="prow-line"><span class="px">$220.00/visit</span><span class="mg-ok">31.2%</span></div></td>
-                <td class="inc">$225.00 - Provider Empire Site Services<span class="sub" style="margin:0">Active</span><div class="lastyr"><b>LY</b> 24 visits &middot; Aug&ndash;Nov</div></td>
+                <td class="inc">$225.00 - Provider Empire Site Services<span class="sub" style="margin:0">Active</span></td>
                 <td><span class="upic">&#8593;</span></td></tr>
 
               <tr data-line="977 E Jericho Tpke" data-svc="Routine Landscaping" data-margin="28.2%" data-risk="" data-reason="&mdash;"><td class="rowno">3</td><td class="chk"><span class="cbx" data-row></span></td>
@@ -1471,7 +1522,7 @@ body.hidelast .lastyr{display:none}
                     <div class="prow-line"><span class="px">$250.00/visit</span><span class="mg-low">28.2%</span></div></td>
                 <td><div class="rangehint">Range $190.00 - $240.00/visit</div><div class="rangehint">Customer Price $330.00/visit</div>
                     <div class="prow-line"><span class="px">$230.00/visit</span><span class="mg-ok">30.3%</span></div></td>
-                <td class="inc">$241.00 - Provider Empire Site Services<span class="sub" style="margin:0">Active</span><div class="lastyr"><b>LY</b> 24 visits &middot; Aug&ndash;Nov</div></td>
+                <td class="inc">$241.00 - Provider Empire Site Services<span class="sub" style="margin:0">Active</span></td>
                 <td><span class="upic">&#8593;</span></td></tr>
             </tbody>
           </table>
@@ -1481,7 +1532,7 @@ body.hidelast .lastyr{display:none}
       <div class="card" style="border-left:3px solid var(--new)">
         <div class="card-h" style="background:var(--new-bg)"><h3 style="color:#8A4508">Contract deviations</h3>
           <span class="badge b-ok">1 of 1 required reason given</span><span class="badge b-l1">1 reason optional</span><span class="badge b-grey">1 warn only</span></div>
-        <div class="card-b flush" style="overflow-x:auto">
+        <div class="card-b flush">
           <table class="grid" style="min-width:1060px">
             <thead><tr><th>Service type</th><th>Field</th><th class="num">Customer signed</th><th class="num">Agreement configured</th><th class="newcol">Difference</th><th>Reason given</th><th>Rule</th></tr></thead>
             <tbody>
@@ -1549,7 +1600,7 @@ body.hidelast .lastyr{display:none}
             <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Verdict</span>
           </div>
         </div>
-        <div class="card-b flush" style="overflow-x:auto">
+        <div class="card-b flush">
           <table class="grid" style="min-width:1620px">
             <thead>
               <tr>
@@ -1885,14 +1936,16 @@ function applyMarginFilter(wrap){
 }
 function markScrollable(){
   document.querySelectorAll('.card-b.flush').forEach(w=>{
+    if(w.offsetParent===null && w.clientWidth===0) return;   // hidden — measurement is meaningless
     const over = w.scrollWidth > w.clientWidth + 1;
     w.classList.toggle('scrollx', over);
     let hint = w.previousElementSibling;
-    if(over && !(hint && hint.classList && hint.classList.contains('scrollhint'))){
+    const has = hint && hint.classList && hint.classList.contains('scrollhint');
+    if(over && !has){
       const h=document.createElement('div'); h.className='scrollhint';
       h.innerHTML='<b>&#8596;</b> scroll sideways for the remaining columns';
       w.parentNode.insertBefore(h,w);
-    }
+    } else if(!over && has){ hint.remove(); }
   });
 }
 window.addEventListener('load',markScrollable);
@@ -1900,8 +1953,11 @@ window.addEventListener('resize',markScrollable);
 const _go=go; go=function(id){_go(id);setTimeout(markScrollable,0);};
 document.querySelectorAll('.lytoggle').forEach(c=>c.addEventListener('click',e=>{
   e.stopPropagation();
-  const off=document.body.classList.toggle('hidelast');
-  document.querySelectorAll('.lytoggle').forEach(x=>x.classList.toggle('applied',!off));
+  const on=document.body.classList.toggle('showly');
+  document.querySelectorAll('.lytoggle').forEach(x=>{
+    x.classList.toggle('newb',on);
+    x.textContent = on ? 'Hide last season' : 'Compare to last season';
+  });
   setTimeout(markScrollable,0);
 }));
 document.querySelectorAll('.fwrap').forEach(wrap=>{
