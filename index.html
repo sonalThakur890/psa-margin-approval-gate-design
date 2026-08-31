@@ -385,13 +385,16 @@ body.showly .lycard{display:block}
           <span class="badge b-grey">PSA-250305-00071</span>
           <span style="margin-left:auto;font-size:11.5px;color:var(--muted)">Same property, same service types</span></div>
         <div class="card-b flush">
-          <table class="grid" style="min-width:880px">
-            <thead><tr><th style="min-width:210px">Service type</th><th class="num">Visits/yr</th><th>Service months</th><th class="num">Provider $</th><th class="num">Customer $</th><th class="num">Margin</th></tr></thead>
+          <table class="grid" style="min-width:1320px">
+            <thead><tr>
+              <th>Customer Service Types</th><th>Provider Service Type</th><th>Job Scope</th>
+              <th>Service Months</th><th>Service Interval</th><th class="num">Service Frequency</th>
+              <th>Due Date</th><th>Service Days</th><th class="num">Total Visits</th><th class="num">Customer contracted</th>
+            </tr></thead>
             <tbody>
-              <tr class="lyrow"><td>Routine Landscaping Service</td><td class="num">26</td><td>Apr&ndash;Sep</td><td class="num">&mdash;</td><td class="num">&mdash;</td><td class="num"><span class="sub" style="margin:0">not priced yet</span></td></tr>
-              <tr class="lyrow"><td>Fall Cleanup</td><td class="num">1</td><td>Nov</td><td class="num">&mdash;</td><td class="num">&mdash;</td><td class="num"><span class="sub" style="margin:0">not priced yet</span></td></tr>
-              <tr class="lynow"><td><b>This season</b></td><td class="num">32</td><td>Mar&ndash;Nov</td><td class="num">&mdash;</td><td class="num">&mdash;</td><td class="num">&mdash;</td></tr>
-              <tr class="lydelta"><td>Change</td><td class="num"><span class="mg-low">+6 visits</span></td><td><span class="mg-low">+2 months</span></td><td class="num">&mdash;</td><td class="num">&mdash;</td><td class="num">&mdash;</td></tr>
+              <tr class="lyrow"><td><b>Routine Landscaping Service</b></td><td>Routine Landscaping Service</td><td>Mowing &amp; Cleanup&hellip;</td><td>Apr&ndash;Sep</td><td>Weekly</td><td class="num">1</td><td>&mdash;</td><td>&mdash;</td><td class="num">26</td><td class="num">26</td></tr>
+              <tr class="lyrow"><td><b>Irrigation Shutdown</b></td><td>Irrigation Shutdown</td><td>SHUT DOWN &amp; IS&hellip;</td><td>Nov</td><td>Seasonal</td><td class="num">1</td><td>11/30</td><td>&mdash;</td><td class="num">1</td><td class="num">1</td></tr>
+              <tr class="lyrow"><td><b>Fall Cleanup</b></td><td>Fall Cleanup</td><td>- Perform a full-&hellip;</td><td>Nov</td><td>Seasonal</td><td class="num">1</td><td>11/30</td><td>&mdash;</td><td class="num">1</td><td class="num">1</td></tr>
             </tbody>
           </table>
         </div>
@@ -470,15 +473,33 @@ body.showly .lycard{display:block}
       <div class="card lycard">
         <div class="card-h"><h3>Last season</h3>
           <span class="badge b-grey">PSA-250228-00019</span>
-          <span style="margin-left:auto;font-size:11.5px;color:var(--muted)">Same properties, same service types</span></div>
+          <span style="margin-left:auto;font-size:11.5px;color:var(--muted)">Same 2 properties &middot; price actually paid</span></div>
         <div class="card-b flush">
-          <table class="grid" style="min-width:880px">
-            <thead><tr><th style="min-width:210px">Service type</th><th class="num">Visits/yr</th><th>Service months</th><th class="num">Provider $</th><th class="num">Customer $</th><th class="num">Margin</th></tr></thead>
+          <table class="grid" style="min-width:1240px">
+            <thead>
+              <tr>
+                <th class="rowno" rowspan="2"></th><th rowspan="2">Property</th><th rowspan="2">Field Owner</th>
+                <th class="grp">Customer Line Item<span class="sub">Tree Pruning</span></th>
+                <th class="grp">Customer Line Item<span class="sub">Routine Landscaping Service</span></th>
+                <th class="grp">Customer Line Item<span class="sub">Irrigation Shutdown</span></th>
+              </tr>
+              <tr>
+                <th class="grp">Provider Line Item<span class="sub">Tree Pruning<span style="display:block;color:#8A929A;font-weight:600;font-size:10px;letter-spacing:.03em;margin-top:3px">PROVIDER PRICE &middot; MARGIN&nbsp;%</span></span></th>
+                <th class="grp">Provider Line Item<span class="sub">Routine Landscaping Service (Jan-Nov)<span style="display:block;color:#8A929A;font-weight:600;font-size:10px;letter-spacing:.03em;margin-top:3px">PROVIDER PRICE &middot; MARGIN&nbsp;%</span></span></th>
+                <th class="grp">Provider Line Item<span class="sub">Irrigation Shutdown<span style="display:block;color:#8A929A;font-weight:600;font-size:10px;letter-spacing:.03em;margin-top:3px">PROVIDER PRICE &middot; MARGIN&nbsp;%</span></span></th>
+              </tr>
+            </thead>
             <tbody>
-              <tr class="lyrow"><td>Routine Landscaping Service</td><td class="num">11</td><td>Jan&ndash;Nov</td><td class="num">$1,144</td><td class="num">$2,200</td><td class="num"><span class="mg-ok">48.0%</span></td></tr>
-              <tr class="lyrow"><td>Irrigation Shutdown<span class="sub" style="margin:0">Provider Per Occurrence</span></td><td class="num">1</td><td>Nov</td><td class="num">$210</td><td class="num">$0</td><td class="num"><span class="sub" style="margin:0">n/a</span></td></tr>
-              <tr class="lynow"><td><b>This season</b><span class="sub" style="margin:0">at the range low &ndash; high</span></td><td class="num">11</td><td>Jan&ndash;Nov</td><td class="num">$1,232 &ndash; $1,540</td><td class="num">$2,200</td><td class="num"><span class="mg-ok">44.0%</span> &ndash; <span class="mg-ok">30.0%</span></td></tr>
-              <tr class="lydelta"><td>Change</td><td class="num">&mdash;</td><td>&mdash;</td><td class="num"><span class="mg-low">+$88 to +$396</span></td><td class="num">&mdash;</td><td class="num"><span class="mg-low">&minus;4.0 to &minus;18.0 pts</span></td></tr>
+              <tr class="lyrow"><td class="rowno">1</td>
+                <td>(00041-W) &mdash; 1805 Greens Road<span class="sub">Houston, TX, 77032</span></td><td>Vinod Baradwaj</td>
+                <td><div class="rangehint">Customer Price $0.00</div><div class="rangehint">Tracking Only</div></td>
+                <td><div class="rangehint">Customer Price $100.00/month</div><div style="margin-top:4px;font-weight:600;font-size:13px">$52.00<span class="mg-ok mgs" style="margin-left:8px">48%</span></div></td>
+                <td><div class="rangehint">Customer Price $0.00</div><div class="rangehint">Tracking Only</div><div style="margin-top:4px;font-weight:600;font-size:13px">$105.00<span class=" mgs" style="margin-left:8px">n/a</span></div></td></tr>
+              <tr class="lyrow"><td class="rowno">2</td>
+                <td>(00052-W) &mdash; 2440 Bay Area Blvd<span class="sub">Houston, TX, 77058</span></td><td>Vinod Baradwaj</td>
+                <td><div class="rangehint">Customer Price $0.00</div><div class="rangehint">Tracking Only</div></td>
+                <td><div class="rangehint">Customer Price $100.00/month</div><div style="margin-top:4px;font-weight:600;font-size:13px">$52.00<span class="mg-ok mgs" style="margin-left:8px">48%</span></div></td>
+                <td><div class="rangehint">Customer Price $0.00</div><div class="rangehint">Tracking Only</div><div style="margin-top:4px;font-weight:600;font-size:13px">$105.00<span class=" mgs" style="margin-left:8px">n/a</span></div></td></tr>
             </tbody>
           </table>
         </div>
@@ -604,15 +625,30 @@ body.showly .lycard{display:block}
       <div class="card lycard">
         <div class="card-h"><h3>Last season</h3>
           <span class="badge b-grey">PSA-250312-00044</span>
-          <span style="margin-left:auto;font-size:11.5px;color:var(--muted)">Same 3 properties, same service types</span></div>
+          <span style="margin-left:auto;font-size:11.5px;color:var(--muted)">Same 3 properties &middot; price actually paid</span></div>
         <div class="card-b flush">
-          <table class="grid" style="min-width:880px">
-            <thead><tr><th style="min-width:230px">Service type</th><th class="num">Visits/yr</th><th>Service months</th><th class="num">Provider $</th><th class="num">Customer $</th><th class="num">Margin</th></tr></thead>
+          <table class="grid" style="min-width:940px">
+            <thead><tr>
+                <th class="rowno"></th><th>Property</th><th>Field Owner</th><th>Provider</th>
+                <th class="grp">Provider Line Item<span class="sub">Routine Landscaping Service Per Visit<br>(Jul-Jun) &middot; 24/yr<span style="display:block;color:#8A929A;font-weight:600;font-size:10px;letter-spacing:.03em;margin-top:3px">PROVIDER PRICE &middot; MARGIN&nbsp;%</span></span></th>
+                <th class="grp">Provider Line Item<span class="sub">Tree Pruning<span style="display:block;color:#8A929A;font-weight:600;font-size:10px;letter-spacing:.03em;margin-top:3px">PROVIDER PRICE &middot; MARGIN&nbsp;%</span></span></th>
+            </tr></thead>
             <tbody>
-              <tr class="lyrow"><td>Routine Landscaping Service<span class="sub" style="margin:0">provider $ from Incumbent Data below</span></td><td class="num">24</td><td>Jul&ndash;Jun</td><td class="num">$4,296</td><td class="num">$5,520</td><td class="num"><span class="mg-low">22.2%</span></td></tr>
-              <tr class="lyrow"><td>Tree Pruning<span class="sub" style="margin:0">Tracking Only both sides</span></td><td class="num">&mdash;</td><td>&mdash;</td><td class="num">&mdash;</td><td class="num">&mdash;</td><td class="num"><span class="sub" style="margin:0">n/a</span></td></tr>
-              <tr class="lynow"><td><b>This season</b><span class="sub" style="margin:0">as entered</span></td><td class="num">24</td><td>Aug&ndash;Jul</td><td class="num">$4,368</td><td class="num">$5,520</td><td class="num"><span class="mg-low">20.9%</span></td></tr>
-              <tr class="lydelta"><td>Change</td><td class="num">&mdash;</td><td>&mdash;</td><td class="num"><span class="mg-low">+$72</span></td><td class="num">&mdash;</td><td class="num"><span class="mg-low">&minus;1.3 pts</span></td></tr>
+              <tr class="lyrow"><td class="rowno">1</td>
+                <td>7-Eleven (42424) &mdash; 2013 S Bridge St<span class="sub">Brady, TX, 76825</span></td><td>Julie Dominguez</td>
+                <td>Greenscape TX</td>
+                <td><div class="rangehint">Customer $110.00/visit</div><div style="margin-top:4px;font-weight:600;font-size:13px">$80.00<span class="mg-low mgs" style="margin-left:8px">27%</span></div></td>
+                <td><div class="rangehint">$0.00</div><div class="rangehint">Tracking Only</div></td></tr>
+              <tr class="lyrow"><td class="rowno">2</td>
+                <td>7-Eleven (42557) &mdash; 701 Highway 87<span class="sub">Comfort, TX, 78013</span></td><td>Julie Dominguez</td>
+                <td>Hill Country LS</td>
+                <td><div class="rangehint">Customer $62.00/visit</div><div style="margin-top:4px;font-weight:600;font-size:13px">$47.00<span class="mg-low mgs" style="margin-left:8px">24%</span></div></td>
+                <td><div class="rangehint">$0.00</div><div class="rangehint">Tracking Only</div></td></tr>
+              <tr class="lyrow"><td class="rowno">3</td>
+                <td>7-Eleven (42610) &mdash; 1401 Junction Hwy<span class="sub">Kerrville, TX, 78028</span></td><td>Julie Dominguez</td>
+                <td>Alamo Grounds<span class="sub" style="margin:0">Terminated</span></td>
+                <td><div class="rangehint">Customer $58.00/visit</div><div style="margin-top:4px;font-weight:600;font-size:13px">$52.00<span class="mg-low mgs" style="margin-left:8px">10%</span></div></td>
+                <td><div class="rangehint">$0.00</div><div class="rangehint">Tracking Only</div></td></tr>
             </tbody>
           </table>
         </div>
