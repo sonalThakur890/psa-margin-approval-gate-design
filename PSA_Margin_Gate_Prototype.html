@@ -68,6 +68,13 @@ button{font-family:inherit}
 .fchip:after{content:'⌄';font-size:13px;color:#7A828A;position:relative;top:-3px}
 .fchip.applied{background:var(--blue);border-color:var(--blue);color:#fff}
 .fchip.applied:after{content:'✕';font-size:10px;top:0}
+.fwrap{position:relative;display:inline-flex}
+.fdrop{position:absolute;left:0;top:100%;margin-top:5px;z-index:40;background:#fff;border:1px solid var(--line);
+  border-radius:var(--r);box-shadow:0 6px 18px rgba(0,0,0,.14);padding:6px 0;min-width:190px;display:none}
+.fwrap.open .fdrop{display:block}
+.fdrop label{display:flex;align-items:center;gap:9px;padding:7px 14px;font-size:12.5px;color:#3A4046;cursor:pointer;white-space:nowrap}
+.fdrop label:hover{background:var(--blue-05)}
+.fdrop .fclear{border-top:1px solid var(--line-2);margin-top:4px;padding:8px 14px 4px;font-size:12px;color:var(--blue);cursor:pointer}
 .search{border:1px solid #C6CDD4;border-radius:var(--r);background:#fff;padding:9px 13px;width:400px;color:#9AA2AA;font-size:13px;margin-bottom:14px}
 
 /* tabs */
@@ -449,11 +456,18 @@ button{font-family:inherit}
 
       <div class="card" style="border-top:none;border-radius:0 0 var(--r) var(--r)">
         <div class="card-h">
-          <div class="filters" style="margin:0"><span class="fchip">State</span><span class="fchip">City</span><span class="fchip">Field Owner</span><span class="fchip">Creation Source</span><span class="fchip">Margin</span></div>
+          <div class="filters" style="margin:0"><span class="fchip">State</span><span class="fchip">City</span><span class="fchip">Field Owner</span><span class="fchip">Creation Source</span><span class="fwrap"><span class="fchip fmargin">Margin</span>
+              <div class="fdrop">
+                <label data-band="lt0"><span class="cbx"></span>Below 0%</label>
+                <label data-band="0-25"><span class="cbx"></span>0% &ndash; 25%</label>
+                <label data-band="25-30"><span class="cbx"></span>25% &ndash; 30%</label>
+                <label data-band="gte30"><span class="cbx"></span>30% and above</label>
+                <div class="fclear">Clear</div>
+              </div></span></div>
           <div style="margin-left:auto" class="btnrow"><button class="btn out sm">Will Not Price</button><button class="btn out sm">Edit Separately</button><button class="btn out sm">Reset</button><button class="btn out sm">Export &#11015;</button><button class="btn out sm">Import &#11014;</button></div>
         </div>
         <div class="card-b flush" style="overflow-x:auto">
-          <table class="grid" style="min-width:1240px">
+          <table class="grid" data-filterable style="min-width:1240px">
             <thead>
               <tr>
                 <th class="rowno" rowspan="2"></th><th rowspan="2">Property</th><th rowspan="2">Field Owner</th>
@@ -630,7 +644,14 @@ button{font-family:inherit}
         <span class="fchip">City</span><span class="fchip">Field Owner</span><span class="fchip">Service Line</span>
         <span class="fchip">Exclude</span><span class="fchip">Changes</span><span class="fchip">Creation Source</span>
         <span class="fchip">Agreement Start Date</span>
-        <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Margin</span>
+        <span class="fwrap"><span class="fchip fmargin" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Margin</span>
+              <div class="fdrop">
+                <label data-band="lt0"><span class="cbx"></span>Below 0%</label>
+                <label data-band="0-25"><span class="cbx"></span>0% &ndash; 25%</label>
+                <label data-band="25-30"><span class="cbx"></span>25% &ndash; 30%</label>
+                <label data-band="gte30"><span class="cbx"></span>30% and above</label>
+                <div class="fclear">Clear</div>
+              </div></span>
         <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
         <span style="font-size:12.5px;color:var(--blue);align-self:center">&#8635; Clear All</span>
       </div>
@@ -655,7 +676,7 @@ button{font-family:inherit}
           <span style="font-size:13px;color:var(--muted);padding-bottom:6px">By term</span>
         </div></div>
         <div class="card-b flush" style="overflow-x:auto">
-          <table class="grid" id="qtbl" style="min-width:1060px">
+          <table class="grid" data-filterable id="qtbl" style="min-width:1060px">
             <thead><tr>
               <th style="width:34px"></th>
               <th style="min-width:200px">Customer/Customer Terms</th>
@@ -666,21 +687,21 @@ button{font-family:inherit}
               <th class="num">Count</th><th style="width:44px"></th>
             </tr></thead>
             <tbody>
-              <tr class="prow" data-g="g1" style="cursor:pointer">
+              <tr class="prow" data-g="g1" style="cursor:pointer" data-worst="9.1">
                 <td class="rowno"><span class="chev">&#8964;</span></td>
                 <td><b>7-Eleven, Inc</b></td>
                 <td>Mulching, Routine Landscaping Service,&hellip;</td>
                 <td>Routine Landscaping Service, Tree Prun&hellip;</td>
                 <td>Landscaping</td><td>Awaiting Level 1 Approval</td><td class="num">2</td><td></td>
               </tr>
-              <tr class="crow g1" style="cursor:pointer" onclick="go('s3')">
+              <tr class="crow g1" style="cursor:pointer" onclick="go('s3')" data-worst="9.1">
                 <td class="num" style="color:var(--blue)">&rsaquo;</td>
                 <td style="padding-left:28px">Landscaping - PUoW 08 Period</td>
                 <td>Mulching, Routine Landscaping Service,&hellip;</td>
                 <td>Routine Landscaping Service, Tree Prun&hellip;</td>
                 <td>Landscaping</td><td>Awaiting Level 1 Approval</td><td class="num">1</td><td class="num" style="color:var(--blue)">&rsaquo;</td>
               </tr>
-              <tr class="crow g1" style="cursor:pointer" onclick="go('s3')">
+              <tr class="crow g1" style="cursor:pointer" onclick="go('s3')" data-worst="21.7">
                 <td class="num" style="color:var(--blue)">&rsaquo;</td>
                 <td style="padding-left:28px">Landscaping - PUoW 12 Period</td>
                 <td>Mulching, Routine Landscaping Service,&hellip;</td>
@@ -688,14 +709,14 @@ button{font-family:inherit}
                 <td>Landscaping</td><td>Awaiting Level 1 Approval</td><td class="num">1</td><td class="num" style="color:var(--blue)">&rsaquo;</td>
               </tr>
 
-              <tr class="prow collapsed" data-g="g2" style="cursor:pointer">
+              <tr class="prow collapsed" data-g="g2" style="cursor:pointer" data-worst="9.1">
                 <td class="rowno"><span class="chev">&rsaquo;</span></td>
                 <td><b>Best Buy Corporate</b></td>
                 <td>Fall Cleanup, Spring Cleanup, Shrub Pr&hellip;</td>
                 <td>Fall Cleanup, Shrub Pruning, Routine La&hellip;</td>
                 <td>Landscaping</td><td>Awaiting Level 1 Approval</td><td class="num">3</td><td></td>
               </tr>
-              <tr class="crow g2 hid" style="cursor:pointer" onclick="go('s3')">
+              <tr class="crow g2 hid" style="cursor:pointer" onclick="go('s3')" data-worst="9.1">
                 <td class="num" style="color:var(--blue)">&rsaquo;</td>
                 <td style="padding-left:28px">Landscaping - Routine 08 Period</td>
                 <td>Fall Cleanup, Spring Cleanup, Shrub Pr&hellip;</td>
@@ -703,14 +724,14 @@ button{font-family:inherit}
                 <td>Landscaping</td><td>Awaiting Level 1 Approval</td><td class="num">3</td><td class="num" style="color:var(--blue)">&rsaquo;</td>
               </tr>
 
-              <tr class="prow collapsed" data-g="g3" style="cursor:pointer">
+              <tr class="prow collapsed" data-g="g3" style="cursor:pointer" data-worst="18.4">
                 <td class="rowno"><span class="chev">&rsaquo;</span></td>
                 <td><b>CBRE/AT&amp;T</b></td>
                 <td>Fall Cleanup, Spring Cleanup, Shrub Pr&hellip;</td>
                 <td>Fall Cleanup, Shrub Pruning, Routine La&hellip;</td>
                 <td>Landscaping</td><td>Awaiting Level 1 Approval</td><td class="num">3</td><td></td>
               </tr>
-              <tr class="crow g3 hid" style="cursor:pointer" onclick="go('s3')">
+              <tr class="crow g3 hid" style="cursor:pointer" onclick="go('s3')" data-worst="18.4">
                 <td class="num" style="color:var(--blue)">&rsaquo;</td>
                 <td style="padding-left:28px">Landscaping - AT&amp;T NE 09 Period</td>
                 <td>Fall Cleanup, Spring Cleanup, Shrub Pr&hellip;</td>
@@ -750,11 +771,18 @@ button{font-family:inherit}
             <span class="srch">&#128269; Search</span>
             <span class="fchip">City</span><span class="fchip">Field Owner</span>
             <span class="fchip">State</span><span class="fchip">Provider</span>
-            <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Margin</span>
+            <span class="fwrap"><span class="fchip fmargin" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Margin</span>
+              <div class="fdrop">
+                <label data-band="lt0"><span class="cbx"></span>Below 0%</label>
+                <label data-band="0-25"><span class="cbx"></span>0% &ndash; 25%</label>
+                <label data-band="25-30"><span class="cbx"></span>25% &ndash; 30%</label>
+                <label data-band="gte30"><span class="cbx"></span>30% and above</label>
+                <div class="fclear">Clear</div>
+              </div></span>
           </div>
         </div>
         <div class="card-b flush" style="overflow-x:auto">
-          <table class="grid" style="min-width:1080px">
+          <table class="grid" data-filterable style="min-width:1080px">
             <thead><tr>
               <th class="chk"><span class="cbx"></span></th>
               <th style="min-width:220px">Property</th>
@@ -820,14 +848,21 @@ button{font-family:inherit}
             <span class="srch">&#128269; Search</span>
             <span class="fchip">State</span><span class="fchip">City</span><span class="fchip">Field Owner</span>
             <span class="fchip">Creation Source</span><span class="fchip">Range</span><span class="fchip">Provider</span>
-            <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Margin</span>
+            <span class="fwrap"><span class="fchip fmargin" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Margin</span>
+              <div class="fdrop">
+                <label data-band="lt0"><span class="cbx"></span>Below 0%</label>
+                <label data-band="0-25"><span class="cbx"></span>0% &ndash; 25%</label>
+                <label data-band="25-30"><span class="cbx"></span>25% &ndash; 30%</label>
+                <label data-band="gte30"><span class="cbx"></span>30% and above</label>
+                <div class="fclear">Clear</div>
+              </div></span>
             <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
             <span style="flex:1"></span>
             <button class="btn sm" data-sel data-base="Send back">Send back (1)</button>
           </div>
         </div>
         <div class="card-b flush" style="overflow-x:auto">
-          <table class="grid" style="min-width:1460px">
+          <table class="grid" data-filterable style="min-width:1460px">
             <thead>
               <tr>
                 <th class="rowno"></th><th class="chk"><span class="cbx on" data-all></span></th>
@@ -932,14 +967,21 @@ button{font-family:inherit}
             <span class="srch">&#128269; Search</span>
             <span class="fchip">State</span><span class="fchip">City</span><span class="fchip">Field Owner</span>
             <span class="fchip">Creation Source</span><span class="fchip">Range</span><span class="fchip">Provider</span>
-            <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Margin</span>
+            <span class="fwrap"><span class="fchip fmargin" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Margin</span>
+              <div class="fdrop">
+                <label data-band="lt0"><span class="cbx"></span>Below 0%</label>
+                <label data-band="0-25"><span class="cbx"></span>0% &ndash; 25%</label>
+                <label data-band="25-30"><span class="cbx"></span>25% &ndash; 30%</label>
+                <label data-band="gte30"><span class="cbx"></span>30% and above</label>
+                <div class="fclear">Clear</div>
+              </div></span>
             <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
             <span style="flex:1"></span>
             <button class="btn sm" data-sel data-base="Send back">Send back (1)</button>
           </div>
         </div>
         <div class="card-b flush" style="overflow-x:auto">
-          <table class="grid" style="min-width:1460px">
+          <table class="grid" data-filterable style="min-width:1460px">
             <thead>
               <tr>
                 <th class="rowno"></th><th class="chk"><span class="cbx on" data-all></span></th>
@@ -1056,14 +1098,21 @@ button{font-family:inherit}
             <span class="srch">&#128269; Search</span>
             <span class="fchip">State</span><span class="fchip">City</span><span class="fchip">Field Owner</span>
             <span class="fchip">Creation Source</span><span class="fchip">Range</span><span class="fchip">Provider</span>
-            <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Margin</span>
+            <span class="fwrap"><span class="fchip fmargin" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Margin</span>
+              <div class="fdrop">
+                <label data-band="lt0"><span class="cbx"></span>Below 0%</label>
+                <label data-band="0-25"><span class="cbx"></span>0% &ndash; 25%</label>
+                <label data-band="25-30"><span class="cbx"></span>25% &ndash; 30%</label>
+                <label data-band="gte30"><span class="cbx"></span>30% and above</label>
+                <div class="fclear">Clear</div>
+              </div></span>
             <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
             <span style="flex:1"></span>
             <button class="btn sm" data-sel data-base="Send back">Send back (1)</button>
           </div>
         </div>
         <div class="card-b flush" style="overflow-x:auto">
-          <table class="grid" style="min-width:1460px">
+          <table class="grid" data-filterable style="min-width:1460px">
             <thead>
               <tr>
                 <th class="rowno"></th><th class="chk"><span class="cbx on" data-all></span></th>
@@ -1489,6 +1538,43 @@ function syncArrows(strip){
   if(left) left.classList.toggle('off',strip.scrollLeft<=1);
   if(right)right.classList.toggle('off',strip.scrollLeft>=max-1);
 }
+function bandOf(v){ return v<0?'lt0' : v<25?'0-25' : v<30?'25-30' : 'gte30'; }
+function rowBands(tr){
+  const out=new Set();
+  if(tr.dataset.worst!==undefined) out.add(bandOf(parseFloat(tr.dataset.worst)));
+  tr.querySelectorAll('.mg-ok,.mg-low').forEach(e=>{
+    const m=e.textContent.replace(/[−–—]/g,'-').match(/-?\d+(\.\d+)?(?=\s*%)/);
+    if(m) out.add(bandOf(parseFloat(m[0])));
+  });
+  return out;
+}
+function applyMarginFilter(wrap){
+  const sec=wrap.closest('.screen'); if(!sec) return;
+  const picked=[...wrap.querySelectorAll('.fdrop label')].filter(l=>l.querySelector('.cbx').classList.contains('on'))
+                 .map(l=>l.dataset.band);
+  const chip=wrap.querySelector('.fmargin');
+  chip.textContent = picked.length ? 'Margin ('+picked.length+')' : 'Margin';
+  chip.classList.toggle('applied', picked.length>0);
+  const tbl=sec.querySelector('table.grid[data-filterable]');
+  if(tbl) tbl.querySelectorAll('tbody tr').forEach(tr=>{
+    if(!picked.length){ tr.style.display=''; return; }
+    const b=rowBands(tr);
+    tr.style.display = picked.some(p=>b.has(p)) ? '' : 'none';
+  });
+  syncSel(sec);
+}
+document.querySelectorAll('.fwrap').forEach(wrap=>{
+  const chip=wrap.querySelector('.fmargin'); if(!chip) return;
+  chip.addEventListener('click',e=>{e.stopPropagation();
+    document.querySelectorAll('.fwrap.open').forEach(o=>{if(o!==wrap)o.classList.remove('open')});
+    wrap.classList.toggle('open');});
+  wrap.querySelectorAll('.fdrop label').forEach(l=>l.addEventListener('click',e=>{
+    e.stopPropagation(); l.querySelector('.cbx').classList.toggle('on'); applyMarginFilter(wrap);}));
+  wrap.querySelector('.fclear').addEventListener('click',e=>{e.stopPropagation();
+    wrap.querySelectorAll('.fdrop .cbx').forEach(c=>c.classList.remove('on'));
+    applyMarginFilter(wrap); wrap.classList.remove('open');});
+});
+document.addEventListener('click',()=>document.querySelectorAll('.fwrap.open').forEach(o=>o.classList.remove('open')));
 document.querySelectorAll('.tabstrip').forEach(wrap=>{
   const strip=wrap.querySelector('.tabs');
   const [left,right]=wrap.querySelectorAll('.tabarrow');
@@ -1505,11 +1591,11 @@ function verdictScope(tr){
   return sel.value==='Correction supplied' ? 'pricing' : 'approver';
 }
 function syncSel(sec){
-  const boxes=[...sec.querySelectorAll('.cbx[data-row]')];
+  const boxes=[...sec.querySelectorAll('.cbx[data-row]')].filter(c=>c.closest('tr').style.display!=='none');
   const n=boxes.filter(c=>c.classList.contains('on')).length;
   const all=sec.querySelector('.cbx[data-all]');
   if(all) all.classList.toggle('on', n>0 && n===boxes.length);
-  const chosen=[...sec.querySelectorAll('tr')].filter(r=>r.querySelector('.cbx[data-row].on'));
+  const chosen=[...sec.querySelectorAll('tr')].filter(r=>r.style.display!=='none'&&r.querySelector('.cbx[data-row].on'));
   sec.querySelectorAll('[data-sel]').forEach(b=>{
     const scope=b.dataset.scope;
     const count = scope ? chosen.filter(r=>verdictScope(r)===scope).length : n;
