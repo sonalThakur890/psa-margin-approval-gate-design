@@ -1011,7 +1011,7 @@ body.showly .lycard{display:block}
               <th>Service Line</th><th>Agreement Type</th>
               <th>Term Start</th><th>Term End</th>
               <th>Field Owner</th><th>Status</th><th style="min-width:140px">Provider</th>
-              <th class="newcol num" style="min-width:150px">Expected margin<span class="sub">full season</span></th><th class="newcol num" style="min-width:150px">Actual margin<span class="sub">to date</span></th>
+              <th class="newcol num" style="min-width:150px">Expected margin<span class="sub">full season</span></th><th class="newcol num" style="min-width:160px">Actual margin<span class="sub">invoiced, as at today</span></th>
             </tr></thead>
             <tbody>
               <tr><td class="chk"><span class="cbx" data-row></span></td>
@@ -1019,14 +1019,14 @@ body.showly .lycard{display:block}
                 <td>Landscaping</td><td>Mixed</td>
                 <td>Apr 1, 2026</td><td>Oct 31, 2026</td>
                 <td>Tyrone Foster</td><td>Active</td><td>NCL Services LLC</td>
-                <td class="newcol num"><span class="mg-ok">32.2%</span><span class="sub">$819.90 of $2,550.00</span></td><td class="newcol num"><span class="mg-ok">30.3%</span><span class="sub">$466.59 of $1,540.00</span></td></tr>
+                <td class="newcol num"><span class="mg-ok">32.2%</span><span class="sub">$819.90 of $2,550.00</span></td><td class="newcol num"><span class="mg-low">27.0%</span><span class="sub">$396.59 of $1,470.00</span><span class="sub" style="color:var(--coral);margin-top:2px">$70.00 credited</span></td></tr>
 
               <tr style="background:#FDF3F2"><td class="chk"><span class="cbx" data-row></span></td>
                 <td>AAA(94520) - 4820 Delhi Pike<span class="sub">4820 Delhi PIKE, Cincinnati, OH, 45238</span></td>
                 <td>Landscaping</td><td>Mixed</td>
                 <td>Apr 1, 2026</td><td>Oct 31, 2026</td>
                 <td>Matthew Ozsvath</td><td>Active</td><td>NCL Services LLC</td>
-                <td class="newcol num"><span class="mg-low">24.6%</span><span class="sub">$611.40 of $2,485.00</span></td><td class="newcol num"><span class="mg-low">21.9%</span><span class="sub">$327.36 of $1,496.00</span></td></tr>
+                <td class="newcol num"><span class="mg-low">24.6%</span><span class="sub">$611.40 of $2,485.00</span></td><td class="newcol num"><span class="mg-low">21.9%</span><span class="sub">$327.36 of $1,496.00</span><span class="sub" style="margin-top:2px">no credits</span></td></tr>
             </tbody>
           </table>
         </div>
@@ -1082,7 +1082,7 @@ body.showly .lycard{display:block}
                 <th rowspan="2" class="num">Expected Season Total</th>
                 <th rowspan="2" class="newcol num" style="min-width:150px">Customer contracted</th>
                 <th rowspan="2" class="newcol num" style="min-width:130px">Expected margin<span class="sub">full season</span></th>
-                <th colspan="3" class="newcol" style="text-align:center;background:#EEF2F6">Actual to date &middot; as at 31 Aug 2026</th>
+                <th colspan="3" class="newcol" style="text-align:center;background:#EEF2F6">Actual to date &middot; as at today, 31 Aug 2026<span class="sub" style="font-weight:400;text-transform:none">invoiced, not cash collected</span></th>
                 <th rowspan="2" class="newcol" style="min-width:120px"></th>
               </tr>
               <tr>
@@ -1098,7 +1098,7 @@ body.showly .lycard{display:block}
                   <td class="num">$1,400.10</td>
                   <td class="newcol num">$2,100.00</td>
                   <td class="newcol num"><span class="mg-ok">33.3%</span><span class="sub">+$699.90</span></td>
-                  <td class="num" style="background:#F7F9FB">$1,540.00</td><td class="num" style="background:#F7F9FB">$1,073.41</td><td class="num" style="background:#F7F9FB"><span class="mg-ok">30.3%</span><span class="sub">22 of 30 visits invoiced</span></td>
+                  <td class="num" style="background:#F7F9FB">$1,540.00<span class="sub" style="color:var(--coral)">less $70.00 credited</span><span class="sub" style="margin-top:2px"><b>$1,470.00</b> net</span></td><td class="num" style="background:#F7F9FB">$1,073.41<span class="sub">no credits</span></td><td class="num" style="background:#F7F9FB"><span class="mg-low">27.0%</span><span class="sub">22 of 30 visits invoiced</span><span class="sub" style="color:var(--coral);margin-top:2px">&minus;3.3 pts from the credit</span></td>
                   <td class="newcol"><a style="color:var(--blue);cursor:pointer" onclick="go('d3')">View schedule &#8599;</a></td></tr>
               <tr><td>Tree and Shrub Maintenance</td>
                   <td>1 time (Sep)</td>
@@ -1120,9 +1120,9 @@ body.showly .lycard{display:block}
                   <td class="num"><b>$1,730.10</b></td>
                   <td class="newcol num"><b>$2,550.00</b></td>
                   <td class="newcol num"><b class="mg-ok">32.2%</b><span class="sub">+$819.90</span></td>
-                  <td class="num" style="background:#F7F9FB"><b>$1,540.00</b></td>
+                  <td class="num" style="background:#F7F9FB"><b>$1,470.00</b><span class="sub" style="color:var(--coral)">after $70.00 credited</span></td>
                   <td class="num" style="background:#F7F9FB"><b>$1,073.41</b></td>
-                  <td class="num" style="background:#F7F9FB"><b class="mg-ok">30.3%</b><span class="sub">+$466.59</span></td>
+                  <td class="num" style="background:#F7F9FB"><b class="mg-low">27.0%</b><span class="sub">+$396.59</span></td>
                   <td class="newcol"></td></tr>
             </tbody>
           </table>
