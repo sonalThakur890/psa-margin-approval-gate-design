@@ -380,10 +380,10 @@ button{font-family:inherit}
                 <td class="num" style="cursor:pointer;background:#FFF4EA" onclick="openM('m-dev')" title="32.5 configured against 30.3 contracted">
                     <span class="moneyin" style="display:inline-flex;min-width:52px;border-color:var(--new);justify-content:center">1</span></td>
                 <td>&mdash;</td><td>&mdash;</td>
-                <td class="num"><span class="m-l2">6</span></td><td class="newcol num"><span class="m-l2">4</span><span class="sub"><b>+2 visits</b><br>+1 month &middot; November</span></td></tr>
+                <td class="num"><span class="m-l2">6</span></td><td class="newcol num"><span class="m-l2">4</span><span class="sub"><span class="tag tag-over">Over-serviced</span><span class="tagline"><b>+2 visits</b></span>+1 month &middot; November</span></td></tr>
               <tr style="background:#FDF3F2">
                 <td colspan="8" style="text-align:right"><b>Configured 32 visits/yr</b></td>
-                <td class="num"><b>32</b></td><td class="newcol num"><span class="m-l2"><b>30 &middot; +2</b></span></td></tr>
+                <td class="num"><b>32</b></td><td class="newcol num"><span class="tag tag-over">Over-serviced</span><span class="tagline"><span class="m-l2"><b>30 &middot; +2</b></span></span></td></tr>
               <tr>
                 <td><b>Irrigation Shutdown</b></td><td>Irrigation Shutdown</td><td>SHUT DOWN &amp; IS&hellip;</td>
                 <td>Nov</td><td>Seasonal</td><td class="num">1</td><td>11/30</td><td>&mdash;</td>
@@ -1506,6 +1506,7 @@ button{font-family:inherit}
       <div style="margin:0 0 16px">
         <div class="dvrow"><span>Customer signed</span><b>Mar &ndash; Oct</b></div>
         <div class="dvrow"><span>Configured on this agreement</span><b>Mar &ndash; Nov</b></div>
+        <div class="dvrow"><span>Direction</span><b><span class="tag tag-over">Over-serviced</span></b></div>
         <div class="dvrow"><span>Difference</span><b class="d-diff">+1 month &middot; added November</b></div>
         <div class="dvrow"><span>Cost of the difference</span><b>+2 visits &middot; $120/yr at $60</b></div>
         <div class="dvrow"><span>Rule</span><b>Needs a reason to send for approval</b></div>
@@ -1526,18 +1527,18 @@ button{font-family:inherit}
     <div class="modal-h">Contract deviation &mdash; 11 properties<span class="sub" style="margin-top:4px">1 of 11 &middot; each needs its own reason</span></div>
     <div class="modal-b">
       <div class="notice n-amber" style="margin:0 0 16px"><span class="ic">&#9873;</span>
-        <div><b>(00041-W) &mdash; 1805 Greens Road, Houston TX</b>Routine Landscaping Service &mdash; contracted <b>Mar&ndash;Oct</b>, configured <b>Mar&ndash;Nov</b>.</div></div>
+        <div><b>(00041-W) &mdash; 1805 Greens Road, Houston TX</b><span class="tag tag-over">Over-serviced</span><span class="tagline">Routine Landscaping Service &mdash; contracted <b>Mar&ndash;Oct</b>, configured <b>Mar&ndash;Nov</b>.</span></div></div>
       <div class="field"><label>Reason for the deviation</label>
         <select><option>Expected under Per Unit of Work</option></select></div>
       <div class="field"><label>Comment <span style="color:var(--coral)">*</span></label>
         <textarea placeholder="Applies to this property only."></textarea></div>
       <table class="grid" style="border:1px solid var(--line);border-radius:var(--r)">
-        <thead><tr><th>Property</th><th class="num">Contracted</th><th class="num">Configured</th><th>Reason</th></tr></thead>
+        <thead><tr><th>Property</th><th class="num">Contracted</th><th class="num">Configured</th><th>Direction</th><th>Reason</th></tr></thead>
         <tbody>
-          <tr style="background:#FFFBF7"><td>1805 Greens Road</td><td class="num">30</td><td class="num"><span class="m-l2">32</span></td><td><span class="badge b-l1">Awaiting</span></td></tr>
-          <tr><td>2440 Bay Area Blvd</td><td class="num">30</td><td class="num"><span class="m-l2">32</span></td><td><span class="badge b-grey">Queued</span></td></tr>
-          <tr><td>9550 Spencer Hwy</td><td class="num">30</td><td class="num"><span class="m-l2">32</span></td><td><span class="badge b-grey">Queued</span></td></tr>
-          <tr><td colspan="4" class="sub" style="margin:0">&hellip; 8 more</td></tr>
+          <tr style="background:#FFFBF7"><td>1805 Greens Road</td><td class="num">30</td><td class="num"><span class="m-l2">32</span></td><td><span class="tag tag-over">Over-serviced</span></td><td><span class="badge b-l1">Awaiting</span></td></tr>
+          <tr><td>2440 Bay Area Blvd</td><td class="num">30</td><td class="num"><span class="m-l2">32</span></td><td><span class="tag tag-over">Over-serviced</span></td><td><span class="badge b-grey">Queued</span></td></tr>
+          <tr><td>9550 Spencer Hwy</td><td class="num">30</td><td class="num"><span class="m-l2">32</span></td><td><span class="tag tag-over">Over-serviced</span></td><td><span class="badge b-grey">Queued</span></td></tr>
+          <tr><td colspan="5" class="sub" style="margin:0">&hellip; 8 more</td></tr>
         </tbody>
       </table>
     </div>
