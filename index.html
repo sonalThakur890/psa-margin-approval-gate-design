@@ -764,7 +764,7 @@ body.showly .lycard{display:block}
                 <label data-band="gte30"><span class="cbx"></span>30% and above</label>
                 <div class="fclear">Clear</div>
               </div></span>
-        <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
+        <span class="fwrap"><span class="fchip fdev" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span><div class="fdrop"><label data-dev="over"><span class="cbx"></span>Over-serviced</label><label data-dev="under"><span class="cbx"></span>Under-serviced</label><label data-dev="other"><span class="cbx"></span>Others</label><div class="fclear">Clear</div></div></span>
         <span style="font-size:12.5px;color:var(--blue);align-self:center">&#8635; Clear All</span>
       </div>
       <div class="pill-row"><span class="fchip applied">Landscaping</span></div>
@@ -799,55 +799,55 @@ body.showly .lycard{display:block}
               <th class="num">Count</th><th style="width:44px"></th>
             </tr></thead>
             <tbody>
-              <tr class="prow" data-g="g1" style="cursor:pointer" data-worst="9.1">
+              <tr data-dev="over" class="prow" data-g="g1" style="cursor:pointer" data-worst="9.1">
                 <td class="rowno"><span class="chev">&#8964;</span></td>
                 <td><b>7-Eleven, Inc</b></td>
                 <td>Mulching, Routine Landscaping Service,&hellip;</td>
                 <td>Routine Landscaping Service, Tree Prun&hellip;</td>
                 <td>Landscaping</td><td>Awaiting Level 1 Approval</td><td class="num">2</td><td></td>
               </tr>
-              <tr class="crow g1" style="cursor:pointer" onclick="go('s3')" data-worst="9.1">
+              <tr data-dev="over" class="crow g1" style="cursor:pointer" onclick="go('s3')" data-worst="9.1">
                 <td class="num" style="color:var(--blue)">&rsaquo;</td>
                 <td style="padding-left:28px">Landscaping - PUoW 08 Period</td>
                 <td>Mulching, Routine Landscaping Service,&hellip;</td>
-                <td>Routine Landscaping Service, Tree Prun&hellip;</td>
+                <td>Routine Landscaping Service, Tree Prun&hellip;<span class="tagline" style="margin-top:4px;display:block"><span class="tag tag-over">Over-serviced</span></span></td>
                 <td>Landscaping</td><td>Awaiting Level 1 Approval</td><td class="num">1</td><td class="num" style="color:var(--blue)">&rsaquo;</td>
               </tr>
-              <tr class="crow g1" style="cursor:pointer" onclick="go('s3')" data-worst="21.7">
+              <tr data-dev="over" class="crow g1" style="cursor:pointer" onclick="go('s3')" data-worst="21.7">
                 <td class="num" style="color:var(--blue)">&rsaquo;</td>
                 <td style="padding-left:28px">Landscaping - PUoW 12 Period</td>
                 <td>Mulching, Routine Landscaping Service,&hellip;</td>
-                <td>Routine Landscaping Service, Tree Prun&hellip;</td>
+                <td>Routine Landscaping Service, Tree Prun&hellip;<span class="tagline" style="margin-top:4px;display:block"><span class="tag tag-over">Over-serviced</span></span></td>
                 <td>Landscaping</td><td>Awaiting Level 1 Approval</td><td class="num">1</td><td class="num" style="color:var(--blue)">&rsaquo;</td>
               </tr>
 
-              <tr class="prow collapsed" data-g="g2" style="cursor:pointer" data-worst="9.1">
+              <tr data-dev="over under other" class="prow collapsed" data-g="g2" style="cursor:pointer" data-worst="9.1">
                 <td class="rowno"><span class="chev">&rsaquo;</span></td>
                 <td><b>Best Buy Corporate</b></td>
                 <td>Fall Cleanup, Spring Cleanup, Shrub Pr&hellip;</td>
                 <td>Fall Cleanup, Shrub Pruning, Routine La&hellip;</td>
                 <td>Landscaping</td><td>Awaiting Level 1 Approval</td><td class="num">3</td><td></td>
               </tr>
-              <tr class="crow g2 hid" style="cursor:pointer" onclick="go('s3')" data-worst="9.1">
+              <tr data-dev="over under other" class="crow g2 hid" style="cursor:pointer" onclick="go('s3')" data-worst="9.1">
                 <td class="num" style="color:var(--blue)">&rsaquo;</td>
                 <td style="padding-left:28px">Landscaping - Routine 08 Period</td>
                 <td>Fall Cleanup, Spring Cleanup, Shrub Pr&hellip;</td>
-                <td>Fall Cleanup, Shrub Pruning, Routine La&hellip;</td>
+                <td>Fall Cleanup, Shrub Pruning, Routine La&hellip;<span class="tagline" style="margin-top:4px;display:block"><span class="tag tag-over">Over-serviced</span><span class="tag tag-under">Under-serviced</span><span class="tag tag-same">Same count, different days</span></span></td>
                 <td>Landscaping</td><td>Awaiting Level 1 Approval</td><td class="num">3</td><td class="num" style="color:var(--blue)">&rsaquo;</td>
               </tr>
 
-              <tr class="prow collapsed" data-g="g3" style="cursor:pointer" data-worst="18.4">
+              <tr data-dev="under" class="prow collapsed" data-g="g3" style="cursor:pointer" data-worst="18.4">
                 <td class="rowno"><span class="chev">&rsaquo;</span></td>
                 <td><b>CBRE/AT&amp;T</b></td>
                 <td>Fall Cleanup, Spring Cleanup, Shrub Pr&hellip;</td>
                 <td>Fall Cleanup, Shrub Pruning, Routine La&hellip;</td>
                 <td>Landscaping</td><td>Awaiting Level 1 Approval</td><td class="num">3</td><td></td>
               </tr>
-              <tr class="crow g3 hid" style="cursor:pointer" onclick="go('s3')" data-worst="18.4">
+              <tr data-dev="under" class="crow g3 hid" style="cursor:pointer" onclick="go('s3')" data-worst="18.4">
                 <td class="num" style="color:var(--blue)">&rsaquo;</td>
                 <td style="padding-left:28px">Landscaping - AT&amp;T NE 09 Period</td>
                 <td>Fall Cleanup, Spring Cleanup, Shrub Pr&hellip;</td>
-                <td>Fall Cleanup, Shrub Pruning, Routine La&hellip;</td>
+                <td>Fall Cleanup, Shrub Pruning, Routine La&hellip;<span class="tagline" style="margin-top:4px;display:block"><span class="tag tag-under">Under-serviced</span></span></td>
                 <td>Landscaping</td><td>Awaiting Level 1 Approval</td><td class="num">3</td><td class="num" style="color:var(--blue)">&rsaquo;</td>
               </tr>
             </tbody>
@@ -1257,7 +1257,7 @@ body.showly .lycard{display:block}
                 <label data-band="gte30"><span class="cbx"></span>30% and above</label>
                 <div class="fclear">Clear</div>
               </div></span>
-            <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
+            <span class="fwrap"><span class="fchip fdev" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span><div class="fdrop"><label data-dev="over"><span class="cbx"></span>Over-serviced</label><label data-dev="under"><span class="cbx"></span>Under-serviced</label><label data-dev="other"><span class="cbx"></span>Others</label><div class="fclear">Clear</div></div></span>
             <span style="flex:1"></span>
             <button class="btn sm" data-sel data-base="Send back">Send back (1)</button>
           </div>
@@ -1275,12 +1275,12 @@ body.showly .lycard{display:block}
               </tr>
             </thead>
             <tbody>
-              <tr data-line="Sunbrook Academy (761)" data-svc="Routine Landscaping" data-margin="33.2%" data-risk="" data-reason="&mdash;">
+              <tr data-dev="over" data-line="Sunbrook Academy (761)" data-svc="Routine Landscaping" data-margin="33.2%" data-risk="" data-reason="&mdash;">
                 <td class="rowno">1</td><td class="chk"><span class="cbx on" data-row></span></td>
                 <td>Cadence Education (761) &mdash; 3947 Hicks Rd<span class="kebab">&#8942;</span><span class="sub">Austell, GA, 30106</span></td>
                 <td>Patrick Craig</td><td>ATL Landscaping &amp; Maintenance</td>
                 <td><div class="rangehint">Range $120.00 - $187.50/visit</div><div class="rangehint">Customer Price $280.00/visit</div>
-                    <div class="prow-line"><span class="px">$187.00/visit</span><span class="mg-ok">33.2%</span></div></td>
+                    <div class="prow-line"><span class="px">$187.00/visit</span><span class="mg-ok">33.2%</span></div><div style="margin-top:5px;cursor:pointer" onclick="openM('m-dev')"><span class="flagmark">&#9873; Contract deviation</span><span class="tag tag-over">Over-serviced</span></div></td>
                 <td><div class="rangehint">Range $120.00 - $165.00/visit</div><div class="rangehint">Customer Price $240.00/visit</div>
                     <div class="prow-line"><span class="px">$165.00/visit</span><span class="mg-ok">31.3%</span></div></td>
                 <td class="inc">$187.50 - Provider ATL Landscaping<span class="sub" style="margin:0">Active</span></td>
@@ -1376,7 +1376,7 @@ body.showly .lycard{display:block}
                 <label data-band="gte30"><span class="cbx"></span>30% and above</label>
                 <div class="fclear">Clear</div>
               </div></span>
-            <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
+            <span class="fwrap"><span class="fchip fdev" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span><div class="fdrop"><label data-dev="over"><span class="cbx"></span>Over-serviced</label><label data-dev="under"><span class="cbx"></span>Under-serviced</label><label data-dev="other"><span class="cbx"></span>Others</label><div class="fclear">Clear</div></div></span>
             <span style="flex:1"></span>
             <button class="btn sm" data-sel data-base="Send back">Send back (1)</button>
           </div>
@@ -1394,32 +1394,32 @@ body.showly .lycard{display:block}
               </tr>
             </thead>
             <tbody>
-              <tr style="background:#FDF3F2" data-line="2050 Green Acres Mall" data-svc="Routine Landscaping" data-margin="9.1%" data-risk="" data-reason="Fair market value"><td class="rowno">1</td><td class="chk"><span class="cbx on" data-row></span></td>
+              <tr data-dev="over" style="background:#FDF3F2" data-line="2050 Green Acres Mall" data-svc="Routine Landscaping" data-margin="9.1%" data-risk="" data-reason="Fair market value"><td class="rowno">1</td><td class="chk"><span class="cbx on" data-row></span></td>
                 <td>Best Buy (2050) &mdash; 2050 Green Acres Mall<span class="kebab">&#8942;</span><span class="sub">Valley Stream, NY, 11581</span></td>
                 <td>Marcus Bell</td><td>Metro Grounds Care</td>
                 <td><div class="rangehint">Range $60.00 - $75.00/visit</div><div class="rangehint">Customer Price $88.00/visit</div>
                     <div class="prow-line" style="cursor:pointer" onclick="openM('m-range')"><span class="px bad">&#9888; $80.00/visit</span><span class="mg-low">9.1%</span></div>
-                    <div style="margin-top:5px;cursor:pointer" onclick="openM('m-dev')"><span class="flagmark">&#9873; Contract deviation</span></div></td>
+                    <div style="margin-top:5px;cursor:pointer" onclick="openM('m-dev')"><span class="flagmark">&#9873; Contract deviation</span><span class="tag tag-over">Over-serviced</span></div></td>
                 <td><div class="rangehint">Range $42.00 - $50.00/visit</div><div class="rangehint">Customer Price $76.85/visit</div>
                     <div class="prow-line"><span class="px">$50.00/visit</span><span class="mg-ok">34.9%</span></div></td>
                 <td class="inc">$92.00 - Provider Metro Grounds Care<span class="sub" style="margin:0">Active</span></td>
                 <td><span class="upic">&#8593;</span></td></tr>
 
-              <tr data-line="9015 Queens Blvd" data-svc="Routine Landscaping" data-margin="21.7%" data-risk="" data-reason="Drive time"><td class="rowno">2</td><td class="chk"><span class="cbx on" data-row></span></td>
+              <tr data-dev="other" data-line="9015 Queens Blvd" data-svc="Routine Landscaping" data-margin="21.7%" data-risk="" data-reason="Drive time"><td class="rowno">2</td><td class="chk"><span class="cbx on" data-row></span></td>
                 <td>Best Buy (0024) &mdash; 9015 Queens Blvd Spc 0024<span class="kebab">&#8942;</span><span class="sub">Elmhurst, NY, 11373</span></td>
                 <td>Marcus Bell</td><td>Metro Grounds Care</td>
                 <td><div class="rangehint">Range $80.00 - $100.00/visit</div><div class="rangehint">Customer Price $115.00/visit</div>
-                    <div class="prow-line"><span class="px">$90.00/visit</span><span class="mg-low">21.7%</span></div></td>
+                    <div class="prow-line"><span class="px">$90.00/visit</span><span class="mg-low">21.7%</span></div><div style="margin-top:5px;cursor:pointer" onclick="openM('m-dev')"><span class="flagmark">&#9873; Contract deviation</span><span class="tag tag-same">Same count, different days</span></div></td>
                 <td><div class="rangehint">Range $80.00 - $100.00/visit</div><div class="rangehint">Customer Price $307.38/visit</div>
                     <div class="prow-line"><span class="px">$100.00/visit</span><span class="mg-ok">67.5%</span></div></td>
                 <td class="inc">$86.00 - Provider Metro Grounds Care<span class="sub" style="margin:0">Active</span></td>
                 <td><span class="upic">&#8593;</span></td></tr>
 
-              <tr data-line="756 Alberta Dr" data-svc="Routine Landscaping" data-margin="40.0%" data-risk="" data-reason="&mdash;"><td class="rowno">3</td><td class="chk"><span class="cbx" data-row></span></td>
+              <tr data-dev="under" data-line="756 Alberta Dr" data-svc="Routine Landscaping" data-margin="40.0%" data-risk="" data-reason="&mdash;"><td class="rowno">3</td><td class="chk"><span class="cbx" data-row></span></td>
                 <td>Best Buy (0459) &mdash; 756 Alberta Dr Ste 459<span class="kebab">&#8942;</span><span class="sub">Amherst, NY, 14226</span></td>
                 <td>Marcus Bell</td><td>Metro Grounds Care</td>
                 <td><div class="rangehint">Range $50.00 - $60.00/visit</div><div class="rangehint">Customer Price $100.00/visit</div>
-                    <div class="prow-line"><span class="px">$60.00/visit</span><span class="mg-ok">40.0%</span></div></td>
+                    <div class="prow-line"><span class="px">$60.00/visit</span><span class="mg-ok">40.0%</span></div><div style="margin-top:5px;cursor:pointer" onclick="openM('m-dev')"><span class="flagmark">&#9873; Contract deviation</span><span class="tag tag-under">Under-serviced</span></div></td>
                 <td><div class="rangehint">Range $70.00 - $84.00/visit</div><div class="rangehint">Customer Price $140.00/visit</div>
                     <div class="prow-line"><span class="px">$84.00/visit</span><span class="mg-ok">40.0%</span></div></td>
                 <td class="inc">$58.00 - Provider Metro Grounds Care<span class="sub" style="margin:0">Active</span></td>
@@ -1513,7 +1513,7 @@ body.showly .lycard{display:block}
                 <label data-band="gte30"><span class="cbx"></span>30% and above</label>
                 <div class="fclear">Clear</div>
               </div></span>
-            <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span>
+            <span class="fwrap"><span class="fchip fdev" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Deviation</span><div class="fdrop"><label data-dev="over"><span class="cbx"></span>Over-serviced</label><label data-dev="under"><span class="cbx"></span>Under-serviced</label><label data-dev="other"><span class="cbx"></span>Others</label><div class="fclear">Clear</div></div></span>
             <span style="flex:1"></span>
             <button class="btn sm" data-sel data-base="Send back">Send back (1)</button>
           </div>
@@ -1531,31 +1531,31 @@ body.showly .lycard{display:block}
               </tr>
             </thead>
             <tbody>
-              <tr style="background:#FDF3F2" data-line="160 E Sunrise Hwy" data-svc="Routine Landscaping" data-margin="&minus;2.0%" data-risk="&minus;$130/yr" data-reason="Fair market value"><td class="rowno">1</td><td class="chk"><span class="cbx on" data-row></span></td>
+              <tr data-dev="over" style="background:#FDF3F2" data-line="160 E Sunrise Hwy" data-svc="Routine Landscaping" data-margin="&minus;2.0%" data-risk="&minus;$130/yr" data-reason="Fair market value"><td class="rowno">1</td><td class="chk"><span class="cbx on" data-row></span></td>
                 <td>Home Depot (2011) &mdash; 160 E Sunrise Hwy<span class="kebab">&#8942;</span><span class="sub">Valley Stream, NY, 11581</span></td>
                 <td>Rhea Kapoor</td><td>Empire Site Services</td>
                 <td><div class="rangehint">Range $180.00 - $255.00/visit</div><div class="rangehint">Customer Price $250.00/visit</div>
-                    <div class="prow-line" style="cursor:pointer" onclick="openM('m-range')"><span class="px bad">&#9888; $255.00/visit</span><span class="mg-low">&minus;2.0%</span></div></td>
+                    <div class="prow-line" style="cursor:pointer" onclick="openM('m-range')"><span class="px bad">&#9888; $255.00/visit</span><span class="mg-low">&minus;2.0%</span></div><div style="margin-top:5px;cursor:pointer" onclick="openM('m-dev')"><span class="flagmark">&#9873; Contract deviation</span><span class="tag tag-over">Over-serviced</span></div></td>
                 <td><div class="rangehint">Range $193.28 - $241.60/visit</div><div class="rangehint">Customer Price $304.00/visit</div>
                     <div class="prow-line"><span class="px">$225.00/visit</span><span class="mg-low">26.0%</span></div></td>
                 <td class="inc">$238.00 - Provider Empire Site Services<span class="sub" style="margin:0">Active</span></td>
                 <td><span class="upic">&#8593;</span></td></tr>
 
-              <tr data-line="2450 Hempstead Tpke" data-svc="Routine Landscaping" data-margin="27.3%" data-risk="" data-reason="&mdash;"><td class="rowno">2</td><td class="chk"><span class="cbx" data-row></span></td>
+              <tr data-dev="other" data-line="2450 Hempstead Tpke" data-svc="Routine Landscaping" data-margin="27.3%" data-risk="" data-reason="&mdash;"><td class="rowno">2</td><td class="chk"><span class="cbx" data-row></span></td>
                 <td>Home Depot (2042) &mdash; 2450 Hempstead Tpke<span class="kebab">&#8942;</span><span class="sub">East Meadow, NY, 11554</span></td>
                 <td>Rhea Kapoor</td><td>Empire Site Services</td>
                 <td><div class="rangehint">Range $180.00 - $240.00/visit</div><div class="rangehint">Customer Price $330.00/visit</div>
-                    <div class="prow-line"><span class="px">$240.00/visit</span><span class="mg-low">27.3%</span></div></td>
+                    <div class="prow-line"><span class="px">$240.00/visit</span><span class="mg-low">27.3%</span></div><div style="margin-top:5px;cursor:pointer" onclick="openM('m-dev')"><span class="flagmark">&#9873; Contract deviation</span><span class="tag tag-same">Same count, different days</span></div></td>
                 <td><div class="rangehint">Range $180.00 - $230.00/visit</div><div class="rangehint">Customer Price $320.00/visit</div>
                     <div class="prow-line"><span class="px">$220.00/visit</span><span class="mg-ok">31.2%</span></div></td>
                 <td class="inc">$225.00 - Provider Empire Site Services<span class="sub" style="margin:0">Active</span></td>
                 <td><span class="upic">&#8593;</span></td></tr>
 
-              <tr data-line="977 E Jericho Tpke" data-svc="Routine Landscaping" data-margin="28.2%" data-risk="" data-reason="&mdash;"><td class="rowno">3</td><td class="chk"><span class="cbx" data-row></span></td>
+              <tr data-dev="under" data-line="977 E Jericho Tpke" data-svc="Routine Landscaping" data-margin="28.2%" data-risk="" data-reason="&mdash;"><td class="rowno">3</td><td class="chk"><span class="cbx" data-row></span></td>
                 <td>Home Depot (2083) &mdash; 977 E Jericho Tpke<span class="kebab">&#8942;</span><span class="sub">Huntington Station, NY, 11746</span></td>
                 <td>Rhea Kapoor</td><td>Empire Site Services</td>
                 <td><div class="rangehint">Range $190.00 - $250.00/visit</div><div class="rangehint">Customer Price $348.00/visit</div>
-                    <div class="prow-line"><span class="px">$250.00/visit</span><span class="mg-low">28.2%</span></div></td>
+                    <div class="prow-line"><span class="px">$250.00/visit</span><span class="mg-low">28.2%</span></div><div style="margin-top:5px;cursor:pointer" onclick="openM('m-dev')"><span class="flagmark">&#9873; Contract deviation</span><span class="tag tag-under">Under-serviced</span></div></td>
                 <td><div class="rangehint">Range $190.00 - $240.00/visit</div><div class="rangehint">Customer Price $330.00/visit</div>
                     <div class="prow-line"><span class="px">$230.00/visit</span><span class="mg-ok">30.3%</span></div></td>
                 <td class="inc">$241.00 - Provider Empire Site Services<span class="sub" style="margin:0">Active</span></td>
@@ -1955,19 +1955,49 @@ function rowBands(tr){
   });
   return out;
 }
-function applyMarginFilter(wrap){
-  const sec=wrap.closest('.screen'); if(!sec) return;
-  const picked=[...wrap.querySelectorAll('.fdrop label')].filter(l=>l.querySelector('.cbx').classList.contains('on'))
-                 .map(l=>l.dataset.band);
-  const chip=wrap.querySelector('.fmargin');
-  chip.textContent = picked.length ? 'Margin ('+picked.length+')' : 'Margin';
-  chip.classList.toggle('applied', picked.length>0);
-  const tbl=sec.querySelector('table.grid[data-filterable]');
-  if(tbl) tbl.querySelectorAll('tbody tr').forEach(tr=>{
-    if(!picked.length){ tr.style.display=''; return; }
-    const b=rowBands(tr);
-    tr.style.display = picked.some(p=>b.has(p)) ? '' : 'none';
+function picked(wrap, key){
+  return [...wrap.querySelectorAll('.fdrop label')]
+    .filter(l=>l.querySelector('.cbx').classList.contains('on'))
+    .map(l=>l.dataset[key]);
+}
+function rowDevs(tr){ return new Set((tr.dataset.dev||'').split(' ').filter(Boolean)); }
+// Margin and Deviation filter the same grid, so one pass decides each row.
+function applyFilters(sec){
+  if(!sec) return;
+  let bands=[], devs=[];
+  sec.querySelectorAll('.fwrap').forEach(w=>{
+    if(w.querySelector('.fmargin')){
+      bands=picked(w,'band');
+      const c=w.querySelector('.fmargin');
+      c.textContent = bands.length ? 'Margin ('+bands.length+')' : 'Margin';
+      c.classList.toggle('applied', bands.length>0);
+    }
+    if(w.querySelector('.fdev')){
+      devs=picked(w,'dev');
+      const c=w.querySelector('.fdev');
+      c.textContent = devs.length ? 'Deviation ('+devs.length+')' : 'Deviation';
+      c.classList.toggle('applied', devs.length>0);
+    }
   });
+  const tbl=sec.querySelector('table.grid[data-filterable]');
+  if(tbl){
+    let shown=0;
+    tbl.querySelectorAll('tbody tr').forEach(tr=>{
+      if(tr.classList.contains('norows')) return;
+      const okB = !bands.length || bands.some(b=>rowBands(tr).has(b));
+      const d=rowDevs(tr);
+      const okD = !devs.length || devs.some(x=>d.has(x));
+      tr.style.display = (okB && okD) ? '' : 'none';
+      if(okB && okD) shown++;
+    });
+    let empty=tbl.querySelector('tr.norows');
+    if(!shown && !empty){
+      empty=document.createElement('tr'); empty.className='norows';
+      empty.innerHTML='<td colspan="'+tbl.rows[0].cells.length+'" style="text-align:center;color:var(--muted);padding:26px 12px">No rows match the filters applied.</td>';
+      tbl.tBodies[0].appendChild(empty);
+    }
+    if(empty) empty.style.display = shown ? 'none' : '';
+  }
   syncSel(sec);
 }
 function markScrollable(){
@@ -1997,15 +2027,16 @@ document.querySelectorAll('.lytoggle').forEach(c=>c.addEventListener('click',e=>
   setTimeout(markScrollable,0);
 }));
 document.querySelectorAll('.fwrap').forEach(wrap=>{
-  const chip=wrap.querySelector('.fmargin'); if(!chip) return;
+  const chip=wrap.querySelector('.fmargin') || wrap.querySelector('.fdev'); if(!chip) return;
+  const sec=wrap.closest('.screen');
   chip.addEventListener('click',e=>{e.stopPropagation();
     document.querySelectorAll('.fwrap.open').forEach(o=>{if(o!==wrap)o.classList.remove('open')});
     wrap.classList.toggle('open');});
   wrap.querySelectorAll('.fdrop label').forEach(l=>l.addEventListener('click',e=>{
-    e.stopPropagation(); l.querySelector('.cbx').classList.toggle('on'); applyMarginFilter(wrap);}));
+    e.stopPropagation(); l.querySelector('.cbx').classList.toggle('on'); applyFilters(sec);}));
   wrap.querySelector('.fclear').addEventListener('click',e=>{e.stopPropagation();
     wrap.querySelectorAll('.fdrop .cbx').forEach(c=>c.classList.remove('on'));
-    applyMarginFilter(wrap); wrap.classList.remove('open');});
+    applyFilters(sec); wrap.classList.remove('open');});
 });
 document.addEventListener('click',()=>document.querySelectorAll('.fwrap.open').forEach(o=>o.classList.remove('open')));
 document.querySelectorAll('.tabstrip').forEach(wrap=>{
