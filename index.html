@@ -1075,10 +1075,10 @@ body.showly .lycard{display:block}
       <div class="card">
         <div class="card-h"><h3>Scope of Work &mdash; Pricing</h3></div>
         <div class="card-b flush">
-          <table class="grid" style="min-width:1560px">
+          <table class="grid" style="min-width:1700px">
             <thead>
               <tr>
-                <th rowspan="2" style="min-width:200px">Service Type</th><th rowspan="2">Service Schedule</th><th rowspan="2">Price</th>
+                <th rowspan="2" style="min-width:200px">Service Type</th><th rowspan="2">Service Schedule</th><th rowspan="2" class="newcol num" style="min-width:130px">Expected visits<span class="sub">full schedule</span></th><th rowspan="2">Price</th>
                 <th rowspan="2" class="num">Expected Season Total</th>
                 <th rowspan="2" class="newcol num" style="min-width:150px">Customer contracted</th>
                 <th rowspan="2" class="newcol num" style="min-width:130px">Expected margin<span class="sub">full season</span></th>
@@ -1094,29 +1094,34 @@ body.showly .lycard{display:block}
             <tbody>
               <tr><td>Routine Landscaping Service</td>
                   <td>1 times per week (Apr-Oct)</td>
+                  <td class="newcol num">30<span class="sub">Apr 1 &ndash; Oct 31 &middot; 1/week</span></td>
                   <td>$46.67/per visit (Apr-Oct)</td>
-                  <td class="num">$1,400.10</td>
-                  <td class="newcol num">$2,100.00</td>
+                  <td class="num">$1,400.10<span class="sub">30 &times; $46.67</span></td>
+                  <td class="newcol num">$2,100.00<span class="sub">30 &times; $70.00</span></td>
                   <td class="newcol num"><span class="mg-ok">33.3%</span><span class="sub">+$699.90</span></td>
                   <td class="num" style="background:#F7F9FB">$1,540.00<span class="sub" style="color:var(--coral)">less $70.00 credited</span><span class="sub" style="margin-top:2px"><b>$1,470.00</b> net</span></td><td class="num" style="background:#F7F9FB">$1,073.41<span class="sub">no credits</span></td><td class="num" style="background:#F7F9FB"><span class="mg-low">27.0%</span><span class="sub">22 of 30 visits invoiced</span><span class="sub" style="color:var(--coral);margin-top:2px">&minus;3.3 pts from the credit</span></td>
                   <td class="newcol"><a style="color:var(--blue);cursor:pointer" onclick="go('d3')">View schedule &#8599;</a></td></tr>
               <tr><td>Tree and Shrub Maintenance</td>
                   <td>1 time (Sep)</td>
+                  <td class="newcol num">1<span class="sub">Sep &middot; seasonal</span></td>
                   <td>$105.00/per visit (Sep)</td>
-                  <td class="num">$105.00</td>
-                  <td class="newcol num">$150.00</td>
+                  <td class="num">$105.00<span class="sub">1 &times; $105.00</span></td>
+                  <td class="newcol num">$150.00<span class="sub">1 &times; $150.00</span></td>
                   <td class="newcol num"><span class="mg-ok">30.0%</span><span class="sub">+$45.00</span></td>
                   <td class="num" style="background:#F7F9FB">&mdash;</td><td class="num" style="background:#F7F9FB">&mdash;</td><td class="num" style="background:#F7F9FB"><span class="sub" style="margin:0">not started</span></td>
                   <td class="newcol"><a style="color:var(--blue);cursor:pointer" onclick="go('d3')">View schedule &#8599;</a></td></tr>
               <tr><td>Fall Cleanup</td>
                   <td>1 time (Oct)</td>
+                  <td class="newcol num">1<span class="sub">Oct &middot; seasonal</span></td>
                   <td>$225.00/per visit (Oct)</td>
-                  <td class="num">$225.00</td>
-                  <td class="newcol num">$300.00</td>
+                  <td class="num">$225.00<span class="sub">1 &times; $225.00</span></td>
+                  <td class="newcol num">$300.00<span class="sub">1 &times; $300.00</span></td>
                   <td class="newcol num"><span class="mg-low">25.0%</span><span class="sub">+$75.00</span></td>
                   <td class="num" style="background:#F7F9FB">&mdash;</td><td class="num" style="background:#F7F9FB">&mdash;</td><td class="num" style="background:#F7F9FB"><span class="sub" style="margin:0">not started</span></td>
                   <td class="newcol"><a style="color:var(--blue);cursor:pointer" onclick="go('d3')">View schedule &#8599;</a></td></tr>
-              <tr><td colspan="3"><b>Total for this Agreement</b><span class="sub" style="margin-top:3px">actual is Routine Landscaping only &mdash; Sep and Oct services have not run</span></td>
+              <tr><td colspan="2"><b>Total for this Agreement</b><span class="sub" style="margin-top:3px">actual is Routine Landscaping only &mdash; Sep and Oct services have not run</span></td>
+                  <td class="newcol num"><b>32</b></td>
+                  <td></td>
                   <td class="num"><b>$1,730.10</b></td>
                   <td class="newcol num"><b>$2,550.00</b></td>
                   <td class="newcol num"><b class="mg-ok">32.2%</b><span class="sub">+$819.90</span></td>
