@@ -1242,6 +1242,11 @@ body.showly .lycard{display:block}
             <div><div class="k">Schedule Type</div><div class="v">Unspecified</div></div>
             <div><div class="k">Status</div><div class="v">Scheduled</div></div>
             <div><div class="k">Frequency</div><div class="v">1 time/week (Apr-Oct)</div></div>
+            <div class="newcol" style="grid-column:span 2"><div class="k">Contract rate</div>
+              <div class="v">Customer $70.00/visit &middot; Provider $46.67/visit &middot; expected margin <span class="mg-ok">33.3%</span></div></div>
+            <div class="newcol" style="grid-column:span 2"><div class="k">Actual to date</div>
+              <div class="v"><span class="mg-low">27.0%</span> &middot; 22 of 30 visits invoiced
+                <span class="sub" style="margin-top:2px;color:var(--coral)">2 activities off contract</span></div></div>
           </div>
           <div style="margin-top:16px"><div class="k" style="font-size:11px;color:var(--muted);font-weight:500;margin-bottom:3px">Job Scope</div>
             <div class="sub" style="margin:0">MOWING &mdash; All turf areas to be mowed as needed. Turf maintained dependent on time of year and species. Grass clippings mulched&hellip; TRASH/DEBRIS CLEAN UP &mdash; all trash, paper and debris removed within property lines&hellip; WEED CONTROL &mdash; weeds removed from mulch and rock beds&hellip;</div></div>
@@ -1259,7 +1264,7 @@ body.showly .lycard{display:block}
           </div>
         </div>
         <div class="card-b flush">
-          <table class="grid" style="min-width:1500px">
+          <table class="grid" style="min-width:1660px">
             <thead><tr>
               <th class="frzL1" style="min-width:92px">Start Date</th><th class="frzL2" style="min-width:92px">End Date</th><th style="min-width:60px">Due Date</th>
               <th class="jobscope" style="min-width:120px;max-width:120px">Job Scope</th>
@@ -1270,17 +1275,41 @@ body.showly .lycard{display:block}
               <th class="newcol" style="min-width:124px">Provider invoice</th>
               <th class="newcol" style="min-width:136px">Ticket</th>
               <th class="newcol" style="min-width:124px">Customer invoice</th>
+              <th class="newcol num" style="min-width:130px">Margin<span class="sub">per visit</span></th>
               <th class="newcol" style="min-width:136px">Work order received</th>
               <th style="min-width:140px">Provider Agreement</th>
             </tr></thead>
             <tbody>
+              <tr style="background:#FDF3F2"><td class="frzL1">07/26/2026</td><td class="frzL2">08/01/2026</td><td><span class="sub" style="margin:0">-</span></td>
+                  <td><span class="sub" style="margin:0">MOWING - All turf areas to be mowed&hellip;</span></td><td class="num">1</td>
+                  <td>CBP-260721-0182</td><td><span class="badge b-grey">Work Triggered - Closed</span></td>
+                  <td><a style="color:var(--blue)">JOB-260721-1993</a></td>
+                  <td class="newcol"><b>$46.67</b><span class="sub" style="margin-top:2px"><a style="color:var(--blue)">I26-0BJ4R1</a> &middot; Paid</span></td>
+                  <td class="newcol"><a style="color:var(--blue)">TKT-260721-21987</a></td>
+                  <td class="newcol"><b>$0.00</b><span class="sub" style="margin-top:2px"><span style="color:var(--coral)">2600681204 &middot; $70.00 credited</span></span></td>
+                  <td class="newcol num"><span style="color:var(--coral);font-weight:600;font-size:12.5px">no revenue</span><span class="sub" style="margin-top:2px">expected 33.3%</span></td>
+                  <td class="newcol">AAA-WO-883104</td>
+                  <td>PSA-260311-00056</td></tr>
+
+              <tr style="background:#FDF3F2"><td class="frzL1">08/09/2026</td><td class="frzL2">08/15/2026</td><td><span class="sub" style="margin:0">-</span></td>
+                  <td><span class="sub" style="margin:0">MOWING - All turf areas to be mowed&hellip;</span></td><td class="num">1</td>
+                  <td>CBP-260804-0180</td><td><span class="badge b-grey">Work Triggered - Closed</span></td>
+                  <td><a style="color:var(--blue)">JOB-260804-2012</a></td>
+                  <td class="newcol"><b>$46.67</b><span class="sub" style="margin-top:2px"><a style="color:var(--blue)">I26-0BJ5A4</a> &middot; Paid</span></td>
+                  <td class="newcol"><a style="color:var(--blue)">TKT-260804-22910</a></td>
+                  <td class="newcol"><span class="sub" style="margin:0"><span style="color:var(--coral)">Not raised</span></span></td>
+                  <td class="newcol num"><span style="color:var(--coral);font-weight:600;font-size:12.5px">no revenue</span><span class="sub" style="margin-top:2px">expected 33.3%</span></td>
+                  <td class="newcol">AAA-WO-883977</td>
+                  <td>PSA-260311-00056</td></tr>
+
               <tr><td class="frzL1">08/16/2026</td><td class="frzL2">08/22/2026</td><td><span class="sub" style="margin:0;margin:0">-</span></td>
                   <td><span class="sub" style="margin:0;margin:0">MOWING - All turf areas to be mowed&hellip;</span></td><td class="num">1</td>
                   <td>CBP-260812-7969</td><td><span class="badge b-grey">Work Triggered - Closed</span></td>
                   <td><a style="color:var(--blue)">JOB-260812-25939</a></td>
-                  <td class="newcol"><a style="color:var(--blue)">I26-0BJ5G5</a><span class="sub"><span class="mg-ok">Paid</span></span></td>
+                  <td class="newcol"><b>$46.67</b><span class="sub" style="margin-top:2px"><a style="color:var(--blue)">I26-0BJ5G5</a> &middot; Paid</span></td>
                   <td class="newcol"><a style="color:var(--blue)">TKT-260812-23848</a></td>
-                  <td class="newcol"><a style="color:var(--blue)">2600683789</a><span class="sub" style="margin:0">Sent</span></td>
+                  <td class="newcol"><b>$70.00</b><span class="sub" style="margin-top:2px"><a style="color:var(--blue)">2600683789</a> &middot; Sent</span></td>
+                  <td class="newcol num"><span class="mg-ok">33.3%</span></td>
                   <td class="newcol">AAA-WO-884210</td>
                   <td>PSA-260311-00056</td></tr>
 
@@ -1288,9 +1317,10 @@ body.showly .lycard{display:block}
                   <td><span class="sub" style="margin:0;margin:0">MOWING - All turf areas to be mowed&hellip;</span></td><td class="num">1</td>
                   <td>CBP-260812-7970</td><td><span class="badge b-grey">Work Triggered - Closed</span></td>
                   <td><a style="color:var(--blue)">JOB-260812-25951</a></td>
-                  <td class="newcol"><a style="color:var(--blue)">I26-0BJ5H2</a><span class="sub">Approved</span></td>
+                  <td class="newcol"><b>$46.67</b><span class="sub" style="margin-top:2px"><a style="color:var(--blue)">I26-0BJ5H2</a> &middot; Approved</span></td>
                   <td class="newcol"><a style="color:var(--blue)">TKT-260812-23851</a></td>
-                  <td class="newcol"><a style="color:var(--blue)">2600684017</a><span class="sub" style="margin:0">Draft</span></td>
+                  <td class="newcol"><b>$70.00</b><span class="sub" style="margin-top:2px"><a style="color:var(--blue)">2600684017</a> &middot; Draft</span></td>
+                  <td class="newcol num"><span class="mg-ok">33.3%</span></td>
                   <td class="newcol">AAA-WO-884233</td>
                   <td>PSA-260311-00056</td></tr>
 
@@ -1301,6 +1331,7 @@ body.showly .lycard{display:block}
                   <td class="newcol"><span class="sub" style="margin:0;margin:0">Not raised</span></td>
                   <td class="newcol"><a style="color:var(--blue)">TKT-260812-23845</a></td>
                   <td class="newcol"><span class="sub" style="margin:0">Not raised</span></td>
+                  <td class="newcol num"><span class="sub" style="margin:0">&mdash;</span></td>
                   <td class="newcol">AAA-WO-884251</td>
                   <td>PSA-260311-00056</td></tr>
 
@@ -1311,6 +1342,7 @@ body.showly .lycard{display:block}
                   <td class="newcol"><span class="sub" style="margin:0;margin:0">Not raised</span></td>
                   <td class="newcol"><a style="color:var(--blue)">TKT-260817-1902</a></td>
                   <td class="newcol"><span class="sub" style="margin:0">Not raised</span></td>
+                  <td class="newcol num"><span class="sub" style="margin:0">&mdash;</span></td>
                   <td class="newcol">AAA-WO-884619</td>
                   <td>PSA-260311-00056</td></tr>
 
@@ -1321,6 +1353,7 @@ body.showly .lycard{display:block}
                   <td class="newcol"><span class="sub" style="margin:0;margin:0">-</span></td>
                   <td class="newcol"><span class="sub" style="margin:0;margin:0">-</span></td>
                   <td class="newcol"><span class="sub" style="margin:0">-</span></td>
+                  <td class="newcol num"><span class="sub" style="margin:0">&mdash;</span></td>
                   <td class="newcol"><span class="sub" style="margin:0">-</span></td>
                   <td>PSA-260311-00056</td></tr>
 
@@ -1331,6 +1364,7 @@ body.showly .lycard{display:block}
                   <td class="newcol"><span class="sub" style="margin:0;margin:0">-</span></td>
                   <td class="newcol"><span class="sub" style="margin:0;margin:0">-</span></td>
                   <td class="newcol"><span class="sub" style="margin:0">-</span></td>
+                  <td class="newcol num"><span class="sub" style="margin:0">&mdash;</span></td>
                   <td class="newcol"><span class="sub" style="margin:0">-</span></td>
                   <td><span class="sub" style="margin:0;margin:0">-</span></td></tr>
             </tbody>
