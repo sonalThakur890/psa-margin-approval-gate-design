@@ -301,7 +301,8 @@ button{font-family:inherit}
     <a data-s="s2"><span class="num">2a</span>Queues — new tabs</a>
     <a data-s="s2b"><span class="num">2b</span>Active &amp; Upcoming</a>
     <a data-s="d1"><span class="num">2c</span>Agreement details — active</a>
-    <a data-s="d2"><span class="num">2d</span>Service schedule — jobs, tickets, invoices</a>
+    <a data-s="d2"><span class="num">2d</span>Schedules — filtered to the agreement</a>
+    <a data-s="d3"><span class="num">2e</span>Service schedule — jobs, tickets, invoices</a>
     <a data-s="s2c"><span class="num">3</span>Approval — Awaiting Approval</a>
     <a data-s="s3"><span class="num">4</span>Approval — Level 1</a>
     <a data-s="s4"><span class="num">5</span>Approval — Level 2 &amp; blocks</a>
@@ -836,7 +837,7 @@ button{font-family:inherit}
         <div style="margin-left:auto" class="btnrow">
           <button class="btn out sm">Terminate</button>
           <button class="btn out sm">Download Provider Agreement</button>
-          <button class="btn newb sm" onclick="openSchedule()">View service schedules &#8599;</button>
+          <button class="btn newb sm" onclick="go('d2')">View service schedules &#8599;</button>
         </div></div>
 
       <div class="card">
@@ -869,19 +870,19 @@ button{font-family:inherit}
                   <td>$46.67/per visit (Apr-Oct)</td>
                   <td class="num">$1,400.10</td>
                   <td class="newcol"><b>21 of 30 jobs</b><span class="sub">19 closed &middot; 2 open &middot; 9 scheduled</span></td>
-                  <td class="newcol"><a style="color:var(--blue);cursor:pointer" onclick="openSchedule('Routine Landscaping Service')">View schedule &#8599;</a></td></tr>
+                  <td class="newcol"><a style="color:var(--blue);cursor:pointer" onclick="go('d3')">View schedule &#8599;</a></td></tr>
               <tr><td>Tree and Shrub Maintenance</td>
                   <td>1 time (Sep)</td>
                   <td>$105.00/per visit (Sep)</td>
                   <td class="num">$105.00</td>
                   <td class="newcol"><b>1 of 1 jobs</b><span class="sub">1 closed</span></td>
-                  <td class="newcol"><a style="color:var(--blue);cursor:pointer" onclick="openSchedule('Tree and Shrub Maintenance')">View schedule &#8599;</a></td></tr>
+                  <td class="newcol"><a style="color:var(--blue);cursor:pointer" onclick="go('d3')">View schedule &#8599;</a></td></tr>
               <tr><td>Fall Cleanup</td>
                   <td>1 time (Oct)</td>
                   <td>$225.00/per visit (Oct)</td>
                   <td class="num">$225.00</td>
                   <td class="newcol"><b>0 of 1 jobs</b><span class="sub">1 scheduled</span></td>
-                  <td class="newcol"><a style="color:var(--blue);cursor:pointer" onclick="openSchedule('Fall Cleanup')">View schedule &#8599;</a></td></tr>
+                  <td class="newcol"><a style="color:var(--blue);cursor:pointer" onclick="go('d3')">View schedule &#8599;</a></td></tr>
               <tr><td colspan="3"><b>Total Expected Payment for this Agreement</b></td>
                   <td class="num"><b>$1,730.10</b></td>
                   <td class="newcol"><b>22 of 32 jobs &middot; 20 invoiced</b><span class="sub">$991.73 paid &middot; $93.34 approved</span></td>
@@ -894,7 +895,7 @@ button{font-family:inherit}
     </div>
   </section>
 
-<!-- ══════════════════ SERVICE SCHEDULE — DOWNSTREAM ══════════════════ -->
+<!-- ══════════════════ SCHEDULES LIST — FILTERED TO THE AGREEMENT ══════════════════ -->
   <section class="screen" id="d2">
     <div class="cc-top">
       <div class="cc-burger"><i></i><i></i><i></i></div>
@@ -904,98 +905,183 @@ button{font-family:inherit}
     <div class="cc-accent"></div>
     <div class="cc-body">
 
-      <div class="cc-crumb"><a>Schedules</a> / AAA(94515) - 6320 Glenway Ave - Routine Landscaping Service - Service Schedule</div>
-      <div class="cc-head-row"><h1 class="cc-h1">AAA(94515) - 6320 Glenway Ave &mdash; Service Schedules</h1></div>
+      <div class="cc-head-row"><h1 class="cc-h1">Schedules</h1>
+        <div style="margin-left:auto"><button class="btn sm">Reprocess work orders</button></div></div>
 
-      <div class="pill-row"><span class="fchip applied" id="d2svc">All service types</span><span class="fchip applied">AAA(94515) - 6320 Glenway Ave</span><span class="fchip applied" style="background:var(--new);border-color:var(--new)">PSA-260311-00056</span></div>
+      <div class="search">&#128269; &nbsp;Search by Property Name, Work Order or Term Sheet</div>
+      <div class="filters">
+        <span class="fchip">Customer</span><span class="fchip">Service Line</span><span class="fchip">Service Type</span>
+        <span class="fchip">Activity Schedule Date</span><span class="fchip">Activity Status</span>
+        <span class="fchip">Dispatch Type</span><span class="fchip">Job Type</span>
+      </div>
+      <div class="pill-row">
+        <span class="fchip applied">AAA(94515) - 6320 Glenway Ave</span>
+        <span class="fchip applied" style="background:var(--new);border-color:var(--new)">PSA-260311-00056</span>
+        <span style="font-size:12.5px;color:var(--blue);align-self:center">Clear All</span>
+      </div>
+
+      <div class="tabstrip"><span class="tabarrow">&lsaquo;</span><div class="tabs">
+        <button class="tab on">Service schedules</button>
+        <button class="tab">Suggested works</button>
+        <button class="tab">Provider invoice triggers</button>
+        <button class="tab">Customer invoice triggers</button>
+        <button class="tab">Work order exceptions</button>
+      </div><span class="tabarrow">&rsaquo;</span></div>
+
+      <div class="card" style="margin-top:0;border-top:none;border-radius:0 0 var(--r) var(--r)">
+        <div class="card-b flush" style="overflow-x:auto">
+          <table class="grid" style="min-width:1240px">
+            <thead><tr>
+              <th class="chk"><span class="cbx"></span></th><th class="rowno"></th>
+              <th style="min-width:230px">Property</th>
+              <th style="min-width:170px">Service line/ type</th>
+              <th style="min-width:150px">Customer</th>
+              <th>Category</th><th>Dispatch type</th>
+              <th style="min-width:120px">Frequency</th>
+              <th>Service start</th><th>Service end</th>
+              <th style="min-width:190px">Contract</th>
+            </tr></thead>
+            <tbody>
+              <tr style="cursor:pointer" onclick="go('d3')"><td class="chk"><span class="cbx"></span></td><td class="rowno">&rsaquo;</td>
+                <td>AAA(94515) - 6320 Glenway Ave</td>
+                <td>Landscaping<span class="sub">Routine Landscaping Service</span></td>
+                <td>AAA Club Alliance Inc.</td><td>Per Occurrence</td><td>DMG</td>
+                <td>1 time/week<span class="sub">Apr-Oct</span></td><td>04/01</td><td>10/31</td>
+                <td><a style="color:var(--blue)">Landscaping - Standard 2026</a></td></tr>
+              <tr style="cursor:pointer" onclick="go('d3')"><td class="chk"><span class="cbx"></span></td><td class="rowno">&rsaquo;</td>
+                <td>AAA(94515) - 6320 Glenway Ave</td>
+                <td>Landscaping<span class="sub">Tree and Shrub Maintenance</span></td>
+                <td>AAA Club Alliance Inc.</td><td>Per Occurrence</td><td>DMG</td>
+                <td>1 time<span class="sub">Sep</span></td><td>09/01</td><td>09/30</td>
+                <td><a style="color:var(--blue)">Landscaping - Standard 2026</a></td></tr>
+              <tr style="cursor:pointer" onclick="go('d3')"><td class="chk"><span class="cbx"></span></td><td class="rowno">&rsaquo;</td>
+                <td>AAA(94515) - 6320 Glenway Ave</td>
+                <td>Landscaping<span class="sub">Fall Cleanup</span></td>
+                <td>AAA Club Alliance Inc.</td><td>Per Occurrence</td><td>DMG</td>
+                <td>1 time<span class="sub">Oct</span></td><td>10/01</td><td>10/31</td>
+                <td><a style="color:var(--blue)">Landscaping - Standard 2026</a></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-b" style="border-top:1px solid var(--line-2);text-align:right;font-size:12.5px;color:var(--muted)">Total Rows: 3 of 3</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════ SERVICE SCHEDULE — ACTIVITIES ══════════════════ -->
+  <section class="screen" id="d3">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Sonal Kumari Thakur</b><span>Product Leader</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+
+      <div class="cc-crumb"><a>Schedules</a> / AAA(94515) - 6320 Glenway Ave - Routine Landscaping Service - Service Schedule</div>
+      <div class="cc-head-row"><h1 class="cc-h1">AAA(94515) - 6320 Glenway Ave - Routine Landscaping Service - Service Schedule</h1></div>
+
+      <div class="notice n-blue">
+        <span class="ic">&#9432;</span>
+        <div><b>Action limitations</b>For this service schedule, you can only modify future activities that have not been posted yet.</div>
+      </div>
 
       <div class="card">
-        <div class="card-h"><h3>Schedule details</h3><span class="badge b-grey">Scheduled</span></div>
+        <div class="card-h"><h3>Schedule details</h3></div>
         <div class="card-b">
-          <div class="kv" style="border:none">
+          <div class="kv" style="border:none;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+            <div><div class="k">Property</div><div class="v">AAA(94515) - 6320 Glenway Ave</div></div>
             <div><div class="k">Customer</div><div class="v">AAA Club Alliance Inc.</div></div>
             <div><div class="k">Term Sheet</div><div class="v">Landscaping - Standard 2026</div></div>
             <div><div class="k">Service Line</div><div class="v">Landscaping</div></div>
+            <div><div class="k">Service Type</div><div class="v">Routine Landscaping Service</div></div>
+            <div><div class="k">Term Start Date</div><div class="v">04/01/2026</div></div>
+            <div><div class="k">Term End Date</div><div class="v">10/31/2026</div></div>
+            <div><div class="k">Service Start</div><div class="v">04/01</div></div>
+            <div><div class="k">Service End</div><div class="v">10/31</div></div>
             <div><div class="k">Category</div><div class="v">Per Occurrence</div></div>
             <div><div class="k">Dispatch Type</div><div class="v">DMG</div></div>
-            <div><div class="k">Service types</div><div class="v">3<span class="sub">Routine Landscaping &middot; Tree and Shrub &middot; Fall Cleanup</span></div></div>
+            <div><div class="k">Schedule Type</div><div class="v">Unspecified</div></div>
+            <div><div class="k">Status</div><div class="v">Scheduled</div></div>
+            <div><div class="k">Frequency</div><div class="v">1 time/week (Apr-Oct)</div></div>
           </div>
+          <div style="margin-top:16px"><div class="k" style="font-size:11px;color:var(--muted);font-weight:500;margin-bottom:3px">Job Scope</div>
+            <div class="sub" style="margin:0">MOWING &mdash; All turf areas to be mowed as needed. Turf maintained dependent on time of year and species. Grass clippings mulched&hellip; TRASH/DEBRIS CLEAN UP &mdash; all trash, paper and debris removed within property lines&hellip; WEED CONTROL &mdash; weeds removed from mulch and rock beds&hellip;</div></div>
         </div>
       </div>
 
       <div class="card">
+        <div class="card-h"><h3>Schedule activities</h3>
+          <div style="margin-left:auto" class="btnrow"><button class="btn out sm">Modify</button></div>
+        </div>
         <div class="card-b" style="padding-bottom:0">
-          <div class="filters" style="align-items:center">
+          <div class="filters">
             <span class="fchip">Activity Schedule Date</span><span class="fchip">Activity Status</span><span class="fchip">Job Type</span>
             <span class="fchip" style="border-color:var(--new);color:#8A4508;background:var(--new-bg)">Provider invoice status</span>
           </div>
         </div>
         <div class="card-b flush" style="overflow-x:auto">
-          <table class="grid" style="min-width:1300px">
+          <table class="grid" style="min-width:1560px">
             <thead><tr>
-              <th style="min-width:180px">Service type</th><th>Start Date</th><th>End Date</th>
+              <th>Start Date</th><th>End Date</th><th>Due Date</th>
+              <th style="min-width:200px">Job Scope</th>
+              <th class="num">Frequency</th>
               <th style="min-width:150px">Finance Correlation Id</th>
               <th style="min-width:160px">Status</th>
               <th style="min-width:160px">Associated Job</th>
               <th class="newcol" style="min-width:160px">Ticket</th>
-              <th class="newcol" style="min-width:170px">Provider invoice</th>
+              <th class="newcol" style="min-width:165px">Provider invoice</th>
               <th style="min-width:160px">Provider Agreement</th>
             </tr></thead>
             <tbody>
-              <tr><td data-svc="Routine Landscaping Service">Routine Landscaping</td><td>08/16/2026</td><td>08/22/2026</td>
+              <tr><td>08/16/2026</td><td>08/22/2026</td><td class="sub" style="margin:0">-</td>
+                  <td class="sub" style="margin:0">MOWING - All turf areas to be mowed&hellip;</td><td class="num">1</td>
                   <td>CBP-260812-7969</td><td><span class="badge b-grey">Work Triggered - Closed</span></td>
                   <td><a style="color:var(--blue)">JOB-260812-25939</a></td>
                   <td class="newcol"><a style="color:var(--blue)">TKT-260812-23848</a></td>
                   <td class="newcol"><a style="color:var(--blue)">I26-0BJ5G5</a><span class="sub"><span class="mg-ok">Paid</span></span></td>
                   <td>PSA-260311-00056</td></tr>
 
-              <tr><td data-svc="Routine Landscaping Service">Routine Landscaping</td><td>08/23/2026</td><td>08/29/2026</td>
+              <tr><td>08/23/2026</td><td>08/29/2026</td><td class="sub" style="margin:0">-</td>
+                  <td class="sub" style="margin:0">MOWING - All turf areas to be mowed&hellip;</td><td class="num">1</td>
                   <td>CBP-260812-7970</td><td><span class="badge b-grey">Work Triggered - Closed</span></td>
                   <td><a style="color:var(--blue)">JOB-260812-25951</a></td>
                   <td class="newcol"><a style="color:var(--blue)">TKT-260812-23851</a></td>
                   <td class="newcol"><a style="color:var(--blue)">I26-0BJ5H2</a><span class="sub">Approved</span></td>
                   <td>PSA-260311-00056</td></tr>
 
-              <tr style="background:#FFFBF7"><td data-svc="Routine Landscaping Service">Routine Landscaping</td><td>08/30/2026</td><td>09/05/2026</td>
+              <tr><td>08/30/2026</td><td>09/05/2026</td><td class="sub" style="margin:0">-</td>
+                  <td class="sub" style="margin:0">MOWING - All turf areas to be mowed&hellip;</td><td class="num">1</td>
                   <td>CBP-260812-7968</td><td><span class="badge b-l1">Work Triggered - Open</span></td>
                   <td><a style="color:var(--blue)">JOB-260812-25945</a></td>
                   <td class="newcol"><a style="color:var(--blue)">TKT-260812-23845</a></td>
                   <td class="newcol sub" style="margin:0">Not raised</td>
                   <td>PSA-260311-00056</td></tr>
 
-              <tr style="background:#FFFBF7"><td data-svc="Routine Landscaping Service">Routine Landscaping</td><td>09/06/2026</td><td>09/12/2026</td>
+              <tr><td>09/06/2026</td><td>09/12/2026</td><td class="sub" style="margin:0">-</td>
+                  <td class="sub" style="margin:0">MOWING - All turf areas to be mowed&hellip;</td><td class="num">1</td>
                   <td>CBP-260817-1634</td><td><span class="badge b-l1">Work Triggered - Open</span></td>
                   <td><a style="color:var(--blue)">JOB-260817-2024</a></td>
                   <td class="newcol"><a style="color:var(--blue)">TKT-260817-1902</a></td>
                   <td class="newcol sub" style="margin:0">Not raised</td>
                   <td>PSA-260311-00056</td></tr>
 
-              <tr><td data-svc="Routine Landscaping Service">Routine Landscaping</td><td>09/13/2026</td><td>09/19/2026</td>
-                  <td class="sub" style="margin:0">&mdash;</td><td><span class="badge b-grey">Scheduled</span></td>
-                  <td class="sub" style="margin:0">&mdash;</td>
-                  <td class="newcol sub" style="margin:0">&mdash;</td>
-                  <td class="newcol sub" style="margin:0">&mdash;</td>
+              <tr><td>09/13/2026</td><td>09/19/2026</td><td class="sub" style="margin:0">-</td>
+                  <td class="sub" style="margin:0">MOWING - All turf areas to be mowed&hellip;</td><td class="num">1</td>
+                  <td class="sub" style="margin:0">-</td><td><span class="badge b-grey">Scheduled</span></td>
+                  <td class="sub" style="margin:0">-</td>
+                  <td class="newcol sub" style="margin:0">-</td>
+                  <td class="newcol sub" style="margin:0">-</td>
                   <td>PSA-260311-00056</td></tr>
 
-              <tr><td data-svc="Routine Landscaping Service">Routine Landscaping</td><td>03/29/2026</td><td>04/04/2026</td>
-                  <td class="sub" style="margin:0">&mdash;</td><td><span class="badge b-unk">Inactive</span></td>
-                  <td class="sub" style="margin:0">&mdash;</td>
-                  <td class="newcol sub" style="margin:0">&mdash;</td>
-                  <td class="newcol sub" style="margin:0">&mdash;</td>
-                  <td class="sub" style="margin:0">&mdash;</td></tr>
-            
-              <tr><td data-svc="Tree and Shrub Maintenance">Tree and Shrub Maintenance</td><td>09/06/2026</td><td>09/12/2026</td>
-                  <td>CBP-260901-0311</td><td><span class="badge b-grey">Work Triggered - Closed</span></td>
-                  <td><a style="color:var(--blue)">JOB-260901-2210</a></td>
-                  <td class="newcol"><a style="color:var(--blue)">TKT-260901-2044</a></td>
-                  <td class="newcol"><a style="color:var(--blue)">I26-0BK1P7</a><span class="sub">Approved</span></td>
-                  <td>PSA-260311-00056</td></tr>
-              <tr><td data-svc="Fall Cleanup">Fall Cleanup</td><td>10/11/2026</td><td>10/17/2026</td>
-                  <td class="sub" style="margin:0">&mdash;</td><td><span class="badge b-grey">Scheduled</span></td>
-                  <td class="sub" style="margin:0">&mdash;</td>
-                  <td class="newcol sub" style="margin:0">&mdash;</td>
-                  <td class="newcol sub" style="margin:0">&mdash;</td>
-                  <td>PSA-260311-00056</td></tr>
+              <tr><td>03/29/2026</td><td>04/04/2026</td><td class="sub" style="margin:0">-</td>
+                  <td class="sub" style="margin:0">MOWING - All turf areas to be mowed&hellip;</td><td class="num">1</td>
+                  <td class="sub" style="margin:0">-</td><td><span class="badge b-unk">Inactive</span></td>
+                  <td class="sub" style="margin:0">-</td>
+                  <td class="newcol sub" style="margin:0">-</td>
+                  <td class="newcol sub" style="margin:0">-</td>
+                  <td class="sub" style="margin:0">-</td></tr>
             </tbody>
           </table>
         </div>
@@ -1003,6 +1089,8 @@ button{font-family:inherit}
 
     </div>
   </section>
+
+
 
   <!-- ══════════════════ 3 · AWAITING APPROVAL (existing bucket) ══════════════════ -->
   <section class="screen" id="s2c" data-agreement="Cadence Education Landscaping - 12M52C w/Irrigation (4 Prunes)">
@@ -1854,16 +1942,6 @@ function fillModal(id){
       :'Back to <b>D. Okafor</b> at Level 1 approval';
     return '<tr><td>'+r.dataset.line+'</td><td><b style="font-size:12px">'+v+'</b></td>'
       +'<td class="sub" style="margin:0">'+dest+'</td></tr>';}).join('');
-}
-function openSchedule(svc){
-  go('d2');
-  const chip=document.getElementById('d2svc');
-  if(chip) chip.textContent = svc || 'All service types';
-  const tbl=document.querySelector('#d2 table.grid');
-  if(tbl) tbl.querySelectorAll('tbody tr').forEach(tr=>{
-    const cell=tr.querySelector('td[data-svc]');
-    tr.style.display = (!svc || !cell || cell.dataset.svc===svc) ? '' : 'none';
-  });
 }
 function openM(id,scope){window.__scope=scope||null;fillModal(id);document.getElementById(id).classList.add('on')}
 
