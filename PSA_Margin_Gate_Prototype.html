@@ -106,6 +106,14 @@ button{font-family:inherit}
 .grid td{padding:11px 12px;border-bottom:1px solid var(--line-2);vertical-align:top}
 .grid td.newcol{background:#FFFBF7}
 .grid th.frz2,.grid td.frz2{position:sticky;right:230px;z-index:2;box-shadow:-6px 0 8px -6px rgba(0,0,0,.12)}
+.grid th.frzL1,.grid td.frzL1{position:sticky;left:0;z-index:3;background:#fff}
+.grid th.frzL1{background:#F7F9FA}
+.grid th.frzL2,.grid td.frzL2{position:sticky;left:92px;z-index:3;background:#fff;box-shadow:6px 0 8px -6px rgba(0,0,0,.14)}
+.grid th.frzL2{background:#F7F9FA}
+.card-b.flush{scrollbar-width:thin;scrollbar-color:#C6CDD4 #F2F4F6}
+.card-b.flush::-webkit-scrollbar{height:11px}
+.card-b.flush::-webkit-scrollbar-track{background:#F2F4F6;border-radius:6px}
+.card-b.flush::-webkit-scrollbar-thumb{background:#C6CDD4;border-radius:6px;border:2px solid #F2F4F6}
 .grid th.frz1,.grid td.frz1{position:sticky;right:0;z-index:2}
 .grid tr:last-child td{border-bottom:none}
 .crow.hid{display:none}
@@ -1027,22 +1035,22 @@ button{font-family:inherit}
           </div>
         </div>
         <div class="card-b flush" style="overflow-x:auto">
-          <table class="grid" style="min-width:1990px">
+          <table class="grid" style="min-width:1500px">
             <thead><tr>
-              <th>Start Date</th><th>End Date</th><th>Due Date</th>
-              <th style="min-width:200px">Job Scope</th>
+              <th class="frzL1" style="min-width:92px">Start Date</th><th class="frzL2" style="min-width:92px">End Date</th><th style="min-width:60px">Due Date</th>
+              <th class="jobscope" style="min-width:120px;max-width:120px">Job Scope</th>
               <th class="num">Frequency</th>
-              <th style="min-width:150px">Finance Correlation Id</th>
-              <th style="min-width:160px">Status</th>
-              <th style="min-width:160px">Associated Job</th>
-              <th class="newcol" style="min-width:165px">Provider invoice</th>
-              <th class="newcol" style="min-width:160px">Ticket</th>
-              <th class="newcol" style="min-width:150px">Customer invoice</th>
-              <th class="newcol" style="min-width:175px">Work order received</th>
-              <th style="min-width:160px">Provider Agreement</th>
+              <th style="min-width:132px">Finance Correlation Id</th>
+              <th style="min-width:128px">Status</th>
+              <th style="min-width:136px">Associated Job</th>
+              <th class="newcol" style="min-width:124px">Provider invoice</th>
+              <th class="newcol" style="min-width:136px">Ticket</th>
+              <th class="newcol" style="min-width:124px">Customer invoice</th>
+              <th class="newcol" style="min-width:136px">Work order received</th>
+              <th style="min-width:140px">Provider Agreement</th>
             </tr></thead>
             <tbody>
-              <tr><td>08/16/2026</td><td>08/22/2026</td><td><span class="sub" style="margin:0;margin:0">-</span></td>
+              <tr><td class="frzL1">08/16/2026</td><td class="frzL2">08/22/2026</td><td><span class="sub" style="margin:0;margin:0">-</span></td>
                   <td><span class="sub" style="margin:0;margin:0">MOWING - All turf areas to be mowed&hellip;</span></td><td class="num">1</td>
                   <td>CBP-260812-7969</td><td><span class="badge b-grey">Work Triggered - Closed</span></td>
                   <td><a style="color:var(--blue)">JOB-260812-25939</a></td>
@@ -1052,7 +1060,7 @@ button{font-family:inherit}
                   <td class="newcol">AAA-WO-884210</td>
                   <td>PSA-260311-00056</td></tr>
 
-              <tr><td>08/23/2026</td><td>08/29/2026</td><td><span class="sub" style="margin:0;margin:0">-</span></td>
+              <tr><td class="frzL1">08/23/2026</td><td class="frzL2">08/29/2026</td><td><span class="sub" style="margin:0;margin:0">-</span></td>
                   <td><span class="sub" style="margin:0;margin:0">MOWING - All turf areas to be mowed&hellip;</span></td><td class="num">1</td>
                   <td>CBP-260812-7970</td><td><span class="badge b-grey">Work Triggered - Closed</span></td>
                   <td><a style="color:var(--blue)">JOB-260812-25951</a></td>
@@ -1062,7 +1070,7 @@ button{font-family:inherit}
                   <td class="newcol">AAA-WO-884233</td>
                   <td>PSA-260311-00056</td></tr>
 
-              <tr><td>08/30/2026</td><td>09/05/2026</td><td><span class="sub" style="margin:0;margin:0">-</span></td>
+              <tr><td class="frzL1">08/30/2026</td><td class="frzL2">09/05/2026</td><td><span class="sub" style="margin:0;margin:0">-</span></td>
                   <td><span class="sub" style="margin:0;margin:0">MOWING - All turf areas to be mowed&hellip;</span></td><td class="num">1</td>
                   <td>CBP-260812-7968</td><td><span class="badge b-l1">Work Triggered - Open</span></td>
                   <td><a style="color:var(--blue)">JOB-260812-25945</a></td>
@@ -1072,7 +1080,7 @@ button{font-family:inherit}
                   <td class="newcol">AAA-WO-884251</td>
                   <td>PSA-260311-00056</td></tr>
 
-              <tr><td>09/06/2026</td><td>09/12/2026</td><td><span class="sub" style="margin:0;margin:0">-</span></td>
+              <tr><td class="frzL1">09/06/2026</td><td class="frzL2">09/12/2026</td><td><span class="sub" style="margin:0;margin:0">-</span></td>
                   <td><span class="sub" style="margin:0;margin:0">MOWING - All turf areas to be mowed&hellip;</span></td><td class="num">1</td>
                   <td>CBP-260817-1634</td><td><span class="badge b-l1">Work Triggered - Open</span></td>
                   <td><a style="color:var(--blue)">JOB-260817-2024</a></td>
@@ -1082,7 +1090,7 @@ button{font-family:inherit}
                   <td class="newcol">AAA-WO-884619</td>
                   <td>PSA-260311-00056</td></tr>
 
-              <tr><td>09/13/2026</td><td>09/19/2026</td><td><span class="sub" style="margin:0;margin:0">-</span></td>
+              <tr><td class="frzL1">09/13/2026</td><td class="frzL2">09/19/2026</td><td><span class="sub" style="margin:0;margin:0">-</span></td>
                   <td><span class="sub" style="margin:0;margin:0">MOWING - All turf areas to be mowed&hellip;</span></td><td class="num">1</td>
                   <td><span class="sub" style="margin:0;margin:0">-</span></td><td><span class="badge b-grey">Scheduled</span></td>
                   <td><span class="sub" style="margin:0;margin:0">-</span></td>
@@ -1092,7 +1100,7 @@ button{font-family:inherit}
                   <td class="newcol"><span class="sub" style="margin:0">-</span></td>
                   <td>PSA-260311-00056</td></tr>
 
-              <tr><td>03/29/2026</td><td>04/04/2026</td><td><span class="sub" style="margin:0;margin:0">-</span></td>
+              <tr><td class="frzL1">03/29/2026</td><td class="frzL2">04/04/2026</td><td><span class="sub" style="margin:0;margin:0">-</span></td>
                   <td><span class="sub" style="margin:0;margin:0">MOWING - All turf areas to be mowed&hellip;</span></td><td class="num">1</td>
                   <td><span class="sub" style="margin:0;margin:0">-</span></td><td><span class="badge b-unk">Inactive</span></td>
                   <td><span class="sub" style="margin:0;margin:0">-</span></td>
