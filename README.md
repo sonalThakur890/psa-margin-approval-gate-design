@@ -1,7 +1,7 @@
 # Margin guidance and gate — design prototype
 
 Interactive prototype for epic **FUL-11893** (stories FUL-11894 to FUL-11899). It matches
-the screens pack sent to business on 23 Nov 2026 (PSA_Margin_Screens_V1_doc).
+PSA_Margin_Screens_V2_doc (25 Nov 2026): adds the year-on-year drop rule and tags RFP review as V2.
 
 **Live:** https://sonalthakur890.github.io/psa-margin-approval-gate-design/
 
@@ -13,9 +13,10 @@ the screens pack sent to business on 23 Nov 2026 (PSA_Margin_Screens_V1_doc).
 | 1c | Ready for Negotiation | one margin per property, the approval it needs, Recalculate |
 | 2a | Queue | Awaiting Level 1, Level 2 and RFP Review tabs |
 | 3 · 4 | Level 1 · Level 2 | approve, Send back (reason + comment), Move to Level 2, RFP review |
-| 5 | RFP review | verdict returned to Level 2 |
+| 5 | RFP review (V2) | verdict returned to Level 2 |
 | 6 · 6b | No approval · Healthy site | straight to signature; one losing line on a healthy site |
-| 7 | Thresholds | Level 1 and Level 2 limits per trade, change log |
+| 6c | Healthy margin, big drop | 30.5% but 11.7 points below last season: Level 1, then Level 2 |
+| 7 | Thresholds | Level 1, Level 2 and year-on-year drop limits per trade, change log |
 
 On every PSA: a comment icon (people talk it through) and an Activity log icon beside the
 PSA number (read-only record of everything done, with who and when).
