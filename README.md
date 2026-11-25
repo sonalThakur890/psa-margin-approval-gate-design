@@ -1,7 +1,7 @@
 # Margin guidance and gate — design prototype
 
 Interactive prototype for epic **FUL-11893** (stories FUL-11894 to FUL-11899). It matches
-PSA_Margin_Screens_V2_doc (25 Nov 2026): adds the year-on-year drop rule and tags RFP review as V2.
+PSA_Margin_Screens_V1_doc_final (25 Nov 2026): adds the year-on-year drop rule and tags RFP review as V2.
 
 **Live:** https://sonalthakur890.github.io/psa-margin-approval-gate-design/
 
