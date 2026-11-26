@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Margin guidance and gate — Prototype (FUL-11893)</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#08568B; --blue-d:#064268; --blue-05:rgba(8,86,139,.05); --blue-10:rgba(8,86,139,.10);
+  --page:#FAFAFA; --ink:#121212; --muted:#646566; --line:#E1E5E9; --line-2:#EDEFF1;
+  --amber:#FBB038; --amber-bg:#FFF8EC; --coral:#FF5A5F;
+  --new:#E8730A; --new-bg:#FFF4EA;
+  --ok:#1E7A4B; --ok-bg:#EAF6F0;
+  --warn:#B36B00; --warn-bg:#FFF6E5;
+  --bad:#C0392B; --bad-bg:#FDECEA;
+  --r:4px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'Poppins',system-ui,sans-serif;color:var(--ink);background:#fff;font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{margin:0;font-weight:600;line-height:1.3}
+p{margin:0 0 10px}
+table{border-collapse:collapse;width:100%}
+button{font-family:inherit}
+
+/* ── prototype shell ───────────────────────────────── */
+.proto-bar{background:#1A1A1D;color:#fff;padding:9px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:12px;position:sticky;top:0;z-index:400}
+.proto-bar .pb-tag{background:var(--new);color:#fff;font-weight:600;padding:2px 8px;border-radius:3px;letter-spacing:.04em;font-size:10.5px;text-transform:uppercase}
+.proto-bar .pb-t{font-weight:500}
+.proto-bar .pb-sub{color:#9A9AA0;margin-left:auto;font-size:11.5px}
+
+.layout{display:flex;min-height:100vh;align-items:flex-start}
+.rail{width:268px;flex:0 0 268px;background:#F4F6F8;border-right:1px solid var(--line);padding:16px 0 40px;position:sticky;top:37px;max-height:calc(100vh - 37px);overflow-y:auto}
+.rail-h{padding:6px 18px 10px;font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:#8A9099}
+.rail a{display:block;padding:9px 18px 9px 16px;color:#3A4046;text-decoration:none;font-size:13px;border-left:3px solid transparent;cursor:pointer}
+.rail a:hover{background:#E9EDF1}
+.rail a.on{background:#fff;border-left-color:var(--blue);color:var(--blue);font-weight:600}
+.rail a .num{display:inline-block;width:22px;color:#98A0A8;font-weight:500;font-size:11.5px}
+.rail a.on .num{color:var(--blue)}
+.rail .rail-note{padding:14px 18px;font-size:11px;color:#7A828A;line-height:1.5;border-top:1px solid var(--line);margin-top:12px}
+.rail .rail-note b{color:#4A5058}
+
+.stage{flex:1;min-width:0;max-width:100%;overflow-x:hidden;background:var(--page)}
+.screen{display:none}
+.screen.on{display:block}
+
+/* ── DMG control-center chrome ─────────────────────── */
+.cc-top{background:var(--blue);height:64px;display:flex;align-items:center;padding:0 22px;gap:16px;color:#fff}
+.cc-burger{width:20px;display:flex;flex-direction:column;gap:4px;opacity:.95}
+.cc-burger i{display:block;height:2px;background:#fff;border-radius:2px}
+.cc-logo{font-weight:700;letter-spacing:.02em;font-size:17px;line-height:1}
+.cc-logo small{display:block;font-size:8px;font-weight:600;letter-spacing:.22em;opacity:.85;margin-top:1px}
+.cc-user{margin-left:auto;text-align:right;line-height:1.25}
+.cc-user b{font-size:14px;font-weight:500;display:block}
+.cc-user span{font-size:11px;opacity:.82}
+.cc-pill{border:1px solid rgba(255,255,255,.5);border-radius:3px;padding:3px 9px;font-size:11.5px;opacity:.95}
+.cc-accent{height:3px;background:linear-gradient(90deg,var(--blue) 0 6%,#E8730A 6% 100%)}
+
+.cc-body{padding:26px 30px 60px;max-width:1500px;min-width:0}
+.cc-h1{font-size:22px;font-weight:600;letter-spacing:-.01em}
+.cc-head-row{display:flex;align-items:center;gap:18px;margin-bottom:20px;flex-wrap:wrap}
+.cc-crumb{font-size:13px;color:var(--muted);margin-bottom:12px}
+.cc-crumb a{color:var(--blue);text-decoration:none}
+
+.filters{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px}
+.fchip{border:1px solid #C6CDD4;border-radius:var(--r);background:#fff;padding:7px 12px;font-size:12.5px;color:#3A4046;display:inline-flex;align-items:center;gap:7px}
+.fchip:after{content:'⌄';font-size:13px;color:#7A828A;position:relative;top:-3px}
+.fchip.applied{background:var(--blue);border-color:var(--blue);color:#fff}
+.fchip.applied:after{content:'✕';font-size:10px;top:0}
+.fwrap{position:relative;display:inline-flex}
+.fdrop{position:absolute;left:0;top:100%;margin-top:5px;z-index:40;background:#fff;border:1px solid var(--line);
+  border-radius:var(--r);box-shadow:0 6px 18px rgba(0,0,0,.14);padding:6px 0;min-width:190px;display:none}
+.fwrap.open .fdrop{display:block}
+.fdrop label{display:flex;align-items:center;gap:9px;padding:7px 14px;font-size:12.5px;color:#3A4046;cursor:pointer;white-space:nowrap}
+.fdrop label:hover{background:var(--blue-05)}
+.fdrop .fclear{border-top:1px solid var(--line-2);margin-top:4px;padding:8px 14px 4px;font-size:12px;color:var(--blue);cursor:pointer}
+.search{border:1px solid #C6CDD4;border-radius:var(--r);background:#fff;padding:9px 13px;width:400px;color:#9AA2AA;font-size:13px;margin-bottom:14px}
+
+/* tabs */
+.tabstrip{display:flex;align-items:stretch;border-bottom:1px solid var(--line);margin:18px 0 0}
+.tabs{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+.tabs::-webkit-scrollbar{display:none}
+.tabarrow{flex:0 0 auto;display:flex;align-items:center;padding:0 10px;color:#8A929A;font-size:16px;cursor:pointer;user-select:none;background:#fff}
+.tabarrow:hover{color:var(--blue)}
+.tabarrow.off{opacity:.22;cursor:default}
+.tabarrow.off:hover{color:#8A929A}
+.tab{padding:12px 18px;font-size:15px;font-weight:400;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;cursor:pointer;background:none;border-top:none;border-left:none;border-right:none}
+.tab:hover{color:#3A4046}
+.tab.on{color:var(--blue);font-weight:500;border-bottom-color:var(--blue)}
+.tab.newtab{color:var(--new)}
+.tab.newtab.on{color:var(--new);border-bottom-color:var(--new)}
+.tab .dotnew{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--new);margin-right:6px;vertical-align:1px}
+
+/* cards + tables */
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r);margin-bottom:18px}
+.card-h{padding:14px 18px;border-bottom:1px solid var(--line-2);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.card-h h3{font-size:15px;font-weight:600}
+.card-b{padding:18px}
+.card-b.flush{padding:0}
+
+.grid{font-size:13px}
+.grid th{background:#F7F9FA;text-align:left;font-weight:600;font-size:11.5px;color:#4A5058;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap;vertical-align:bottom}
+.grid th.newcol{background:var(--new-bg);color:#8A4508}
+.grid th.grp{background:var(--blue-05);color:var(--blue)}
+.grid td{padding:11px 12px;border-bottom:1px solid var(--line-2);vertical-align:top}
+.grid td.newcol{background:#FFFBF7}
+.grid th.frz2,.grid td.frz2{position:sticky;right:230px;z-index:2;box-shadow:-6px 0 8px -6px rgba(0,0,0,.12)}
+.grid th.frzL1,.grid td.frzL1{position:sticky;left:0;z-index:3;background:#fff}
+.grid th.frzL1{background:#F7F9FA}
+.grid th.frzL2,.grid td.frzL2{position:sticky;left:92px;z-index:3;background:#fff;box-shadow:6px 0 8px -6px rgba(0,0,0,.14)}
+.grid th.frzL2{background:#F7F9FA}
+.scrollx{overflow-x:scroll !important}
+.scrollx::-webkit-scrollbar{height:12px;-webkit-appearance:none}
+.scrollx::-webkit-scrollbar-track{background:#EEF1F4;border-top:1px solid var(--line-2)}
+.scrollx::-webkit-scrollbar-thumb{background:#AEB6BE;border-radius:6px;border:3px solid #EEF1F4}
+.scrollx::-webkit-scrollbar-thumb:hover{background:#8A929A}
+.scrollhint{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted);padding:6px 18px 0}
+.scrollhint b{color:var(--blue);font-weight:600}
+.acc{border:1px solid var(--line);border-radius:var(--r);margin-bottom:10px}
+.acc-h{display:flex;align-items:center;padding:14px 16px;font-size:13.5px;color:var(--ink)}
+.acc-h:after{content:'\2304';margin-left:auto;color:var(--blue);font-size:15px;position:relative;top:-4px}
+.cprice{font-size:15.5px;font-weight:600;color:var(--ink);line-height:1.3}
+.cprice span{font-size:11px;font-weight:400;color:var(--muted);margin-left:3px}
+.pstack{margin-top:6px;padding-top:5px;border-top:1px dashed var(--line-2)}
+.pstack .pl{display:flex;justify-content:space-between;gap:10px;align-items:baseline;font-size:11.5px;color:var(--muted)}
+.nolink{font-size:11px;color:#9AA2AA;margin-top:6px;padding-top:5px;border-top:1px dashed var(--line-2)}
+
+.lycard{display:none;border-left:3px solid #8A929A}
+body.showly .lycard{display:block}
+.lycard .card-h{background:#F2F4F6}
+.lycard h3{color:#4A5058}
+.lyrow td{background:#FAFBFC}
+.lynow td{border-top:2px solid var(--line)}
+.lydelta td{background:#F2F4F6;font-weight:600}
+.grid th.frz1,.grid td.frz1{position:sticky;right:0;z-index:2}
+.grid tr:last-child td{border-bottom:none}
+.crow.hid{display:none}
+.prow td{background:#FBFCFD}
+.prow .chev{color:#7A828A;font-size:13px}
+.crow td{font-size:12.5px}
+.grid .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.grid .rowno{color:#98A0A8;font-size:11.5px;width:34px;text-align:center}
+.sub{display:block;color:var(--muted);font-size:11.5px;font-weight:400;margin-top:2px}
+.rangehint{font-size:11px;color:var(--muted);white-space:nowrap}
+/* --- production PAM grid chrome --- */
+.grid th.grp{background:#E5F2F7;color:#1A4D6B}
+.grid th.inc{background:#fff;color:#4A5058;border-left:1px solid var(--line)}
+.grid td.inc{border-left:1px solid var(--line-2)}
+.grid th.chk,.grid td.chk{width:34px;text-align:center;padding-left:6px;padding-right:6px}
+.cbx{width:14px;height:14px;cursor:pointer;border:1px solid #8A929A;border-radius:2px;display:inline-block;vertical-align:middle}
+.cbx.on{background:var(--blue);border-color:var(--blue);position:relative}
+.cbx.on:after{content:'✓';color:#fff;font-size:10px;position:absolute;left:2px;top:-3px}
+.kebab{color:#8A929A;font-size:14px;line-height:1;margin-left:6px;cursor:pointer}
+.upic{display:inline-block;border:1px solid #C6CDD4;border-radius:3px;width:26px;height:22px;text-align:center;line-height:20px;color:#4A5058;font-size:12px}
+.gridsel{width:100%;border:1px solid #C6CDD4;border-radius:3px;padding:5px 7px;font-size:12.5px;font-family:inherit;color:var(--ink);background:#fff}
+.gridtxt{width:100%;border:1px solid #C6CDD4;border-radius:3px;padding:5px 7px;font-size:12.5px;font-family:inherit;color:var(--ink);background:#fff}
+.gridtxt::placeholder{color:#A8B0B8}
+.srch{border:1px solid #C6CDD4;border-radius:var(--r);background:#fff;padding:7px 12px;font-size:12.5px;color:#98A0A8;display:inline-flex;align-items:center;gap:8px;min-width:250px}
+.px{color:#328E0C;font-weight:500}
+.px.bad{color:var(--bad);font-weight:600}
+.prow-line{display:flex;justify-content:space-between;gap:12px;margin-top:3px;align-items:baseline}
+.foot{display:flex;align-items:center;gap:10px;margin:20px 0 8px}
+.moneyin{border:1px solid #C6CDD4;border-radius:3px;padding:5px 8px;font-size:13px;display:flex;justify-content:space-between;gap:10px;min-width:104px;background:#fff}
+.moneyin .cur{color:#9AA2AA}
+.moneyin.flag{border-color:var(--coral)}
+
+/* badges */
+.badge{display:inline-block;padding:2.5px 8px;border-radius:11px;font-size:11px;font-weight:600;white-space:nowrap;line-height:1.5}
+.b-ok{background:var(--ok-bg);color:var(--ok)}
+.b-l1{background:var(--warn-bg);color:var(--warn)}
+.b-l2{background:var(--bad-bg);color:var(--bad)}
+.b-na{background:#F0F2F4;color:#6A727A}
+.b-ind{background:#EDE9F7;color:#5B4B9E}
+.b-unk{background:#F0F2F4;color:#6A727A}
+.b-new{background:var(--new-bg);color:#8A4508;border:1px solid #F5C89C}
+.b-rfp{background:#E8F0FA;color:#1A5B96}
+.tipwrap{position:relative}
+.tip{position:absolute;left:0;top:100%;margin-top:6px;z-index:30;background:#2B2B2B;color:#fff;border-radius:4px;padding:10px 12px;font-size:12px;line-height:1.55;width:330px;box-shadow:0 6px 18px rgba(0,0,0,.28)}
+.tip b{color:#fff;font-weight:600}
+.tip .r{display:block;margin-top:6px}
+.flagmark{color:var(--new);font-weight:600}
+.tag{display:inline-block;padding:1.5px 7px;border-radius:3px;font-size:10.5px;font-weight:600;letter-spacing:.02em;white-space:nowrap}
+.tag-over{background:var(--bad-bg);color:var(--bad);border:1px solid #F5C6C0}
+.tag-under{background:var(--warn-bg);color:var(--warn);border:1px solid #EFDCA8}
+.tag-same{background:#F0F2F4;color:#6A727A;border:1px solid #DDE1E5}
+.tagline{display:block;margin-top:4px}
+.dvrow{display:flex;justify-content:space-between;gap:16px;padding:3px 0;border-top:1px solid rgba(255,255,255,.14)}
+.dvrow span{opacity:.7}
+.dvrow b{font-weight:600;text-align:right;white-space:nowrap}
+.dvrow .d-diff{color:#FFC98A}
+.modal-b .dvrow{border-top:1px solid var(--line);padding:7px 0;font-size:13px}
+.modal-b .dvrow span{opacity:1;color:var(--muted)}
+.modal-b .dvrow .d-diff{color:var(--new)}
+.b-grey{background:#F0F2F4;color:#6A727A}
+
+.m-ok{color:var(--ok);font-weight:600}
+.m-l1{color:var(--warn);font-weight:600}
+.m-l2{color:var(--bad);font-weight:600}
+.mg-ok{color:var(--ok);font-weight:600}
+.mg-low{color:var(--bad);font-weight:600}
+.pricestack{display:inline-flex;flex-direction:column;align-items:stretch;gap:2px}
+.mgs{font-size:11px;text-align:right;padding-right:2px}
+.m-na{color:#8A9099;font-weight:500;font-style:italic}
+
+/* buttons */
+.btn{border:none;border-radius:var(--r);padding:7px 16px;font-size:14px;font-weight:500;cursor:pointer;background:var(--blue);color:#fff}
+.btn:hover{background:var(--blue-d)}
+.btn.sm{padding:5px 12px;font-size:12.5px}
+.btn.out{background:none;color:var(--blue);border:2px solid rgba(8,86,139,.5)}
+.btn.out:hover{background:var(--blue-05)}
+.btn.ghost{background:none;color:var(--blue)}
+.btn.ghost:hover{background:var(--blue-05)}
+.btn.dis{background:#D1D8DC;color:#fff;cursor:default}
+.btn.dis:hover{background:#D1D8DC}
+.btn.newb{background:var(--new)}
+.btn.newb:hover{background:#C55F06}
+.btn.newb.out{background:none;color:var(--new);border:2px solid rgba(232,115,10,.5)}
+.btn.dis,.btn.newb.dis,.btn.out.dis,.btn.newb.out.dis{background:#D1D8DC;color:#fff;border:2px solid #D1D8DC;cursor:default}
+.btn.dis:hover,.btn.newb.dis:hover,.btn.out.dis:hover,.btn.newb.out.dis:hover{background:#D1D8DC}
+.btnrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btnrow.right{justify-content:flex-end}
+
+/* notices */
+.notice{border-radius:var(--r);padding:13px 16px;display:flex;gap:12px;margin-bottom:14px;font-size:13px;align-items:flex-start}
+.notice .ic{font-size:15px;line-height:1.2;flex:0 0 auto}
+.notice b{font-weight:600}
+.notice>div>b:first-child{display:block;margin-bottom:2px;font-size:13.5px}
+.n-amber{background:var(--amber-bg);border:1px solid #F5DDB0;color:#6B4E12}
+.n-red{background:var(--bad-bg);border:1px solid #F5C6C0;color:#8C2A1E}
+.n-blue{background:#EEF4FA;border:1px solid #C9DCF0;color:#1A4D7A}
+.n-new{background:var(--new-bg);border:1px solid #F5C89C;color:#8A4508}
+.n-ok{background:var(--ok-bg);border:1px solid #BEE0CE;color:#155F3A}
+
+/* annotation callouts — prototype voice, not product UI */
+.anno{border-left:3px solid var(--new);background:var(--new-bg);padding:12px 16px;border-radius:0 var(--r) var(--r) 0;font-size:12.5px;color:#6B4108;margin:0 0 20px;line-height:1.55}
+.anno b{color:#8A4508}
+.anno .tag{display:inline-block;background:var(--new);color:#fff;font-size:9.5px;font-weight:700;letter-spacing:.07em;padding:2px 6px;border-radius:2px;text-transform:uppercase;margin-right:8px;vertical-align:1px}
+.anno code{background:#fff;border:1px solid #F0D4B4;padding:1px 5px;border-radius:2px;font-size:11.5px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.anno ul{margin:8px 0 0;padding-left:18px}
+.anno li{margin-bottom:4px}
+
+.srcnote{font-size:11.5px;color:#8A9099;border-top:1px dashed var(--line);padding-top:10px;margin-top:16px;line-height:1.6}
+.srcnote code{background:#F2F4F6;padding:1px 5px;border-radius:2px;font-size:11px;font-family:ui-monospace,Menlo,monospace}
+
+/* overview page */
+.ov-hero{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:28px 30px;margin-bottom:20px}
+.ov-hero h2{font-size:26px;letter-spacing:-.02em;margin-bottom:6px}
+.ov-hero .lede{font-size:14.5px;color:#4A5058;max-width:820px;line-height:1.6}
+.formula{background:#F7F9FA;border:1px solid var(--line);border-radius:var(--r);padding:14px 18px;font-family:ui-monospace,Menlo,monospace;font-size:14px;color:var(--blue);margin:16px 0;text-align:center}
+.tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-top:14px}
+.tier{border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;background:#fff}
+.tier .t-pct{font-size:20px;font-weight:700;letter-spacing:-.02em}
+.tier .t-n{font-size:13px;font-weight:600;margin:4px 0 3px}
+.tier .t-d{font-size:12px;color:var(--muted);line-height:1.45}
+.tier.ok{border-top:3px solid var(--ok)} .tier.ok .t-pct{color:var(--ok)}
+.tier.l1{border-top:3px solid var(--warn)} .tier.l1 .t-pct{color:var(--warn)}
+.tier.l2{border-top:3px solid var(--bad)} .tier.l2 .t-pct{color:var(--bad)}
+
+.stepflow{display:flex;gap:0;align-items:stretch;flex-wrap:wrap;margin:6px 0 4px}
+.stepflow .sf{flex:1;min-width:132px;border:1px solid var(--line);background:#fff;border-radius:var(--r);padding:12px 13px;position:relative;margin-right:22px}
+.stepflow .sf:last-child{margin-right:0}
+.stepflow .sf:not(:last-child):after{content:'→';position:absolute;right:-17px;top:50%;transform:translateY(-50%);color:#B8C0C8;font-size:15px}
+.stepflow .sf.new{border-color:#F5C89C;background:var(--new-bg)}
+.stepflow .sf .s-n{font-size:12.5px;font-weight:600}
+.stepflow .sf .s-d{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4}
+.stepflow .sf.new .s-n{color:#8A4508}
+
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0;border:1px solid var(--line);border-radius:var(--r);background:#fff;overflow:hidden}
+.kv>div{padding:14px 16px;border-right:1px solid var(--line-2);min-width:0}
+.kv .v{overflow-wrap:anywhere}
+.kv>div:last-child{border-right:none}
+.kv .k{font-size:11px;color:var(--muted);font-weight:500;margin-bottom:3px}
+.kv .v{font-size:14px;font-weight:500}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:1100px){.two{grid-template-columns:1fr}}
+
+/* modal */
+.modal-wrap{position:fixed;inset:0;background:rgba(18,18,18,.45);display:none;align-items:center;justify-content:center;z-index:500;padding:20px}
+.modal-wrap.on{display:flex}
+.modal{background:#fff;border-radius:6px;width:100%;max-width:540px;box-shadow:0 12px 40px rgba(0,0,0,.25);max-height:90vh;overflow:hidden;display:flex;flex-direction:column}.modal-b{overflow:auto;flex:1 1 auto;min-height:0}.modal-h,.modal-f{flex:none}
+.modal-h{padding:18px 22px 12px;font-size:16px;font-weight:600;border-bottom:1px solid var(--line-2)}
+.modal-b{padding:20px 22px}
+.modal-f{padding:14px 22px 20px;display:flex;justify-content:flex-end;gap:10px;align-items:center}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;font-weight:500;color:#4A5058;margin-bottom:5px}
+.field select,.field input,.field textarea{width:100%;border:1px solid #C6CDD4;border-radius:var(--r);padding:9px 11px;font-size:13px;font-family:inherit;color:var(--ink);background:#fff}
+.field textarea{min-height:72px;resize:vertical}
+.field .hint{font-size:11px;color:var(--muted);margin-top:4px}
+.radios label{display:flex;gap:9px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r);margin-bottom:7px;font-size:13px;cursor:pointer;font-weight:400;color:var(--ink)}
+.radios label:hover{background:var(--blue-05);border-color:#B8CBDE}
+.radios input{margin-top:3px;flex:0 0 auto}
+.radios .r-n{font-weight:600;font-size:13px;display:block}
+.radios .r-d{font-size:11.5px;color:var(--muted);margin-top:1px;display:block;line-height:1.45}
+
+/* email mock */
+.mail{border:1px solid var(--line);border-radius:var(--r);background:#fff;overflow:hidden;margin-bottom:16px}
+.mail-h{background:#F7F9FA;padding:11px 16px;border-bottom:1px solid var(--line);font-size:12px;color:var(--muted)}
+.mail-h b{color:var(--ink);font-weight:600;display:block;font-size:13.5px;margin-bottom:3px}
+.mail-b{padding:18px 20px;font-size:13px}
+.mail-b table{font-size:12.5px;margin:12px 0}
+.mail-b th{background:#F7F9FA;padding:7px 10px;text-align:left;font-size:11px;border-bottom:1px solid var(--line)}
+.mail-b td{padding:7px 10px;border-bottom:1px solid var(--line-2)}
+.mail-cta{display:inline-block;background:var(--blue);color:#fff;padding:8px 16px;border-radius:var(--r);font-size:13px;font-weight:500;text-decoration:none;margin-top:6px}
+
+.pill-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:12px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:9px;height:9px;border-radius:2px;display:inline-block}
+
+.lnk{color:var(--blue);cursor:pointer;text-decoration:underline}
+.scrollhint{gap:8px;padding:8px 18px 6px}
+.clean .rail,.clean .proto-bar,.clean .scrollhint,.clean .protohint,.clean .badge.b-grey[title="Source of this example"]{display:none}.clean .cc-body{max-width:none}
+.coBadge.coL{left:-27px;top:-2px}
+.coBadge{position:absolute;top:-9px;left:-9px;background:#E8590C;color:#fff;border-radius:50%;width:22px;height:22px;font:700 12px/22px Poppins,sans-serif;text-align:center;z-index:60;box-shadow:0 0 0 2px #fff}
+.cmtbtn{position:relative;border:1px solid var(--line);background:#fff;color:var(--blue);border-radius:var(--r);padding:4px 6px;cursor:pointer;line-height:0;vertical-align:middle}
+.cmtbtn:hover{background:var(--blue-05)}.cmtbtn.has{color:#fff;background:var(--blue);border-color:var(--blue)}
+.cmtn{position:absolute;top:-6px;right:-6px;background:var(--new);color:#fff;border-radius:8px;font-size:10px;line-height:14px;min-width:14px;padding:0 3px;display:none}
+.cmtlist .ci{border-bottom:1px solid var(--line-2);padding:8px 0;font-size:13px}.cmtlist .ci .sub{margin:2px 0 0}
+.scrollhint .sxb{padding:2px 10px;font-size:11px;line-height:1.4}
+.newf{border-left:3px solid var(--new);padding-left:10px}
+.card-b.flush{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.kv{overflow-x:auto}
+.foot{flex-wrap:wrap}
+@media(max-width:1100px){
+ .layout{flex-direction:column;align-items:stretch}
+ .rail{position:static;width:auto;flex:none;max-height:none;display:flex;overflow-x:auto;overflow-y:hidden;white-space:nowrap;padding:0;border-right:none;border-bottom:1px solid var(--line)}
+ .rail-h,.rail .rail-note{display:none}
+ .rail a{flex:0 0 auto;border-left:none;border-bottom:3px solid transparent;padding:10px 14px}
+ .rail a.on{border-bottom-color:var(--blue)}
+ .cc-body{padding:18px 16px 48px}
+ .kv{grid-template-columns:repeat(auto-fit,minmax(120px,1fr)) !important}
+}
+.cellm{font-size:11px;color:#8A939B;font-weight:400}.cellm.neg{color:#B42318}.clean .cellm{padding-left:22px}.clean .expl{display:none}.clean .sibl{white-space:normal;margin-left:auto}.clean .grid{min-width:0!important}#s8 td{white-space:nowrap}#s8 input.moneyin{display:inline-block;vertical-align:middle;margin-right:4px}#s8 td.num,#s8 th.num{text-align:left!important;padding-left:30px}.clean .grid th .sub{white-space:normal}.clean .grid td:has(.sibl){min-width:330px!important}.clean .newf{padding-left:26px}.clean #s2 .fchip.fmargin,.clean #s2 .fchip.fdev,.clean #s2 .pill-row{display:none}
+.sibl{display:block;font-size:11.5px;color:var(--muted);text-align:right;white-space:nowrap;margin-top:2px;font-weight:400}.sib-np{color:#8A4508}
+.cmtbtn .coBadge.coL{left:auto;right:-26px;top:1px}.v2tag{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:10px;background:#EEF0F2;color:#5A626A;font-size:10.5px;font-weight:600;vertical-align:middle;letter-spacing:.02em}
+</style>
+<style id="tl-css">
+.tlbtn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;margin-left:4px;vertical-align:middle;border:0;border-radius:8px;background:transparent;color:#08568B;cursor:pointer}
+.tlbtn:hover{background:#E9EDF1}
+#tlpop{position:fixed;z-index:60;width:400px;max-height:80vh;overflow:auto;background:#fff;border-radius:12px;box-shadow:rgba(149,157,165,.32) 0 12px 24px 0;padding:16px 0 12px;display:none;color:#121212}
+#tlpop.on{display:block}
+#tlpop .tl-h{display:flex;align-items:center;padding:0 16px;font-size:18px;font-weight:600}
+#tlpop .tl-h button{margin-left:auto;border:0;background:none;font-size:18px;cursor:pointer;color:#5A626A}
+#tlpop .tl-sub{padding:2px 16px 0;font-size:12px;color:#70757A}
+#tlpop .tl-chips{display:flex;gap:8px;padding:10px 16px 6px;position:relative}
+#tlpop .tl-chips span:not(.coBadge){font-size:13px;padding:3px 10px;border-radius:24px;background:#EEF0F2;cursor:pointer}
+#tlpop .tl-chips span.on:not(.coBadge){background:#121212;color:#fff}
+#tlpop ol{list-style:none;margin:6px 0 0;padding:0 16px}
+#tlpop li{position:relative;padding:0 0 14px 30px}
+#tlpop li:before{content:"";position:absolute;left:10px;top:22px;bottom:0;width:2px;background:#E3E6E9}
+#tlpop li.done:before{background:#2E7D32}
+#tlpop li:last-child:before{display:none}
+#tlpop .tl-n{position:absolute;left:0;top:0;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;background:#EEF0F2;color:#5A626A}
+#tlpop li.done .tl-n{background:#2E7D32;color:#fff}
+#tlpop li.cur .tl-n{background:#08568B;color:#fff}
+#tlpop .tl-t{font-size:14px;font-weight:600;line-height:22px}
+#tlpop li.todo .tl-t{font-weight:500;color:#3A4046}
+#tlpop .tl-d{font-size:12px;color:#70757A;margin-top:1px}
+#tlpop .tl-e{margin-top:6px;background:#F3F4F6;border-radius:6px;padding:7px 10px;font-size:12.5px}
+#tlpop .tl-e i{color:#70757A;font-style:normal}
+#tlpop .tl-chips .coBadge{left:auto;right:16px;top:8px} .tlbtn .coBadge{left:auto;right:-26px;top:1px} #tlpop li .coBadge{left:auto;right:-6px;top:-4px}
+#tlpop .tl-f{margin:4px 16px 0;padding-top:8px;border-top:1px solid #EEF0F2;font-size:11.5px;color:#8A4508}
+</style></head>
+<body>
+
+<div class="proto-bar">
+  <span class="pb-tag">Prototype</span>
+  <span class="pb-t">Margin guidance and gate &middot; FUL-11893 &middot; matches PSA_Margin_Screens_V1_doc_final</span>
+</div>
+
+<div class="layout">
+  <nav class="rail">
+    <div class="rail-h" style="padding-top:16px">Prototype screens</div>
+    <a class="on" data-s="s0"><span class="num">—</span>Overview &amp; the rule</a>
+          <a data-s="s1t"><span class="num">1a</span>Draft — template</a>
+    <a data-s="s1c"><span class="num">1b</span>Draft — pricing</a>
+    <a data-s="s1"><span class="num">1c</span>Pricing — Ready for Negotiation</a>
+    <a data-s="s2"><span class="num">2a</span>Queues — new tabs</a>
+    <a data-s="s3"><span class="num">3</span>Approval — Level 1 (was Awaiting Approval)</a>
+    <a data-s="s4"><span class="num">4</span>Approval — Level 2</a>
+    <a data-s="s5"><span class="num">5</span>RFP / costing review (from Level 2)<span class="v2tag">V2</span></a>
+    <a data-s="s2c"><span class="num">6</span>Auto-approved (no queue)</a>
+    <a data-s="s2d"><span class="num">6b</span>Healthy site, one losing service</a>
+    <a data-s="s2y"><span class="num">6c</span>Healthy margin, big drop</a>
+    <a data-s="s8"><span class="num">7</span>Threshold configuration</a>
+    
+  </nav>
+
+  <div class="stage">
+
+  <!-- ══════════════════ 0 · OVERVIEW ══════════════════ -->
+  <section class="screen on" id="s0">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Product</b><span>Margin guidance and gate</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <style>#s0 .lk{color:#08568B;cursor:pointer;text-decoration:underline} #s0 td{vertical-align:top}</style>
+    <div class="cc-body">
+      <div class="cc-head-row"><h1 class="cc-h1">Margin guidance and gate</h1></div>
+      <div style="font-size:14px;color:var(--muted);margin:-6px 0 16px">Prototype for epic FUL-11893. Same screens as PSA_Margin_Screens_V1_doc_final (25 Nov 2026). Landscaping first. Every example is a real PAM agreement; where a value was changed to show a behaviour, the screen says so.</div>
+      <div class="card">
+        <div class="card-h"><h3>The rule</h3></div>
+        <div class="card-b">
+          <p style="margin:0 0 10px"><b>Property margin</b> = customer $ minus provider $, divided by customer $. It counts every PSA on the store for that term sheet, each line &times; its visits, over the same period.</p>
+          <table class="grid" style="width:auto">
+            <thead><tr><th>Property margin (default limits, set per trade)</th><th>Route</th></tr></thead>
+            <tbody>
+              <tr><td>25% or more</td><td>No approval: straight to Awaiting Signature</td></tr>
+              <tr><td>0% to under 25%</td><td>Level 1: Regional Manager</td></tr>
+              <tr><td>Below 0%</td><td>Level 1: Regional Manager, then Level 2: Leadership</td></tr>
+            </tbody>
+          </table>
+          <p style="margin:10px 0 0"><b>Year-on-year drop:</b> if the property margin is 10 points (configurable) or more below last season (limit set per trade), the PSA goes to Level 1, then Level 2, even at 25% or more. The stricter route applies.</p><p style="margin:10px 0 0">Each PSA routes on its own property, so a losing property does not hold up healthy ones. RFP review is optional, from Level 2 only, by hand: V2.
+          On Draft, more provider visits than the customer contracted is flagged and needs a reason; equal or fewer is not flagged.</p>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px"><div class="card-h"><h3>How the approval is decided</h3><span class="badge b-grey">Same flowchart as the V1 final PDF</span></div><div class="card-b"><svg viewBox="0 0 1100 520" xmlns="http://www.w3.org/2000/svg" font-family="Poppins, sans-serif" style="width:100%;max-width:1100px">
+<defs><marker id="ga" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#5A626A"/></marker></defs>
+<text x="20" y="22" font-size="12" font-weight="600" fill="#8A4508" letter-spacing=".05em">RULE 1 &#183; MARGIN THIS YEAR</text>
+<rect x="20" y="40" width="230" height="150" rx="8" fill="#FFF4EA" stroke="#E8590C" stroke-width="1.5"/>
+<text x="135" y="74" text-anchor="middle" font-size="16" font-weight="600" fill="#8A4508">Property margin</text>
+<text x="135" y="98" text-anchor="middle" font-size="12" fill="#5A626A">customer $ minus provider $,</text>
+<text x="135" y="115" text-anchor="middle" font-size="12" fill="#5A626A">divided by customer $</text>
+<text x="135" y="140" text-anchor="middle" font-size="11" fill="#5A626A">every PSA on the store, this term</text>
+<text x="135" y="155" text-anchor="middle" font-size="11" fill="#5A626A">sheet, same period</text>
+<path d="M250 115 H268 V55 H288" fill="none" stroke="#5A626A" stroke-width="1.4" marker-end="url(#ga)"/>
+<path d="M250 115 H268 V165 H288" fill="none" stroke="#5A626A" stroke-width="1.4" marker-end="url(#ga)"/>
+<path d="M268 115 V285 H288" fill="none" stroke="#5A626A" stroke-width="1.4" marker-end="url(#ga)"/>
+<rect x="290" y="30" width="150" height="50" rx="8" fill="#E7F5EC" stroke="#2E7D4F" stroke-width="1.2"/><text x="365" y="54" text-anchor="middle" font-size="14" font-weight="600" fill="#1E5C39">25% or more</text><text x="365" y="71" text-anchor="middle" font-size="11" fill="#E8590C">limit set per trade</text>
+<rect x="290" y="140" width="150" height="50" rx="8" fill="#FFF6E0" stroke="#B7791F" stroke-width="1.2"/><text x="365" y="164" text-anchor="middle" font-size="14" font-weight="600" fill="#7A4E0E">0% to under 25%</text><text x="365" y="181" text-anchor="middle" font-size="11" fill="#E8590C">limits set per trade</text>
+<rect x="290" y="260" width="150" height="50" rx="8" fill="#FDECEA" stroke="#B42318" stroke-width="1.2"/><text x="365" y="284" text-anchor="middle" font-size="14" font-weight="600" fill="#8C2A1E">Below 0%</text><text x="365" y="301" text-anchor="middle" font-size="11" fill="#E8590C">limit set per trade</text>
+<text x="20" y="352" font-size="12" font-weight="600" fill="#8A4508" letter-spacing=".05em">RULE 2 &#183; DROP VS LAST SEASON (NEW)</text>
+<rect x="20" y="368" width="230" height="110" rx="8" fill="#FFF4EA" stroke="#E8590C" stroke-width="1.5"/>
+<text x="135" y="398" text-anchor="middle" font-size="16" font-weight="600" fill="#8A4508">Drop in points</text>
+<text x="135" y="422" text-anchor="middle" font-size="12" fill="#5A626A">last season&#8217;s property margin</text>
+<text x="135" y="439" text-anchor="middle" font-size="12" fill="#5A626A">minus this year&#8217;s</text>
+<text x="135" y="462" text-anchor="middle" font-size="11" fill="#5A626A">no last season: rule does not apply</text>
+<path d="M250 423 H288" fill="none" stroke="#5A626A" stroke-width="1.4" marker-end="url(#ga)"/>
+<rect x="290" y="393" width="150" height="62" rx="8" fill="#FDECEA" stroke="#B42318" stroke-width="1.2"/><text x="365" y="415" text-anchor="middle" font-size="14" font-weight="600" fill="#8C2A1E">10 points or more</text><text x="365" y="431" text-anchor="middle" font-size="11" fill="#8C2A1E">(configurable)</text><text x="365" y="447" text-anchor="middle" font-size="11" fill="#E8590C">limit set per trade</text>
+<path d="M440 55 H488" fill="none" stroke="#5A626A" stroke-width="1.4" marker-end="url(#ga)"/>
+<rect x="490" y="30" width="200" height="50" rx="8" fill="#FFFFFF" stroke="#9AA2AA" stroke-width="1.2"/><text x="590" y="54" text-anchor="middle" font-size="14" font-weight="600" fill="#1D2329">No approval</text><text x="590" y="71" text-anchor="middle" font-size="11" fill="#5A626A">no queue, no click</text>
+<path d="M440 165 H488" fill="none" stroke="#5A626A" stroke-width="1.4" marker-end="url(#ga)"/>
+<rect x="490" y="140" width="200" height="50" rx="8" fill="#FFFFFF" stroke="#9AA2AA" stroke-width="1.2"/><text x="590" y="164" text-anchor="middle" font-size="14" font-weight="600" fill="#1D2329">Level 1</text><text x="590" y="181" text-anchor="middle" font-size="11" fill="#5A626A">Regional Manager</text>
+<path d="M440 285 H488" fill="none" stroke="#5A626A" stroke-width="1.4" marker-end="url(#ga)"/>
+<path d="M440 423 H466 V300 H488" fill="none" stroke="#5A626A" stroke-width="1.4" marker-end="url(#ga)"/>
+<rect x="490" y="255" width="200" height="60" rx="8" fill="#FFFFFF" stroke="#9AA2AA" stroke-width="1.2"/><text x="590" y="280" text-anchor="middle" font-size="14" font-weight="600" fill="#1D2329">Level 1, then Level 2</text><text x="590" y="298" text-anchor="middle" font-size="11" fill="#5A626A">Regional Manager, then Leadership</text>
+<path d="M590 315 V363" fill="none" stroke="#E8590C" stroke-width="1.4" stroke-dasharray="5 4" marker-end="url(#ga)"/>
+<rect x="490" y="365" width="200" height="50" rx="8" fill="#FFFFFF" stroke="#E8590C" stroke-width="1.2" stroke-dasharray="5 4"/><text x="590" y="387" text-anchor="middle" font-size="13" font-weight="600" fill="#8A4508">RFP review &#183; V2</text><text x="590" y="404" text-anchor="middle" font-size="11" fill="#8A4508">optional, from Level 2, by hand</text>
+<rect x="720" y="345" width="360" height="66" rx="8" fill="#FFF4EA" stroke="#E8590C" stroke-width="1.2"/><text x="900" y="372" text-anchor="middle" font-size="13" font-weight="600" fill="#8A4508">If both rules apply, the stricter route wins</text><text x="900" y="394" text-anchor="middle" font-size="11" fill="#5A626A">e.g. 23.9% and 11.2 points down: Level 1, then Level 2</text>
+<rect x="920" y="30" width="160" height="285" rx="8" fill="#EEF4FA" stroke="#08568B" stroke-width="1.4"/><text x="1000" y="165" text-anchor="middle" font-size="15" font-weight="600" fill="#08568B">Awaiting</text><text x="1000" y="185" text-anchor="middle" font-size="15" font-weight="600" fill="#08568B">Signature</text>
+<path d="M690 55 H918" fill="none" stroke="#5A626A" stroke-width="1.4" marker-end="url(#ga)"/><text x="815" y="47" text-anchor="middle" font-size="11" fill="#5A626A">automatic</text>
+<path d="M690 165 H918" fill="none" stroke="#5A626A" stroke-width="1.4" marker-end="url(#ga)"/><text x="815" y="157" text-anchor="middle" font-size="11" fill="#5A626A">approve</text>
+<path d="M690 285 H918" fill="none" stroke="#5A626A" stroke-width="1.4" marker-end="url(#ga)"/><text x="815" y="277" text-anchor="middle" font-size="11" fill="#5A626A">approve</text>
+</svg></div></div>
+      <div class="card" style="margin-top:16px">
+        <div class="card-h"><h3>Where each ticket shows</h3><span class="badge b-grey">Click a screen to open it</span></div>
+        <div class="card-b flush">
+          <table class="grid" style="width:100%">
+            <thead><tr><th style="width:150px">Ticket</th><th>In scope</th><th style="width:300px">Screen</th></tr></thead>
+            <tbody><tr><td rowspan="4" style="vertical-align:top;white-space:nowrap"><b>FUL-11894</b><span class="sub">Over-servicing</span></td><td>Provider visits compared with the customer term sheet, per service type, over the PSA term</td><td><a class="lk" onclick="go('s1t')">1a Draft template</a></td></tr><tr><td>Flag with the visit gap and its cost; equal or fewer visits not flagged</td><td><a class="lk" onclick="go('s1t')">1a Draft template</a> (set Service Frequency to 2)</td></tr><tr><td>Reason from a list plus a note, required before Ready for Negotiation</td><td><a class="lk" onclick="go('s1t')">1a Draft template</a> &rsaquo; Add reason</td></tr><tr><td>Frequencies and reason locked from Ready for Negotiation; shown on Ready for Negotiation, Level 1 and Level 2</td><td><a class="lk" onclick="go('s1t')">1a Draft template</a> (preview below the grid)</td></tr><tr><td rowspan="5" style="vertical-align:top;white-space:nowrap"><b>FUL-11895</b><span class="sub">Contracted margin</span></td><td>Draft pricing: property margin at both ends of the range and the approval the top would need</td><td><a class="lk" onclick="go('s1c')">1b Draft pricing</a></td></tr><tr><td>Ready for Negotiation: Customer $, Provider $, Margin, Approval, vs last year; Recalculate; "Not entered" with range guide</td><td><a class="lk" onclick="go('s1')">1c Ready for Negotiation</a></td></tr><tr><td>Level 1 and Level 2: same figures, read-only</td><td><a class="lk" onclick="go('s3')">3 Level 1</a>, <a class="lk" onclick="go('s4')">4 Level 2</a></td></tr><tr><td>Line margin inside the price box where both sides are per visit; negative shown as negative</td><td><a class="lk" onclick="go('s4')">4 Level 2</a>, <a class="lk" onclick="go('s2d')">6b Healthy site</a></td></tr><tr><td>Store with more than one PSA: property total, other PSAs linked, "not priced yet"</td><td><a class="lk" onclick="go('s4')">4 Level 2</a></td></tr><tr><td rowspan="8" style="vertical-align:top;white-space:nowrap"><b>FUL-11897</b><span class="sub">Approval routing</span></td><td>Each PSA routes on its own property margin: none, Level 1, or Level 1 then Level 2</td><td><a class="lk" onclick="go('s1')">1c Ready for Negotiation</a> &rsaquo; Send for approval, <a class="lk" onclick="go('s2c')">6 No approval</a>, <a class="lk" onclick="go('s2d')">6b Healthy site</a></td></tr><tr><td>Year-on-year drop: 10 points (configurable) or more below last season (limit set per trade) sends it to Level 1, then Level 2, even at 25% or more; the stricter route applies</td><td><a class="lk" onclick="go('s2y')">6c Healthy margin, big drop</a>, <a class="lk" onclick="go('s3')">3 Level 1</a></td></tr><tr><td>Three new tabs replace Awaiting Approval</td><td><a class="lk" onclick="go('s2')">2a Queue</a></td></tr><tr><td>Level 1: approve (Send To Provider), Send back, Move to Level 2</td><td><a class="lk" onclick="go('s3')">3 Level 1</a></td></tr><tr><td>Level 2: approve (Send To Provider), Send back, Send to RFP review</td><td><a class="lk" onclick="go('s4')">4 Level 2</a></td></tr><tr><td>RFP review only from Level 2, by hand; verdict returns to Level 2. V2</td><td><a class="lk" onclick="go('s5')">5 RFP review</a></td></tr><tr><td>Send back: a reason and a comment (posted to the PSA&rsquo;s comments), back to Ready for Negotiation, District Manager and Regional Manager told by email or SMS</td><td><a class="lk" onclick="go('s3')">3 Level 1</a> &rsaquo; Send back</td></tr><tr><td>Approval recorded against the prices as submitted</td><td><a class="lk" onclick="go('s3')">3 Level 1</a> &rsaquo; Send To Provider</td></tr><tr><td rowspan="3" style="vertical-align:top;white-space:nowrap"><b>FUL-11896</b><span class="sub">Thresholds per trade</span></td><td>Level 1, Level 2 and year-on-year drop limits per service line, defaults 25%, 0% and 10 points (all configurable)</td><td><a class="lk" onclick="go('s8')">7 Thresholds</a></td></tr><tr><td>Admin-only edit; Level 2 below Level 1; effective from; change log</td><td><a class="lk" onclick="go('s8')">7 Thresholds</a></td></tr><tr><td>Send-back channel; FYI to the RFP team when Level 2 approves a loss</td><td><a class="lk" onclick="go('s8')">7 Thresholds</a></td></tr><tr><td rowspan="1" style="vertical-align:top;white-space:nowrap"><b>FUL-11898</b><span class="sub">Comments</span></td><td>One thread per PSA for people to talk it through, at every step, kept after signature. Send-back comments land here; every comment also shows in the Activity log</td><td>Comment icon on <a class="lk" onclick="go('s3')">3 Level 1</a>, <a class="lk" onclick="go('s4')">4 Level 2</a>, <a class="lk" onclick="go('s1')">1c Ready for Negotiation</a></td></tr><tr><td rowspan="1" style="vertical-align:top;white-space:nowrap"><b>FUL-11899</b><span class="sub">Activity log</span></td><td>Who approved what, and every other action, with who, when and before/after: timeline icon beside every PSA number</td><td><a class="lk" onclick="go('s1')">1c Ready for Negotiation</a>, <a class="lk" onclick="go('s3')">3 Level 1</a>, <a class="lk" onclick="go('s4')">4 Level 2</a>, <a class="lk" onclick="go('s5')">5 RFP review</a>, <a class="lk" onclick="go('s2c')">6 No approval</a>, <a class="lk" onclick="go('s2d')">6b Healthy site</a></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="notice n-blue" style="margin-top:16px"><span class="ic">&#9432;</span><div><b>Not shown on a screen.</b>
+        Nobody can approve a PSA they priced, and a price change after approval sends the PSA back through routing (FUL-11897). Tracking-only services show "not applicable" instead of a margin (FUL-11895); no example is used here.</div></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ 1a · CONFIGURE — TEMPLATE INFORMATION ══════════════════ -->
+
+    <section class="screen" id="s1t" data-agreement="Pilot Flying J Corporate Landscaping - R26-00000CM9">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Contract Admin</b><span>Contract admin team &middot; Draft</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+      <div class="cc-crumb"><a>Provider Agreement Management</a> / Pilot Flying J Corporate Landscaping (0137) - Draft</div>
+      <div class="cc-head-row"><h1 class="cc-h1">Pilot Flying J Corporate Landscaping (0137) - Draft <span style="color:var(--blue);font-weight:400">&#8599;</span></h1>
+        <span class="badge b-grey" title="Source of this example">Real example &middot; PSA-260514-00138, now Active; Draft shown as configured</span>
+        <div style="margin-left:auto" class="btnrow"><button class="btn out sm" onclick="go('d2')">View Service Schedule</button><button class="btn out sm">Preview</button></div></div>
+      <div class="tabs" style="margin-top:0">
+        <button class="tab on">Template Information</button>
+        <button class="tab" onclick="go('s1c')">Price Range Information</button>
+      </div>
+      <div class="card" style="border-top:none;border-radius:0 0 var(--r) var(--r)">
+        <div class="card-h"><h3>Service Details</h3><span class="badge b-grey">Pilot Flying J (0137) - 395 E Vista Dr, Weed, CA &middot; term 05/15/26 &ndash; 02/28/27</span>
+          <div style="margin-left:auto" class="btnrow"><button class="btn out sm">Separate Agreements</button></div></div>
+        <div class="card-b flush">
+          <table class="grid" style="min-width:1320px">
+            <thead><tr>
+              <th>Customer Service Types</th><th>Provider Service Type</th><th>Customer Category</th>
+              <th>Service Months</th><th>Service Interval</th><th class="num">Service Frequency</th>
+              <th class="num">Total Visits</th>
+              <th class="newcol num">Customer visits<span class="sub">term sheet, this PSA&rsquo;s term</span></th><th class="newcol">Check</th>
+            </tr></thead>
+            <tbody>
+              <tr id="ovrow"><td><b>Routine Landscaping Service</b></td><td>Routine Landscaping Service</td><td>Per Occurrence</td>
+                <td>May&ndash;Feb</td><td>Weekly</td>
+                <td class="num"><input id="ovf" type="number" min="1" max="3" value="1" class="moneyin" style="width:60px;text-align:center;border-color:var(--new)" oninput="ovCheck()"></td>
+                <td class="num"><b id="ovv">41</b></td>
+                <td class="newcol num">41<span class="sub">weekly Mar&ndash;Feb, 52/property; PSA starts 15 May</span></td>
+                <td class="newcol" id="ovchk"><span class="badge b-ok">Matches term sheet</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-b" style="border-top:1px solid var(--line-2)">
+          <div id="ovnote" class="notice n-new" style="margin:0 0 12px;display:none"><span class="ic">&#9873;</span><div><b>Expected over-service.</b>
+            <span id="ovtxt"></span> A reason is required before this agreement can move to Ready for Negotiation. From Ready for Negotiation the frequencies and the reason are locked.
+            <div style="margin-top:10px" class="btnrow"><button class="btn newb sm" onclick="openM('m-dev')">Add reason</button></div></div></div>
+          <div class="hint protohint" style="margin:0 0 10px">Try it: change Service Frequency to 2. The check compares configured visits with the customer term sheet for the same months.
+            As-needed contracts may vary using RFP data (17:21&ndash;17:43); the provider schedule must stay within what the customer contracted (18:07).</div>
+          <div class="card newf" style="margin:16px 0 0;border-left:3px solid var(--new)">
+        <div class="card-h" style="background:var(--new-bg)"><h3 style="color:#8A4508">After Send For Pricing: shown read-only on Ready for Negotiation, Level 1 and Level 2</h3><span class="badge b-grey">Example with Service Frequency 2, as in the PDF</span></div>
+        <div class="card-b">
+          <div class="notice n-amber" style="margin:0"><span class="ic">&#9888;</span><div><b>Expected over-service &middot; Routine Landscaping Service:</b> 82 provider visits against 41 customer visits (+41, $18,450 at $450 a visit).
+            Reason: <i>as entered on Draft</i>. Frequencies and reason are locked; to change them, send the PSA back to Draft.</div></div>
+        </div>
+      </div>
+          <div class="btnrow right"><button class="btn ghost">Cancel</button><button class="btn">Save</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ 1a · CONFIGURE — PRICE RANGE ══════════════════ -->
+  <section class="screen" id="s1c" data-agreement="CBRE/Xylem Landscaping - RLS 8 Months w/Irrigation">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Contract Admin</b><span>Contract admin team &middot; Draft</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+      <div class="cc-crumb"><a>Provider Agreement Management</a> / CBRE/Xylem Landscaping - RLS 8 Months w/Irrigation - Will Not Price</div>
+      <div class="cc-head-row"><h1 class="cc-h1">CBRE/Xylem Landscaping - RLS 8 Months w/Irrigation - Will Not Price <span style="color:var(--blue);font-weight:400">&#8599;</span></h1>
+        <span class="badge b-grey" title="Source of this example">Real example &middot; Draft read live in PAM, 17 Nov</span>
+        <div style="margin-left:auto" class="btnrow"><button class="btn out sm" onclick="go('d2')">View Service Schedule</button><button class="btn out sm">Preview</button></div></div>
+      <div class="tabs" style="margin-top:0">
+        <button class="tab" onclick="go('s1t')">Template Information</button>
+        <button class="tab on">Price Range Information</button>
+      </div>
+      <div class="notice n-blue expl"><span class="ic">&#9432;</span><div><b>Already in PAM:</b> the price range and the margin at each end of it, inside each range box, per line (here 52% and 40%), and the Margin filter.
+        PAM also shows it for monthly customer prices (checked on Amazon Corporate Lot Sweeping - RSR Monthly: $224 &ndash; $280 against $400.00 a month = 44% &ndash; 30%).
+        <b>New, needs sign-off:</b> the same margin for the whole property at the range ends, in the orange columns. Open: a line that is tracking only for the customer but billed by the provider has no customer price to compare against; how PAM shows that was not checked.</div></div>
+      <div class="card">
+        <div class="card-b" style="padding-bottom:0">
+          <div class="filters" style="align-items:center">
+            <span class="srch">&#128269; Search</span><span class="fchip">State</span><span class="fchip">City</span><span class="fchip">Field Owner</span><span class="fchip">Creation Source</span><span class="fchip">Margin</span>
+            <span style="flex:1"></span><button class="btn out sm dis">Edit Separately</button><button class="btn out sm dis">Reset</button><button class="btn out sm">Export &#11015;</button><button class="btn out sm">Import &#11014;</button>
+          </div>
+        </div>
+        <div class="card-b flush">
+          <table class="grid" style="min-width:1500px">
+            <thead>
+              <tr><th class="rowno" rowspan="2"></th><th class="chk" rowspan="2"><span class="cbx" data-all></span></th><th rowspan="2" style="min-width:250px">Property</th><th rowspan="2">Field Owner</th><th class="grp" style="min-width:240px">Customer Line Item<span class="sub" style="color:#1A4D6B">Irrigation Shutdown</span></th><th class="grp" style="min-width:240px">Customer Line Item<span class="sub" style="color:#1A4D6B">Irrigation Startup</span></th>
+                <th colspan="4" class="newcol" style="text-align:center;letter-spacing:.06em;font-size:11px">MARGIN &middot; EXPECTED (CONTRACTED)<span class="sub" style="letter-spacing:0;text-transform:none;margin-top:2px">Margin at the range &middot; per property &middot; Landscaping &middot; all service types &middot; all PSAs</span></th></tr>
+              <tr><th class="grp">Provider Line Item<span class="sub" style="color:#1A4D6B">Irrigation Shutdown Per Visit (Oct-Nov)</span></th><th class="grp">Provider Line Item<span class="sub" style="color:#1A4D6B">Irrigation Startup Per Visit (Mar-Apr)</span></th>
+                <th class="newcol num" style="min-width:140px">Customer $<span class="sub">what the customer pays us</span></th>
+                <th class="newcol num" style="min-width:160px">Provider $<span class="sub">what we would pay, range</span></th>
+                <th class="newcol num" style="min-width:150px">Margin<span class="sub">customer $ minus provider $, divided by customer $</span></th>
+                <th class="newcol" style="min-width:200px">Approval<span class="sub">at the top of the range</span></th></tr>
+            </thead>
+            <tbody><tr><td class="rowno">1</td><td class="chk"><span class="cbx" data-row></span></td><td>CBRE/Xylem (XYL-2523) - 8445 S 218th St<span class="sub">8445 S 218th St, Kent, WA, 98031</span></td><td>Josh Avery</td><td><div class="rangehint">Customer Price $333.33/visit</div><div style="display:flex;gap:6px;align-items:center;margin-top:4px"><div class="moneyin" style="min-width:110px;justify-content:space-between"><span><span class="cur">$</span> 160</span><span class="sub" style="margin:0">52%</span></div><span style="color:var(--muted);font-size:11px">to</span><div class="moneyin" style="min-width:110px;justify-content:space-between"><span><span class="cur">$</span> 200</span><span class="sub" style="margin:0">40%</span></div></div></td><td><div class="rangehint">Customer Price $233.33/visit</div><div style="display:flex;gap:6px;align-items:center;margin-top:4px"><div class="moneyin" style="min-width:110px;justify-content:space-between"><span><span class="cur">$</span> 112</span><span class="sub" style="margin:0">52%</span></div><span style="color:var(--muted);font-size:11px">to</span><div class="moneyin" style="min-width:110px;justify-content:space-between"><span><span class="cur">$</span> 140</span><span class="sub" style="margin:0">40%</span></div></div><div class="sub" style="margin-top:3px;color:var(--warn)">Visits not set on Template</div></td><td class="newcol num">$333.33<span class="sub">$333.33 &times; 1</span></td><td class="newcol num">$160.00 &ndash; $200.00<span class="sub">range &times; visits</span></td><td class="newcol num"><b class="mg-ok">52.0%</b> &ndash; <b class="mg-ok">40.0%</b><span class="sub">bottom &ndash; top of range</span></td><td class="newcol"><span class="badge b-ok">None &middot; to signature</span><span class="sub">if priced at the top</span><span class="sub" style="color:var(--warn)">Left out: Irrigation Startup (visits not set)</span></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="foot"><button class="btn ghost">Cancel</button><span style="flex:1"></span><button class="btn out dis">Save</button><button class="btn dis">Send For Pricing</button></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ 1 · PRICING ══════════════════ -->
+  <section class="screen" id="s1" data-agreement="7-Eleven, Inc Landscaping - PUoW 12M">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Takoda Pratt</b><span>District Manager &middot; assigns and negotiates</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+      <div class="cc-crumb"><a>Provider Agreement Management</a> / 7-Eleven, Inc Landscaping - PUoW 12M - Ready For Negotiation</div>
+      <div class="cc-head-row"><h1 class="cc-h1">7-Eleven, Inc Landscaping - PUoW 12M - Ready For Negotiation</h1>
+        <span class="badge b-grey" title="Source of this example">Real example &middot; term sheet R26-00000QZQ, prices as entered 6&ndash;16 Nov</span>
+        <div style="margin-left:auto"><button class="btn out sm" onclick="go('d2')">View Service Schedule</button></div></div>
+      <div class="kv" style="margin-bottom:18px;grid-template-columns:repeat(7,1fr)">
+        <div><div class="k">Agreement Type</div><div class="v">Mixed</div></div>
+        <div><div class="k">Term Start Date</div><div class="v">11/01/26</div></div>
+        <div><div class="k">Term End Date</div><div class="v">12/31/26</div></div>
+        <div><div class="k">Service Start</div><div class="v">11/01</div></div>
+        <div><div class="k">Service End</div><div class="v">12/31</div></div>
+        <div><div class="k">Billing Start</div><div class="v">11/01</div></div>
+        <div><div class="k">Billing End</div><div class="v">12/31</div></div>
+      </div>
+<div class="notice n-new expl" style="margin:0 0 12px"><span class="ic">&#9432;</span><div><b>One margin per property.</b>Customer $ from the term sheet minus provider $ from every PSA on the property, each line &times; its visits, for the period in the orange header (Product, 17 Nov; field review 25:03). No margin under each price: this customer is billed per month and the provider per visit, so a per-visit margin would be wrong (product call: only where customer and provider lines match 1:1).</div></div>
+      <div class="card">
+        <div class="card-b" style="padding-bottom:0">
+          <div class="filters" style="align-items:center">
+            <span class="fchip">State</span><span class="fchip">City</span><span class="fchip">Field Owner</span><span class="fchip">Creation Source</span>
+            <span style="flex:1"></span>
+            <span id="rfnRoute" style="font-size:12.5px"><b>On Send for approval:</b> 4 to signature <span class="sub" style="display:inline;margin:0">&middot; each PSA routes on its own property</span></span>
+            <span class="sub" id="recalcAt" style="margin:0 8px 0 12px">Calculated 16 Nov, 09:12</span>
+            <button class="btn newb out sm" onclick="rfnRecalc()">&#8635; Recalculate margin</button>
+            <button class="btn sm dis" title="Select properties to send back">Send back</button><button class="btn out sm">Export</button>
+          </div>
+        </div>
+        <div class="card-b flush">
+          <table class="grid" style="min-width:1500px">
+            <thead>
+              <tr><th colspan="5"></th><th colspan="5" class="newcol" style="text-align:center;letter-spacing:.06em;font-size:11px">MARGIN &middot; EXPECTED (CONTRACTED)<span class="sub" style="letter-spacing:0;text-transform:none;margin-top:2px">Per property &middot; Landscaping (this term sheet&rsquo;s service line) &middot; all service types &middot; all PSAs &middot; 1 Nov &ndash; 31 Dec 2026</span></th><th></th></tr>
+              <tr><th class="rowno"></th><th style="min-width:260px">Property</th><th>Field Owner</th><th style="min-width:180px">Provider</th>
+                <th class="grp" style="min-width:200px">Provider Line Item<span class="sub">Routine Landscaping Service Per Visit &middot; 5 visits (Nov 3, Dec 2)</span></th>
+                <th class="newcol num" style="min-width:150px">Customer $<span class="sub">what the customer pays us</span></th>
+                <th class="newcol num" style="min-width:150px">Provider $<span class="sub">what we pay providers</span></th>
+                <th class="newcol num" style="min-width:110px">Margin<span class="sub">customer $ minus provider $, divided by customer $</span></th>
+                <th class="newcol num" style="min-width:110px">vs last year</th>
+                <th class="newcol" style="min-width:190px">Approval<span class="sub">from this property&rsquo;s margin</span></th><th style="width:70px">Actions</th></tr>
+            </thead>
+            <tbody>
+<tr><td class="rowno">1</td><td>7-Eleven (22724) - 3101 W Gandy Blvd<span class="sub">PSA-261106-00076 <button class="tlbtn" title="Activity log" aria-label="Activity log for PSA-261106-00076" data-psa="PSA-261106-00076" data-stage="rfn" onclick="openTl(event,this)"><svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M24 20 24 24 20 24 20 28 16 28 16 30 22 30 22 26 26 26 26 22 30 22 30 20 24 20z"></path><path d="M8,4h8v6c0,1.1025,.8972,2,2,2h6v4h2v-6c0-.2651-.1055-.5195-.293-.707l-7-7c-.1875-.1875-.4419-.293-.707-.293H8c-1.1028,0-2,.8975-2,2V28c0,1.1025,.8972,2,2,2h4v-2h-4V4Zm15.5857,6h-5.5857V4.4141l5.5857,5.5859Z"></path></svg></button></span></td><td>Takoda Pratt</td>
+          <td><div class="rangehint">Select Provider</div><div class="moneyin" style="min-width:150px;color:#9AA2AA"><span>Sanchez and sonz lawncare llc</span><span>&#8964;</span></div></td>
+          <td><div class="rangehint">Range $116.28 &ndash; $145.35/visit</div>
+            <div class="moneyin" style="min-width:120px;margin-top:4px"><span class="cur">$</span><input class="rfnin" data-r="1" value="135.00" style="border:0;width:80px;font:inherit;text-align:right" oninput="rfnDirty()"></div></td>
+          <td class="newcol num" data-oc="1">$1,038.20<span class="sub">$519.10/month &times; 2 months</span></td><td class="newcol num"><span data-op="1">$675.00</span><span class="sub" data-ops="1">$135.00 &times; 5 visits</span></td><td class="newcol num" data-om="1"><b class="mg-ok">35.0%</b><span class="sub">$363</span></td><td class="newcol num"><span class="sub" style="margin:0">no 2025 season</span></td><td class="newcol" data-og="1"><span class="badge b-ok">None &middot; to signature</span></td><td><button class="cmtbtn" data-ck="PSA-261106-00076" data-cl="7-Eleven (22724) &middot; PSA-261106-00076" title="Comments" aria-label="Comments on 7-Eleven (22724) &middot; PSA-261106-00076" onclick="openCmt(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="cmtn"></span></button></td></tr>
+<tr><td class="rowno">2</td><td>7-Eleven (34962) - 4691 W Sunrise Blvd<span class="sub">PSA-261106-00075 <button class="tlbtn" title="Activity log" aria-label="Activity log for PSA-261106-00075" data-psa="PSA-261106-00075" data-stage="rfn" onclick="openTl(event,this)"><svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M24 20 24 24 20 24 20 28 16 28 16 30 22 30 22 26 26 26 26 22 30 22 30 20 24 20z"></path><path d="M8,4h8v6c0,1.1025,.8972,2,2,2h6v4h2v-6c0-.2651-.1055-.5195-.293-.707l-7-7c-.1875-.1875-.4419-.293-.707-.293H8c-1.1028,0-2,.8975-2,2V28c0,1.1025,.8972,2,2,2h4v-2h-4V4Zm15.5857,6h-5.5857V4.4141l5.5857,5.5859Z"></path></svg></button></span></td><td>Mario Cantero</td>
+          <td><div class="rangehint">Select Provider</div><div class="moneyin" style="min-width:150px;color:#9AA2AA"><span>Garden Techs Landscaping Contractors</span><span>&#8964;</span></div></td>
+          <td><div class="rangehint">Range $275.63 &ndash; $344.53/visit</div>
+            <div class="moneyin" style="min-width:120px;margin-top:4px"><span class="cur">$</span><input class="rfnin" data-r="2" value="300.00" style="border:0;width:80px;font:inherit;text-align:right" oninput="rfnDirty()"></div></td>
+          <td class="newcol num" data-oc="2">$2,460.94<span class="sub">$1,230.47/month &times; 2 months</span></td><td class="newcol num"><span data-op="2">$1,500.00</span><span class="sub" data-ops="2">$300.00 &times; 5 visits</span></td><td class="newcol num" data-om="2"><b class="mg-ok">39.0%</b><span class="sub">$961</span></td><td class="newcol num"><span class="sub" style="margin:0">no 2025 season</span></td><td class="newcol" data-og="2"><span class="badge b-ok">None &middot; to signature</span></td><td><button class="cmtbtn" data-ck="PSA-261106-00075" data-cl="7-Eleven (34962) &middot; PSA-261106-00075" title="Comments" aria-label="Comments on 7-Eleven (34962) &middot; PSA-261106-00075" onclick="openCmt(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="cmtn"></span></button></td></tr>
+<tr><td class="rowno">3</td><td>7-Eleven (38750) - 940 S Broad St<span class="sub">PSA-261106-00077 <button class="tlbtn" title="Activity log" aria-label="Activity log for PSA-261106-00077" data-psa="PSA-261106-00077" data-stage="rfn" onclick="openTl(event,this)"><svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M24 20 24 24 20 24 20 28 16 28 16 30 22 30 22 26 26 26 26 22 30 22 30 20 24 20z"></path><path d="M8,4h8v6c0,1.1025,.8972,2,2,2h6v4h2v-6c0-.2651-.1055-.5195-.293-.707l-7-7c-.1875-.1875-.4419-.293-.707-.293H8c-1.1028,0-2,.8975-2,2V28c0,1.1025,.8972,2,2,2h4v-2h-4V4Zm15.5857,6h-5.5857V4.4141l5.5857,5.5859Z"></path></svg></button></span></td><td>Takoda Pratt</td>
+          <td><div class="rangehint">Select Provider</div><div class="moneyin" style="min-width:150px;color:#9AA2AA"><span>Southern Florida Landscaping</span><span>&#8964;</span></div></td>
+          <td><div class="rangehint">Range $150.39 &ndash; $187.99/visit</div>
+            <div class="moneyin" style="min-width:120px;margin-top:4px"><span class="cur">$</span><input class="rfnin" data-r="3" value="160.00" style="border:0;width:80px;font:inherit;text-align:right" oninput="rfnDirty()"></div></td>
+          <td class="newcol num" data-oc="3">$1,342.78<span class="sub">$671.39/month &times; 2 months</span></td><td class="newcol num"><span data-op="3">$800.00</span><span class="sub" data-ops="3">$160.00 &times; 5 visits</span></td><td class="newcol num" data-om="3"><b class="mg-ok">40.4%</b><span class="sub">$543</span></td><td class="newcol num"><span class="sub" style="margin:0">no 2025 season</span></td><td class="newcol" data-og="3"><span class="badge b-ok">None &middot; to signature</span></td><td><button class="cmtbtn" data-ck="PSA-261106-00077" data-cl="7-Eleven (38750) &middot; PSA-261106-00077" title="Comments" aria-label="Comments on 7-Eleven (38750) &middot; PSA-261106-00077" onclick="openCmt(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="cmtn"></span></button></td></tr>
+<tr><td class="rowno">4</td><td>7-Eleven (43405) - 14361 Gulf Blvd<span class="sub">PSA-261106-00078 <button class="tlbtn" title="Activity log" aria-label="Activity log for PSA-261106-00078" data-psa="PSA-261106-00078" data-stage="rfn" onclick="openTl(event,this)"><svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M24 20 24 24 20 24 20 28 16 28 16 30 22 30 22 26 26 26 26 22 30 22 30 20 24 20z"></path><path d="M8,4h8v6c0,1.1025,.8972,2,2,2h6v4h2v-6c0-.2651-.1055-.5195-.293-.707l-7-7c-.1875-.1875-.4419-.293-.707-.293H8c-1.1028,0-2,.8975-2,2V28c0,1.1025,.8972,2,2,2h4v-2h-4V4Zm15.5857,6h-5.5857V4.4141l5.5857,5.5859Z"></path></svg></button></span></td><td>Takoda Pratt</td>
+          <td><div class="rangehint">Select Provider</div><div class="moneyin" style="min-width:150px;color:#9AA2AA"><span>LawnFinity, LLC</span><span>&#8964;</span></div></td>
+          <td><div class="rangehint">Range $198.40 &ndash; $248.00/visit</div>
+            <div class="moneyin" style="min-width:120px;margin-top:4px"><span class="cur">$</span><input class="rfnin" data-r="4" value="200.00" style="border:0;width:80px;font:inherit;text-align:right" oninput="rfnDirty()"></div></td>
+          <td class="newcol num" data-oc="4">$1,771.40<span class="sub">$885.70/month &times; 2 months</span></td><td class="newcol num"><span data-op="4">$1,000.00</span><span class="sub" data-ops="4">$200.00 &times; 5 visits</span></td><td class="newcol num" data-om="4"><b class="mg-ok">43.5%</b><span class="sub">$771</span></td><td class="newcol num"><span class="sub" style="margin:0">no 2025 season</span></td><td class="newcol" data-og="4"><span class="badge b-ok">None &middot; to signature</span></td><td><button class="cmtbtn" data-ck="PSA-261106-00078" data-cl="7-Eleven (43405) &middot; PSA-261106-00078" title="Comments" aria-label="Comments on 7-Eleven (43405) &middot; PSA-261106-00078" onclick="openCmt(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="cmtn"></span></button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card expl" style="border-left:3px solid var(--new)">
+        <div class="card-h" style="background:var(--new-bg)"><h3 style="color:#8A4508">How the margin is calculated</h3><span class="badge b-grey">worked for row 3, 7-Eleven (38750)</span></div>
+        <div class="card-b" style="font-size:13px;line-height:1.7">
+          <div style="margin-bottom:6px"><b>What one margin covers:</b> one property, for this term sheet&rsquo;s service line (<b>Landscaping</b>), adding <b>every service type</b> and <b>every PSA</b> on that property, over the period in the orange header. It is not per service type and not per PSA.</div>
+          <div><b>Customer $</b> = the total the customer is charged for this property in the period, adding up every service type on the term sheet.</div>
+          <div><b>Provider $</b> = the total we pay providers for this property in the period, adding up every PSA on the property: each service&rsquo;s provider price times its visits.</div>
+          <div><b>Margin</b> = customer $ minus provider $, divided by customer $.</div>
+          <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--line-2)"><b>Worked for row 3, 7-Eleven (38750):</b> term sheet R26-00000QZQ has 4 service types &mdash; Routine Landscaping Service (customer pays monthly) and Mulching, Tree Pruning, Palm Tree Pruning (tracking only). In 1 Nov &ndash; 31 Dec only Routine Landscaping Service is scheduled, and the property has 1 PSA (PSA-261106-00077). So:</div>
+          <div>Customer $ = $671.39 a month times 2 months = <b>$1,342.78</b></div>
+          <div>Provider $ = $160.00 a visit times 5 visits (3 in Nov, 2 in Dec) = <b>$800.00</b></div>
+          <div>Margin = $1,342.78 minus $800.00, divided by $1,342.78 = <b>40.4%</b></div>
+          <div class="sub" style="margin-top:6px">Monthly customer charges and per-visit provider prices are totalled for the same period before comparing, which is why there is no margin under each price. A line with no provider price yet is left out and listed. Press Recalculate after changing a price.</div>
+        </div>
+      </div>
+      <div class="foot"><button class="btn ghost">Cancel</button><span style="flex:1"></span><button class="btn out">Save</button><button class="btn" onclick="openM('m-submit')">Send for approval</button></div>
+      <script>window.RFN=[{"r": 1, "c": 1038.2, "v": 5, "sp": 0, "lo": 116.28, "hi": 145.35}, {"r": 2, "c": 2460.94, "v": 5, "sp": 0, "lo": 275.63, "hi": 344.53}, {"r": 3, "c": 1342.78, "v": 5, "sp": 0, "lo": 150.39, "hi": 187.99}, {"r": 4, "c": 1771.4, "v": 5, "sp": 0, "lo": 198.4, "hi": 248.0}];</script>
+    </div>
+  </section>
+
+  <!-- ══════════════════ 2 · QUEUES ══════════════════ -->
+  <section class="screen" id="s2" data-agreement="Provider Agreement Management">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Sonal Kumari Thakur</b><span>Back Office Product</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <style>
+      #s2 .qf{display:inline-flex;gap:10px;align-items:center;border:1px solid #08568B;color:#08568B;border-radius:4px;padding:7px 12px;font-size:14px;background:#fff;margin:0 12px 12px 0}
+      #s2 .qhead{display:flex;align-items:center;gap:16px;margin:4px 0 14px}
+      #s2 .qtog{display:inline-block;width:34px;height:16px;border-radius:8px;background:#8FA9C2;position:relative;vertical-align:middle}
+      #s2 .qtog:after{content:"";position:absolute;right:-2px;top:-3px;width:22px;height:22px;border-radius:50%;background:#08568B}
+      #s2 .qchip{display:inline-flex;gap:8px;align-items:center;background:#08568B;color:#fff;border-radius:4px;padding:5px 10px;font-size:13px}
+      #s2 .qe{max-width:300px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      #s2 table.qt{width:100%;border-collapse:collapse;font-size:14px;background:#fff}
+      #s2 table.qt th{text-align:left;font-weight:600;font-size:13px;padding:14px 10px;color:#1D2329}
+      #s2 table.qt td{padding:14px 10px;border-top:1px solid #E6E9EC}
+      #s2 .qx{width:30px;color:#5A626A;font-size:18px}
+      .clean #s2 .tabstrip{padding-top:12px} .clean #s2 .tabstrip,.clean #s2 .tabs{overflow:visible}
+    </style>
+    <div class="cc-body">
+      <div class="qhead"><h1 class="cc-h1" style="margin:0;font-size:22px">Provider Agreement Management</h1><span style="flex:1"></span>
+        <span style="font-size:15px">Self View</span><span class="qtog"></span><span style="font-size:15px">Team View</span>
+        <button class="btn out">Create Secondary PSA</button></div>
+      <div style="margin:0 0 14px"><span class="srch" style="width:420px;display:inline-block">&#128269; Search</span></div>
+      <div><span class="qf">Customer <span style="color:#5A626A">&#8964;</span></span><span class="qf">Provider <span style="color:#5A626A">&#8964;</span></span><span class="qf">Customer Contract Type <span style="color:#5A626A">&#8964;</span></span><span class="qf">Provider Agreement Type <span style="color:#5A626A">&#8964;</span></span><span class="qf">Status <span style="color:#5A626A">&#8964;</span></span><span class="qf">State <span style="color:#5A626A">&#8964;</span></span><span class="qf">City <span style="color:#5A626A">&#8964;</span></span><span class="qf">Field Owner <span style="color:#5A626A">&#8964;</span></span></div>
+      <div><span class="qf">Service Line <span style="color:#5A626A">&#8964;</span></span><span class="qf">Exclude <span style="color:#5A626A">&#8964;</span></span><span class="qf">Changes <span style="color:#5A626A">&#8964;</span></span><span class="qf">Creation Source <span style="color:#5A626A">&#8964;</span></span><span class="qf">Agreement Start Date <span style="color:#5A626A">&#8964;</span></span><span style="color:#08568B;font-size:14px">&#8635; Clear All</span></div>
+      <div style="margin:4px 0 14px"><span class="qchip">Mixed <span style="opacity:.85">&#10005;</span></span></div>
+      <div class="tabstrip"><span class="tabarrow">&lsaquo;</span><div class="tabs"><button class="tab">Draft (5915)</button><button class="tab">Ready For Negotiation (550)</button><button class="tab newtab on"><span class="dotnew"></span>Awaiting Level 1 Approval</button><button class="tab newtab"><span class="dotnew"></span>Awaiting Level 2 Approval</button><button class="tab newtab"><span class="dotnew"></span>Awaiting RFP Review<span class="v2tag">V2</span></button><button class="tab">Awaiting Signature (254)</button><button class="tab">Active and Upcoming (37527)</button><button class="tab">Inactive (106009)</button><button class="tab">Error or Exception Cases (233)</button></div><span class="tabarrow">&rsaquo;</span></div>
+      <table class="qt">
+        <thead><tr><th></th><th>Customer/Customer Terms</th><th>Customer Contract</th><th>Provider Agreement</th><th>Service Line</th><th>Status</th><th>Count</th></tr></thead>
+        <tbody><tr><td class="qx">&#8250;</td><td>Extra Space Storage</td><td><div class="qe">Routine Landscaping Service, Fall Cleanup, Retention Pond Maintenance</div></td><td><div class="qe">Routine Landscaping Service, Fall Cleanup, Retention Pond Maintenance</div></td><td>Landscaping</td><td>Awaiting Level 1 Approval</td><td>1</td></tr><tr><td class="qx">&#8250;</td><td>Kneaders Bakery &amp; Cafe</td><td><div class="qe">Emergency Signs and Lighting PMI, Fire Extinguishers PMI, Hood Vent Inspection, Kitchen Vent Inspection, Kitchen Vent Cleaning, Fire Line Backflow PMI</div></td><td><div class="qe">Kitchen Vent Cleaning</div></td><td>Fire Life Safety</td><td>Awaiting Level 1 Approval</td><td>11</td></tr><tr><td class="qx">&#8250;</td><td>Kroger Corporate</td><td><div class="qe">Routine Lot Sweeping Service, Routine Portering Service</div></td><td><div class="qe">Routine Lot Sweeping Service, Routine Portering Service</div></td><td>Lot Sweeping, Portering</td><td>Awaiting Level 1 Approval</td><td>11</td></tr><tr><td class="qx">&#8250;</td><td>PetSmart</td><td><div class="qe">Routine Lotsweeping Service</div></td><td><div class="qe">Routine Lotsweeping Service</div></td><td>Lot Sweeping</td><td>Awaiting Level 1 Approval</td><td>1</td></tr><tr><td class="qx">&#8250;</td><td>Realty Income</td><td><div class="qe">Non-Mow Routine Landscaping Service, Wet Check, Shrub Pruning, Routine Landscaping Service</div></td><td><div class="qe">Non-Mow Routine Landscaping Service, Wet Check, Shrub Pruning, Routine Landscaping Service</div></td><td>Landscaping</td><td>Awaiting Level 1 Approval</td><td>2</td></tr><tr><td class="qx">&#8250;</td><td>Walgreens Corporate- AR Acct</td><td><div class="qe">Irrigation Startup, Spring Cleanup, Fall Cleanup, Irrigation Shutdown, Wet Check, Fertilization, Shrub Pruning, Routine Landscaping Service</div></td><td><div class="qe">Irrigation Shutdown</div></td><td>Landscaping</td><td>Awaiting Level 1 Approval</td><td>1</td></tr></tbody>
+      </table>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 10px;font-size:14px;color:#5A626A">
+        <span>View <b style="color:#1D2329">25</b> rows per page</span><span>1 - 6 of 6</span></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ 2b · ACTIVE & UPCOMING ══════════════════ -->
+
+<!-- ══════════════════ AGREEMENT DETAILS — ACTIVE ══════════════════ -->
+
+<!-- ══════════════════ SCHEDULES LIST — FILTERED TO THE AGREEMENT ══════════════════ -->
+
+  <!-- ══════════════════ SERVICE SCHEDULE — ACTIVITIES ══════════════════ -->
+
+
+
+  <!-- ══════════════════ 2f · MARGIN ROLL-UP ══════════════════ -->
+
+  <!-- ══════════════════ 3 · AUTO-APPROVED -> AWAITING SIGNATURE (replaces the Awaiting Approval bucket) ══════════════════ -->
+  <section class="screen" id="s2c" data-agreement="7-Eleven, Inc Landscaping - PUoW 12M">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Sonal Kumari Thakur</b><span>Back Office Product</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+      <div class="cc-crumb"><a>Provider Agreement Management</a> / 7-Eleven, Inc Landscaping - PUoW 12M - Awaiting Signature</div>
+      <div class="cc-head-row"><h1 class="cc-h1">7-Eleven, Inc Landscaping - PUoW 12M - Awaiting Signature <span style="color:var(--blue);font-weight:400">&#8599;</span></h1><span class="badge b-grey" title="Source of this example">Real example &middot; term sheet R26-00000QZQ</span></div>
+      <div class="notice n-ok"><span class="ic">&#10003;</span><div><b>Would be auto-approved: no approval queue.</b>
+        Every property is at or above 25% (lowest 35.0%), so &ldquo;Send for approval&rdquo; would move all 4 PSAs straight to Awaiting Signature (field review 7:12&ndash;7:50).
+        Today these 4 PSAs sat in Awaiting Approval until someone clicked approve; 3 are now Active and 1 is Awaiting Signature.</div></div>
+      <div class="card">
+        <div class="card-b" style="padding-bottom:0">
+          <div class="filters" style="align-items:center"><span class="srch">&#128269; Search</span><span style="flex:1"></span><button class="btn dis sm" data-sel data-base="Revoke">Revoke (0)</button></div>
+          <div class="filters" style="margin-top:10px"><span class="fchip">City</span><span class="fchip">Field Owner</span><span class="fchip">State</span><span class="fchip">Provider</span></div>
+        </div>
+        <div class="card-b flush">
+          <table class="grid" style="min-width:1300px">
+            <thead><tr><th class="chk"><span class="cbx" data-all></span></th><th style="min-width:260px">Property</th><th>Service Line</th><th>Agreement Type</th><th>Term Start</th><th>Term End</th>
+              <th>Field Owner</th><th>Status</th><th style="min-width:230px">Provider</th><th class="newcol num">Property margin<span class="sub">expected, term</span></th></tr></thead>
+            <tbody><tr><td class="chk"><span class="cbx" data-row></span></td><td>7-Eleven (22724) - 3101 W Gandy Blvd<span class="sub">PSA-261106-00076 <button class="tlbtn" title="Activity log" aria-label="Activity log for PSA-261106-00076" data-psa="PSA-261106-00076" data-stage="sig" onclick="openTl(event,this)"><svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M24 20 24 24 20 24 20 28 16 28 16 30 22 30 22 26 26 26 26 22 30 22 30 20 24 20z"></path><path d="M8,4h8v6c0,1.1025,.8972,2,2,2h6v4h2v-6c0-.2651-.1055-.5195-.293-.707l-7-7c-.1875-.1875-.4419-.293-.707-.293H8c-1.1028,0-2,.8975-2,2V28c0,1.1025,.8972,2,2,2h4v-2h-4V4Zm15.5857,6h-5.5857V4.4141l5.5857,5.5859Z"></path></svg></button></span></td>
+      <td>Landscaping</td><td>Mixed</td><td>Nov 1, 2026</td><td>Dec 31, 2026</td><td>Takoda Pratt</td><td>Active</td>
+      <td>Sanchez and sonz lawncare llc <span style="color:var(--blue);font-size:12px;margin-left:6px">&#9636; Provider details</span></td>
+      <td class="newcol num"><b class="mg-ok">35.0%</b><span class="sub">$363 on $1,038</span></td></tr><tr><td class="chk"><span class="cbx" data-row></span></td><td>7-Eleven (34962) - 4691 W Sunrise Blvd<span class="sub">PSA-261106-00075 <button class="tlbtn" title="Activity log" aria-label="Activity log for PSA-261106-00075" data-psa="PSA-261106-00075" data-stage="sig" onclick="openTl(event,this)"><svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M24 20 24 24 20 24 20 28 16 28 16 30 22 30 22 26 26 26 26 22 30 22 30 20 24 20z"></path><path d="M8,4h8v6c0,1.1025,.8972,2,2,2h6v4h2v-6c0-.2651-.1055-.5195-.293-.707l-7-7c-.1875-.1875-.4419-.293-.707-.293H8c-1.1028,0-2,.8975-2,2V28c0,1.1025,.8972,2,2,2h4v-2h-4V4Zm15.5857,6h-5.5857V4.4141l5.5857,5.5859Z"></path></svg></button></span></td>
+      <td>Landscaping</td><td>Mixed</td><td>Nov 1, 2026</td><td>Dec 31, 2026</td><td>Mario Cantero</td><td>Awaiting Signature</td>
+      <td>Garden Techs Landscaping Contractors <span style="color:var(--blue);font-size:12px;margin-left:6px">&#9636; Provider details</span></td>
+      <td class="newcol num"><b class="mg-ok">39.0%</b><span class="sub">$961 on $2,461</span></td></tr><tr><td class="chk"><span class="cbx" data-row></span></td><td>7-Eleven (38750) - 940 S Broad St<span class="sub">PSA-261106-00077 <button class="tlbtn" title="Activity log" aria-label="Activity log for PSA-261106-00077" data-psa="PSA-261106-00077" data-stage="sig" onclick="openTl(event,this)"><svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M24 20 24 24 20 24 20 28 16 28 16 30 22 30 22 26 26 26 26 22 30 22 30 20 24 20z"></path><path d="M8,4h8v6c0,1.1025,.8972,2,2,2h6v4h2v-6c0-.2651-.1055-.5195-.293-.707l-7-7c-.1875-.1875-.4419-.293-.707-.293H8c-1.1028,0-2,.8975-2,2V28c0,1.1025,.8972,2,2,2h4v-2h-4V4Zm15.5857,6h-5.5857V4.4141l5.5857,5.5859Z"></path></svg></button></span></td>
+      <td>Landscaping</td><td>Mixed</td><td>Nov 1, 2026</td><td>Dec 31, 2026</td><td>Takoda Pratt</td><td>Active</td>
+      <td>Southern Florida Landscaping <span style="color:var(--blue);font-size:12px;margin-left:6px">&#9636; Provider details</span></td>
+      <td class="newcol num"><b class="mg-ok">40.4%</b><span class="sub">$543 on $1,343</span></td></tr><tr><td class="chk"><span class="cbx" data-row></span></td><td>7-Eleven (43405) - 14361 Gulf Blvd<span class="sub">PSA-261106-00078 <button class="tlbtn" title="Activity log" aria-label="Activity log for PSA-261106-00078" data-psa="PSA-261106-00078" data-stage="sig" onclick="openTl(event,this)"><svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M24 20 24 24 20 24 20 28 16 28 16 30 22 30 22 26 26 26 26 22 30 22 30 20 24 20z"></path><path d="M8,4h8v6c0,1.1025,.8972,2,2,2h6v4h2v-6c0-.2651-.1055-.5195-.293-.707l-7-7c-.1875-.1875-.4419-.293-.707-.293H8c-1.1028,0-2,.8975-2,2V28c0,1.1025,.8972,2,2,2h4v-2h-4V4Zm15.5857,6h-5.5857V4.4141l5.5857,5.5859Z"></path></svg></button></span></td>
+      <td>Landscaping</td><td>Mixed</td><td>Nov 1, 2026</td><td>Dec 31, 2026</td><td>Takoda Pratt</td><td>Active</td>
+      <td>LawnFinity, LLC <span style="color:var(--blue);font-size:12px;margin-left:6px">&#9636; Provider details</span></td>
+      <td class="newcol num"><b class="mg-ok">43.5%</b><span class="sub">$771 on $1,771</span></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="screen" id="s2d" data-agreement="UPS Landscaping - R26-00000D2Z">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Michael Dailey</b><span>District Manager &middot; assigns and negotiates</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+      <div class="cc-crumb"><a>Provider Agreement Management</a> / UPS Landscaping - R26-00000D2Z - Ready For Negotiation</div>
+      <div class="cc-head-row"><h1 class="cc-h1">UPS Landscaping - R26-00000D2Z - Ready For Negotiation</h1></div>
+      <div class="kv" style="margin-bottom:18px;grid-template-columns:repeat(7,1fr)">
+        <div><div class="k">Agreement Type</div><div class="v">Mixed</div></div>
+        <div><div class="k">Term Start Date</div><div class="v">05/01/26</div></div>
+        <div><div class="k">Term End Date</div><div class="v">12/31/26</div></div>
+        <div><div class="k">Service Start</div><div class="v">05/01</div></div>
+        <div><div class="k">Service End</div><div class="v">12/31</div></div>
+        <div><div class="k">Billing Start</div><div class="v">05/01</div></div>
+        <div><div class="k">Billing End</div><div class="v">12/31</div></div>
+      </div>
+
+      <div class="notice n-ok expl" id="jdnote" style="margin:0 0 12px"><span class="ic">&#10003;</span><div><b>One service loses money, the site does not: no approval needed.</b>
+        Fall Cleanup costs $870.00 against $441.18 from the customer (&minus;97.2%, shown in its price box), but the property makes 44.4% once Routine Landscaping is added.
+        The approval follows the property, so this goes straight to signature. Under the old rule (worst line) it would have needed the Regional Manager, then Leadership.</div></div>
+      <div class="card">
+        <div class="card-b flush">
+          <table class="grid" style="min-width:1560px">
+            <thead>
+              <tr><th colspan="6"></th><th colspan="4" class="newcol" style="text-align:center;letter-spacing:.06em;font-size:11px">MARGIN &middot; EXPECTED (CONTRACTED)<span class="sub" style="letter-spacing:0;text-transform:none;margin-top:2px">Per property &middot; Landscaping &middot; all service types &middot; all PSAs &middot; 1 May &ndash; 31 Dec 2026 (this PSA&rsquo;s term)</span></th><th></th></tr>
+              <tr><th class="rowno"></th><th style="min-width:250px">Property</th><th>Field Owner</th><th style="min-width:180px">Provider</th>
+                <th class="grp" style="min-width:150px">Provider Line Item<span class="sub">Routine Landscaping</span></th>
+                <th class="grp" style="min-width:150px">Provider Line Item<span class="sub">Fall Cleanup</span></th>
+                <th class="newcol num" style="min-width:150px">Customer $<span class="sub">what the customer pays us</span></th>
+                <th class="newcol num" style="min-width:150px">Provider $<span class="sub">what we pay providers</span></th>
+                <th class="newcol num" style="min-width:110px">Margin<span class="sub">for the property</span></th>
+                <th class="newcol" style="min-width:200px">Approval<span class="sub">from this property&rsquo;s margin</span></th>
+                <th>Actions</th></tr>
+            </thead>
+            <tbody><tr><td class="rowno">1</td><td>UPS (MAYAR) - 131 Ansel Hallet RD<span class="sub">PSA-260408-00344 <button class="tlbtn" title="Activity log" aria-label="Activity log for PSA-260408-00344" data-psa="PSA-260408-00344" data-stage="rfn" onclick="openTl(event,this)"><svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M24 20 24 24 20 24 20 28 16 28 16 30 22 30 22 26 26 26 26 22 30 22 30 20 24 20z"></path><path d="M8,4h8v6c0,1.1025,.8972,2,2,2h6v4h2v-6c0-.2651-.1055-.5195-.293-.707l-7-7c-.1875-.1875-.4419-.293-.707-.293H8c-1.1028,0-2,.8975-2,2V28c0,1.1025,.8972,2,2,2h4v-2h-4V4Zm15.5857,6h-5.5857V4.4141l5.5857,5.5859Z"></path></svg></button></span></td><td>Michael Dailey</td>
+      <td><div class="rangehint">Select Provider</div><div class="moneyin" style="min-width:150px;color:#9AA2AA"><span>D. Muzzioli Associates</span><span>&#8964;</span></div></td>
+      <td><div class="rangehint">Routine Landscaping</div><div class="moneyin" style="min-width:110px"><span class="cur">$</span><span style="margin-left:auto">180.00</span></div>
+        <span class="sub">per visit &middot; 22 visits</span></td>
+      <td><div class="rangehint">Fall Cleanup</div><div class="moneyin" style="min-width:150px" id="jdfall"><span class="cur">$</span><span style="margin-left:auto">870.00</span><span class="cellm neg" style="margin-left:10px" title="Margin on this line, information only">&minus;97.2%</span></div>
+        <span class="sub">per visit &middot; 1 visit</span></td>
+      <td class="newcol num" id="jdc">$8,686.97<span class="sub">property total</span></td>
+      <td class="newcol num">$4,830.00<span class="sub">property total</span></td>
+      <td class="newcol num" id="jdm"><b class="mg-ok">44.4%</b><span class="sub">$3,857</span></td>
+      <td class="newcol" id="jdg" style="padding-left:30px"><span class="badge b-ok">None &middot; to signature</span></td>
+      <td><button class="cmtbtn" data-ck="PSA-260408-00344" data-cl="UPS (MAYAR) &middot; PSA-260408-00344" title="Comments" aria-label="Comments on UPS (MAYAR) &middot; PSA-260408-00344" onclick="openCmt(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="cmtn"></span></button></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="foot"><button class="btn ghost">Cancel</button><span style="flex:1"></span><button class="btn out">Save</button><button class="btn">Send for approval</button></div>
+    </div>
+  </section>
+  <section class="screen" id="s2y" data-agreement="Realty Income Landscaping - R25-00000JDX">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>District Manager</b><span>assigns and negotiates</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+      <div class="cc-crumb"><a>Provider Agreement Management</a> / Realty Income Landscaping - R25-00000JDX - Ready For Negotiation</div>
+      <div class="cc-head-row"><h1 class="cc-h1">Realty Income Landscaping - R25-00000JDX - Ready For Negotiation</h1></div>
+      <div class="kv" style="margin-bottom:18px;grid-template-columns:repeat(7,1fr)">
+        <div><div class="k">Agreement Type</div><div class="v">Mixed</div></div>
+        <div><div class="k">Term Start Date</div><div class="v">01/01/26</div></div>
+        <div><div class="k">Term End Date</div><div class="v">12/31/26</div></div>
+        <div><div class="k">Service Start</div><div class="v">01/01</div></div>
+        <div><div class="k">Service End</div><div class="v">12/31</div></div>
+        <div><div class="k">Billing Start</div><div class="v">01/01</div></div>
+        <div><div class="k">Billing End</div><div class="v">12/31</div></div>
+      </div>
+
+      <div class="notice n-amber expl" id="yynote" style="margin:0 0 12px"><span class="ic">&#9873;</span><div><b>Healthy margin, big drop: needs Level 1, then Level 2.</b>
+        The property makes 30.5%, above 25%, so the margin alone needs no approval. But it made 42.2% in 2025 with the same provider: a 11.7-point drop,
+        at or over the 10-point (configurable) limit for Landscaping. The customer pays the same; the provider now costs $2,610.00 against $2,160.00. The stricter route applies.</div></div>
+      <div class="card">
+        <div class="card-b flush">
+          <table class="grid" style="min-width:1560px">
+            <thead>
+              <tr><th colspan="6"></th><th colspan="5" class="newcol" style="text-align:center;letter-spacing:.06em;font-size:11px">MARGIN &middot; EXPECTED (CONTRACTED)<span class="sub" style="letter-spacing:0;text-transform:none;margin-top:2px">Per property &middot; Landscaping &middot; all service types &middot; all PSAs &middot; 1 Jan &ndash; 31 Dec 2026 (this PSA&rsquo;s term)</span></th><th></th></tr>
+              <tr><th class="rowno"></th><th style="min-width:250px">Property</th><th>Field Owner</th><th style="min-width:180px">Provider</th>
+                <th class="grp" style="min-width:150px">Provider Line Item<span class="sub">Routine Landscaping</span></th>
+                <th class="grp" style="min-width:150px">Provider Line Item<span class="sub">Non-Mow Routine</span></th>
+                <th class="newcol num" style="min-width:150px">Customer $<span class="sub">what the customer pays us</span></th>
+                <th class="newcol num" style="min-width:150px">Provider $<span class="sub">what we pay providers</span></th>
+                <th class="newcol num" style="min-width:110px">Margin<span class="sub">for the property</span></th>
+                <th class="newcol num" style="min-width:130px">vs last year<span class="sub">points</span></th>
+                <th class="newcol" style="min-width:220px">Approval<span class="sub">stricter of margin and drop</span></th>
+                <th>Actions</th></tr>
+            </thead>
+            <tbody><tr><td class="rowno">1</td><td>Realty Income (13031) - 7334 Us Highway 231<span class="sub">PSA-251227-00224 <button class="tlbtn" title="Activity log" aria-label="Activity log for PSA-251227-00224" data-psa="PSA-251227-00224" data-stage="rfn" onclick="openTl(event,this)"><svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M24 20 24 24 20 24 20 28 16 28 16 30 22 30 22 26 26 26 26 22 30 22 30 20 24 20z"></path><path d="M8,4h8v6c0,1.1025,.8972,2,2,2h6v4h2v-6c0-.2651-.1055-.5195-.293-.707l-7-7c-.1875-.1875-.4419-.293-.707-.293H8c-1.1028,0-2,.8975-2,2V28c0,1.1025,.8972,2,2,2h4v-2h-4V4Zm15.5857,6h-5.5857V4.4141l5.5857,5.5859Z"></path></svg></button></span></td><td>District Manager</td>
+      <td><div class="rangehint">Select Provider</div><div class="moneyin" style="min-width:150px;color:#9AA2AA"><span>CLEAN CUT LAWNCARE</span><span>&#8964;</span></div></td>
+      <td><div class="rangehint">Routine Landscaping</div><div class="moneyin" style="min-width:110px"><span class="cur">$</span><span style="margin-left:auto">80.00</span></div>
+        <span class="sub">per visit &middot; 27 visits (Mar&ndash;Nov)</span></td>
+      <td><div class="rangehint">Non-Mow Routine</div><div class="moneyin" style="min-width:110px"><span class="cur">$</span><span style="margin-left:auto">50.00</span></div>
+        <span class="sub">per visit &middot; 9 visits (Dec&ndash;Feb)</span></td>
+      <td class="newcol num" id="yyc">$3,753.84<span class="sub">property total</span></td>
+      <td class="newcol num">$2,610.00<span class="sub">property total</span></td>
+      <td class="newcol num" id="yym"><b class="mg-ok">30.5%</b><span class="sub">$1,144</span></td>
+      <td class="newcol num" id="yyl"><span class="mg-low">&minus;11.7 pts</span><span class="sub">2025 season: 42.2%</span></td>
+      <td class="newcol" id="yyg" style="padding-left:30px"><span class="badge b-l2">Regional Manager &rarr; Leadership</span><span class="sub" style="margin-top:4px">from the drop: 11.7 pts &ge; 10 (configurable)</span></td>
+      <td><button class="cmtbtn" data-ck="PSA-251227-00224" data-cl="Realty Income (13031) &middot; PSA-251227-00224" title="Comments" aria-label="Comments on Realty Income (13031) &middot; PSA-251227-00224" onclick="openCmt(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="cmtn"></span></button></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="foot"><button class="btn ghost">Cancel</button><span style="flex:1"></span><button class="btn out">Save</button><button class="btn">Send for approval</button></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ 3 · APPROVAL L1 ══════════════════ -->
+  <section class="screen" id="s3" data-agreement="ExchangeRight Net Leased Portfolio 13, DST Landscaping - R26-00000E6F">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Regional Manager</b><span>Level 1 approver</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+      <div class="cc-crumb"><a>Provider Agreement Management</a> / ExchangeRight Net Leased Portfolio 13, DST Landscaping - R26-00000E6F - <span style="color:var(--new)">Awaiting Level 1 Approval</span></div>
+      <div class="cc-head-row"><h1 class="cc-h1">ExchangeRight Net Leased Portfolio 13, DST Landscaping - R26-00000E6F - <span style="color:var(--new)">Awaiting Level 1 Approval</span> <span style="color:var(--blue);font-weight:400">&#8599;</span></h1>
+        <span class="badge b-grey" title="Source of this example">Real example &middot; PSA-260423-00011, Active today</span>
+        <div style="margin-left:auto"><button class="btn out sm" onclick="go('d2')">View Service Schedule</button></div></div>
+      <div class="kv" style="margin-bottom:18px;grid-template-columns:repeat(7,1fr)">
+        <div><div class="k">Agreement Type</div><div class="v">Mixed</div></div>
+        <div><div class="k">Term Start Date</div><div class="v">04/16/26</div></div>
+        <div><div class="k">Term End Date</div><div class="v">11/30/26</div></div>
+        <div><div class="k">Service Start</div><div class="v">04/16</div></div>
+        <div><div class="k">Service End</div><div class="v">11/30</div></div>
+        <div><div class="k">Billing Start</div><div class="v">04/16</div></div>
+        <div><div class="k">Billing End</div><div class="v">11/30</div></div>
+      </div>
+<div class="notice n-amber expl" style="margin:0 0 12px"><span class="ic">&#9873;</span><div><b>Needs Level 1, then Level 2.</b> The margin, 23.9%, is below 25% (Level 1), and it is 11.2 points below the 2025 season (35.1%), at or over the 10-point (configurable) limit (Level 1, then Level 2). The stricter route applies, so after the Regional Manager approves, it goes to Leadership.</div></div>
+      <div class="card">
+        <div class="card-b" style="padding-bottom:0">
+          <div class="filters" style="align-items:center">
+            <span class="srch">&#128269; Search</span>
+            <span class="fchip">State</span><span class="fchip">City</span><span class="fchip">Field Owner</span><span class="fchip">Creation Source</span><span class="fchip">Range</span><span class="fchip">Provider</span>
+            <span style="flex:1"></span>
+            <button class="btn sm" data-sel data-base="Send back" onclick="openM('m-back')">Send back (1)</button>
+          </div>
+        </div>
+        <div class="card-b flush">
+          <table class="grid" data-filterable style="min-width:1700px">
+            <thead>
+              <tr><th colspan="7"></th><th colspan="4" class="newcol" style="text-align:center;letter-spacing:.06em;font-size:11px">MARGIN &middot; EXPECTED (CONTRACTED)<span class="sub" style="letter-spacing:0;text-transform:none;margin-top:2px">Per property &middot; Landscaping &middot; all service types &middot; all PSAs &middot; 16 Apr &ndash; 30 Nov 2026 (this PSA&rsquo;s term)</span></th><th></th></tr>
+              <tr><th class="rowno"></th><th class="chk"><span class="cbx on" data-all></span></th>
+                <th style="min-width:250px">Property</th><th>Field Owner</th><th style="min-width:150px">Provider</th>
+                <th class="grp" style="min-width:170px">Provider Line Item<span class="sub" style="color:#1A4D6B">Routine Landscaping Service</span></th><th style="min-width:170px">Pricer&rsquo;s out-of-range reason</th>
+                <th class="newcol num" style="min-width:150px">Customer $<span class="sub">what the customer pays us</span></th>
+                <th class="newcol num" style="min-width:150px">Provider $<span class="sub">what we pay providers</span></th>
+                <th class="newcol num" style="min-width:110px">Margin<span class="sub">customer $ minus provider $, divided by customer $</span></th>
+                <th class="newcol num" style="min-width:110px">vs last year</th>
+                <th>Actions</th></tr>
+            </thead>
+            <tbody>
+              <tr data-dev="" data-line="Hobby Lobby (14)" data-svc="Routine Landscaping Service" data-margin="23.9%" data-site="23.9%" data-risk="" data-reason="Difficulty of service"><td class="rowno">1</td><td class="chk"><span class="cbx on" data-row></span></td>
+        <td>Hobby Lobby (14) - 5519 Coldwater RD<span class="kebab">&#8942;</span><span class="sub">PSA-260423-00011 <button class="tlbtn" title="Activity log" aria-label="Activity log for PSA-260423-00011" data-psa="PSA-260423-00011" data-stage="l1" onclick="openTl(event,this)"><svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M24 20 24 24 20 24 20 28 16 28 16 30 22 30 22 26 26 26 26 22 30 22 30 20 24 20z"></path><path d="M8,4h8v6c0,1.1025,.8972,2,2,2h6v4h2v-6c0-.2651-.1055-.5195-.293-.707l-7-7c-.1875-.1875-.4419-.293-.707-.293H8c-1.1028,0-2,.8975-2,2V28c0,1.1025,.8972,2,2,2h4v-2h-4V4Zm15.5857,6h-5.5857V4.4141l5.5857,5.5859Z"></path></svg></button></span></td><td>Chris Camacho</td><td>Three Rivers Lawn Care Co.</td>
+        <td><div class="rangehint">Customer Price $230.00/visit</div><div class="prow-line"><span class="px">$175.00/visit</span><span class="cellm " title="Margin on this line, information only">23.9%</span></div><span class="sub">31 visits</span></td>
+        <td><b style="font-size:12px">Difficulty of service</b><span class="sub">This is a larger proerty with specifications from the tenant on items they want addressed weekly.</span><span class="sub">edw, not verified</span></td>
+        <td class="newcol num" data-oc="" title="PSA-260423-00011 Routine Landscaping Service: 31 x $230.00 = $7,130.00">$7,130.00<span class="sub">property total</span></td><td class="newcol num" title="PSA-260423-00011 Routine Landscaping Service: 31 x $175.00 = $5,425.00"><span data-op="">$5,425.00</span><span class="sub" data-ops="">property total</span></td><td class="newcol num" data-om=""><b class="mg-low">23.9%</b><span class="sub">$1,705</span></td><td class="newcol num"><span class="mg-low">&minus;11.2 pts</span><span class="sub">2025 season: 35.1%</span></td>
+        <td style="white-space:nowrap"><button class="cmtbtn" data-ck="PSA-260423-00011" data-cl="Hobby Lobby (14) &middot; PSA-260423-00011" title="Comments" aria-label="Comments on Hobby Lobby (14) &middot; PSA-260423-00011" onclick="openCmt(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="cmtn"></span></button></td></tr>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="foot"><button class="btn ghost">Cancel</button><span style="flex:1"></span>
+        <button class="btn dis" data-sel data-base="Send To Active" data-blocked title="No signed agreement on file for this selection.">Send To Active (1)</button>
+        <button class="btn out" data-sel data-base="Move to Level 2" onclick="openM('m-l1up')">Move to Level 2 (1)</button>
+        <button class="btn" data-sel data-base="Send To Provider" onclick="openM('m-apv')">Send To Provider (1)</button></div>
+    </div>
+  </section>
+
+<!-- ══════════════════ 4 · APPROVAL L2 + BLOCKS ══════════════════ -->
+  <section class="screen" id="s4" data-agreement="CBRE/Amtrak Landscaping - R25-00000DRK">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Leadership</b><span>Level 2 approver</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+      <div class="cc-crumb"><a>Provider Agreement Management</a> / CBRE/Amtrak Landscaping - R25-00000DRK - <span style="color:var(--new)">Awaiting Level 2 Approval</span></div>
+      <div class="cc-head-row"><h1 class="cc-h1">CBRE/Amtrak Landscaping - R25-00000DRK - <span style="color:var(--new)">Awaiting Level 2 Approval</span> <span style="color:var(--blue);font-weight:400">&#8599;</span></h1>
+        <span class="badge b-grey" title="Source of this example">Real example &middot; PSA-260715-01042, Active today</span>
+        <div style="margin-left:auto"><button class="btn out sm" onclick="go('d2')">View Service Schedule</button></div></div>
+      <div class="kv" style="margin-bottom:18px;grid-template-columns:repeat(7,1fr)">
+        <div><div class="k">Agreement Type</div><div class="v">Mixed</div></div>
+        <div><div class="k">Term Start Date</div><div class="v">07/16/26</div></div>
+        <div><div class="k">Term End Date</div><div class="v">11/30/26</div></div>
+        <div><div class="k">Service Start</div><div class="v">07/16</div></div>
+        <div><div class="k">Service End</div><div class="v">11/30</div></div>
+        <div><div class="k">Billing Start</div><div class="v">07/16</div></div>
+        <div><div class="k">Billing End</div><div class="v">11/30</div></div>
+      </div>
+<div class="notice n-red expl" style="margin:0 0 12px"><span class="ic">&#9873;</span><div><b>Needs Level 1, then Level 2: the property loses money (&minus;6.9%).</b>Today this PSA went through the single Awaiting Approval step and has been Active since 16 Jul 2026. Under the gate: Regional Manager first, then Leadership (field review 8:25&ndash;8:40).</div></div>
+      <div class="card">
+        <div class="card-b" style="padding-bottom:0">
+          <div class="filters" style="align-items:center">
+            <span class="srch">&#128269; Search</span>
+            <span class="fchip">State</span><span class="fchip">City</span><span class="fchip">Field Owner</span><span class="fchip">Creation Source</span><span class="fchip">Range</span><span class="fchip">Provider</span>
+            <span style="flex:1"></span>
+            <button class="btn sm" data-sel data-base="Send back" onclick="openM('m-back')">Send back (1)</button>
+          </div>
+        </div>
+        <div class="card-b flush">
+          <table class="grid" data-filterable style="min-width:1700px">
+            <thead>
+              <tr><th colspan="9"></th><th colspan="4" class="newcol" style="text-align:center;letter-spacing:.06em;font-size:11px">MARGIN &middot; EXPECTED (CONTRACTED)<span class="sub" style="letter-spacing:0;text-transform:none;margin-top:2px">Per property &middot; Landscaping &middot; all service types &middot; all PSAs &middot; 16 Jul &ndash; 30 Nov 2026 (this PSA&rsquo;s term)</span></th><th></th></tr>
+              <tr><th class="rowno"></th><th class="chk"><span class="cbx on" data-all></span></th>
+                <th style="min-width:250px">Property</th><th>Field Owner</th><th style="min-width:150px">Provider</th>
+                <th class="grp" style="min-width:170px">Provider Line Item<span class="sub" style="color:#1A4D6B">Fall Cleanup</span></th><th class="grp" style="min-width:170px">Provider Line Item<span class="sub" style="color:#1A4D6B">Routine Landscaping Service</span></th><th class="grp" style="min-width:170px">Provider Line Item<span class="sub" style="color:#1A4D6B">Shrub Pruning</span></th><th style="min-width:170px">Pricer&rsquo;s out-of-range reason</th>
+                <th class="newcol num" style="min-width:150px">Customer $<span class="sub">what the customer pays us</span></th>
+                <th class="newcol num" style="min-width:150px">Provider $<span class="sub">what we pay providers</span></th>
+                <th class="newcol num" style="min-width:110px">Margin<span class="sub">customer $ minus provider $, divided by customer $</span></th>
+                <th class="newcol num" style="min-width:110px">vs last year</th>
+                <th>Actions</th></tr>
+            </thead>
+            <tbody>
+              <tr data-dev="" data-line="CBRE/Amtrak (AMT-PTB)" data-svc="Routine Landscaping Service" data-margin="&minus;18.7%" data-site="&minus;6.9%" data-risk="&minus;$284 in period" data-reason="Fair market value"><td class="rowno">1</td><td class="chk"><span class="cbx on" data-row></span></td>
+        <td>CBRE/Amtrak (AMT-PTB) - 3516 South ST<span class="kebab">&#8942;</span><span class="sub">PSA-260715-01042 <button class="tlbtn" title="Activity log" aria-label="Activity log for PSA-260715-01042" data-psa="PSA-260715-01042" data-stage="l2" onclick="openTl(event,this)"><svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M24 20 24 24 20 24 20 28 16 28 16 30 22 30 22 26 26 26 26 22 30 22 30 20 24 20z"></path><path d="M8,4h8v6c0,1.1025,.8972,2,2,2h6v4h2v-6c0-.2651-.1055-.5195-.293-.707l-7-7c-.1875-.1875-.4419-.293-.707-.293H8c-1.1028,0-2,.8975-2,2V28c0,1.1025,.8972,2,2,2h4v-2h-4V4Zm15.5857,6h-5.5857V4.4141l5.5857,5.5859Z"></path></svg></button></span></td><td>Joshua Moses</td><td>Legendary Lawn Care, LLC</td>
+        <td><div class="rangehint">Customer Price $361.54/visit</div><div class="prow-line"><span class="px">$235.00/visit</span><span class="cellm " title="Margin on this line, information only">35.0%</span></div><span class="sub">1 visit</span></td><td><div class="rangehint">Customer Price $168.46/visit</div><div class="prow-line"><span class="px">$200.00/visit</span><span class="cellm neg" title="Margin on this line, information only">&minus;18.7%</span></div><span class="sub">19 visits</span></td><td><div class="rangehint">Customer Price $69.23/visit</div><div class="prow-line"><span class="px">$45.00/visit</span><span class="cellm " title="Margin on this line, information only">35.0%</span></div><span class="sub">1 visit</span></td>
+        <td><b style="font-size:12px">Fair market value</b><span class="sub">edw, not verified</span></td>
+        <td class="newcol num" data-oc="" title="Not counted (no provider price yet): Irrigation Shutdown $307.69&#10;PSA-251218-00275 Chemical Application - Weeds: 1 x $469.59 = $469.59&#10;PSA-260715-01042 Fall Cleanup: 1 x $361.54 = $361.54&#10;PSA-260715-01042 Routine Landscaping Service: 19 x $168.46 = $3,200.74&#10;PSA-260715-01042 Shrub Pruning: 1 x $69.23 = $69.23">$4,101.10<span class="sub">property total</span></td><td class="newcol num" title="Not counted (no provider price yet): Irrigation Shutdown $307.69&#10;PSA-251218-00275 Chemical Application - Weeds: 1 x $305.23 = $305.23&#10;PSA-260715-01042 Fall Cleanup: 1 x $235.00 = $235.00&#10;PSA-260715-01042 Routine Landscaping Service: 19 x $200.00 = $3,800.00&#10;PSA-260715-01042 Shrub Pruning: 1 x $45.00 = $45.00"><span data-op="">$4,385.23</span><span class="sub" data-ops=""><span class="sub" style="margin:0">property total</span><span class="sibl">This PSA (1 &times; $235.00 + 19 &times; $200.00 + 1 &times; $45.00) &middot; $4,080.00</span><span class="sibl"><a class="lnk" title="Opens that PSA">PSA-251218-00275&nbsp;&#8599;</a> &middot; TruGreen (Germantown, TN) &middot; Chemical Application - Weeds &middot; $305.23</span><span class="sibl sib-np"><a class="lnk" title="Opens that PSA">PSA-260715-01037&nbsp;&#8599;</a> &middot; Kirby Knight Landscape Management &middot; Irrigation Shutdown &middot; not priced yet</span></span></td><td class="newcol num" data-om=""><b class="mg-low">&minus;6.9%</b><span class="sub">&minus;$284</span></td><td class="newcol num"><span class="sub" style="margin:0">no 2025 season</span></td>
+        <td style="white-space:nowrap"><button class="cmtbtn" data-ck="PSA-260715-01042" data-cl="CBRE/Amtrak (AMT-PTB) &middot; PSA-260715-01042" title="Comments" aria-label="Comments on CBRE/Amtrak (AMT-PTB) &middot; PSA-260715-01042" onclick="openCmt(this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="cmtn"></span></button></td></tr>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="foot"><button class="btn ghost">Cancel</button>
+        <button class="btn newb out" data-sel data-base="Send to RFP review" onclick="openM('m-rfp')" title="Manual choice, Level 2 only. V2">Send to RFP review (1)</button><span class="v2tag" id="rfpv2" style="margin-left:-4px;margin-right:6px">V2</span>
+        <span style="flex:1"></span>
+        <button class="btn dis" data-sel data-base="Send To Active" data-blocked title="No signed agreement on file for this selection.">Send To Active (1)</button>
+        <button class="btn" data-sel data-base="Send To Provider" onclick="openM('m-l2ok')">Send To Provider (1)</button></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ 5 · RFP REVIEW ══════════════════ -->
+  <section class="screen" id="s5" data-agreement="CBRE/Amtrak Landscaping - R25-00000DRK">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Costing Team</b><span>RFP review</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+      <div class="cc-crumb"><a>Provider Agreement Management</a> / CBRE/Amtrak Landscaping - R25-00000DRK - <span style="color:var(--new)">Awaiting RFP Review</span></div>
+      <div class="cc-head-row"><h1 class="cc-h1">CBRE/Amtrak Landscaping - R25-00000DRK - <span style="color:var(--new)">Awaiting RFP Review</span></h1><span class="badge b-grey" title="Source of this example">Real example &middot; PSA-260715-01042</span></div>
+      <div class="notice n-blue"><span class="ic">&#9432;</span><div><b>Sent by Level 2 (Leadership), by hand.</b> Never automatic and never offered from Level 1 (field review 22:48). The verdict returns to Level 2 (to confirm).</div></div>
+      <div class="card">
+        <div class="card-b flush">
+          <table class="grid" style="min-width:1500px">
+            <thead><tr><th class="rowno"></th><th class="chk"><span class="cbx on" data-all></span></th><th style="min-width:250px">Property</th><th>Field Owner</th><th>Provider</th>
+              <th class="grp">Line sent for review</th><th class="newcol num">Property margin<span class="sub">16 Jul &ndash; 30 Nov</span></th><th>Pricer&rsquo;s reason</th>
+              <th class="newcol frz2" style="min-width:170px">Verdict</th><th class="newcol frz1" style="min-width:230px">Comment</th></tr></thead>
+            <tbody><tr style="background:#FDF3F2" data-line="CBRE/Amtrak (AMT-PTB)"><td class="rowno">1</td><td class="chk"><span class="cbx on" data-row></span></td>
+              <td>CBRE/Amtrak (AMT-PTB) - 3516 South ST<span class="sub">PSA-260715-01042 <button class="tlbtn" title="Activity log" aria-label="Activity log for PSA-260715-01042" data-psa="PSA-260715-01042" data-stage="rfp" onclick="openTl(event,this)"><svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M24 20 24 24 20 24 20 28 16 28 16 30 22 30 22 26 26 26 26 22 30 22 30 20 24 20z"></path><path d="M8,4h8v6c0,1.1025,.8972,2,2,2h6v4h2v-6c0-.2651-.1055-.5195-.293-.707l-7-7c-.1875-.1875-.4419-.293-.707-.293H8c-1.1028,0-2,.8975-2,2V28c0,1.1025,.8972,2,2,2h4v-2h-4V4Zm15.5857,6h-5.5857V4.4141l5.5857,5.5859Z"></path></svg></button></span></td><td>Joshua Moses</td><td>Legendary Lawn Care, LLC</td>
+              <td><b style="font-size:12px">Routine Landscaping Service</b><div class="rangehint">Customer $168.46/visit &middot; 19 visits</div><div class="prow-line"><span class="px bad">$200.00/visit</span></div></td>
+              <td class="newcol num"><b class="mg-low">&minus;6.9%</b></td>
+              <td><b style="font-size:12px">Fair market value</b><span class="sub">no comment entered &middot; 16 Jul 2026 &middot; edw, not verified</span></td>
+              <td class="newcol frz2"><select class="gridsel"><option>Select verdict</option><option>Pricing confirmed</option><option>Correction supplied</option><option>Reopen customer pricing</option><option>Decline the property</option><option>Not enough information</option></select></td>
+              <td class="newcol frz1"><textarea class="gridtxt" rows="3" placeholder="Required"></textarea></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="foot"><button class="btn ghost">Cancel</button><span style="flex:1"></span>
+        <button class="btn newb" data-sel data-scope="approver" data-base="Return to Level 2" onclick="openM('m-rfpdone','approver')">Return to Level 2 (0)</button></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════ 8 · CONFIG ══════════════════ -->
+  <section class="screen" id="s8">
+    <div class="cc-top">
+      <div class="cc-burger"><i></i><i></i><i></i></div>
+      <div class="cc-logo">DMG<small>PRO</small></div>
+      <div class="cc-user"><b>Admin</b><span>Margin gate settings</span></div>
+    </div>
+    <div class="cc-accent"></div>
+    <div class="cc-body">
+      <div class="cc-head-row"><h1 class="cc-h1">Margin gate thresholds</h1></div>
+      <div class="notice n-blue expl"><span class="ic">&#9432;</span><div><b>Set per trade.</b> Each service line has its own Level 1 and Level 2 thresholds (product call, 18 Nov). A PSA uses the thresholds of its term sheet&rsquo;s service line. 25% / 0% is the starting value everywhere until a trade is changed.</div></div>
+      <div class="card" style="border-left:3px solid var(--new)">
+        <div class="card-h" style="background:var(--new-bg)"><h3 style="color:#8A4508">Thresholds by trade (service line)</h3><span class="badge b-grey">16 service lines with routine contracts in 2026</span></div>
+        <div class="card-b flush">
+          <table class="grid">
+            <thead><tr><th>Trade (service line)</th><th class="num">Level 1 below<span class="sub">Regional Manager</span></th><th class="num">Level 2 below<span class="sub">Leadership</span></th><th class="num newcol">Year-on-year drop<span class="sub">points &middot; Level 1, then Level 2</span></th><th>Note</th></tr></thead>
+            <tbody><tr><td>Landscaping</td><td class="num"><input class="moneyin" value="25.0" style="width:70px;text-align:right"> %</td><td class="num"><input class="moneyin" value="0.0" style="width:70px;text-align:right"> %</td><td class="num newcol"><input class="moneyin" value="10.0" style="width:70px;text-align:right"> pts</td><td><span class="sub" style="margin:0">default</span></td></tr><tr><td>Lot Sweeping</td><td class="num"><input class="moneyin" value="25.0" style="width:70px;text-align:right"> %</td><td class="num"><input class="moneyin" value="0.0" style="width:70px;text-align:right"> %</td><td class="num newcol"><input class="moneyin" value="10.0" style="width:70px;text-align:right"> pts</td><td><span class="sub" style="margin:0">default</span></td></tr><tr><td>Snow Removal</td><td class="num"><input class="moneyin" value="25.0" style="width:70px;text-align:right"> %</td><td class="num"><input class="moneyin" value="0.0" style="width:70px;text-align:right"> %</td><td class="num newcol"><input class="moneyin" value="10.0" style="width:70px;text-align:right"> pts</td><td><span class="sub" style="margin:0">default</span></td></tr><tr><td>Portering</td><td class="num"><input class="moneyin" value="25.0" style="width:70px;text-align:right"> %</td><td class="num"><input class="moneyin" value="0.0" style="width:70px;text-align:right"> %</td><td class="num newcol"><input class="moneyin" value="10.0" style="width:70px;text-align:right"> pts</td><td><span class="sub" style="margin:0">default</span></td></tr><tr><td>Irrigation</td><td class="num"><input class="moneyin" value="25.0" style="width:70px;text-align:right"> %</td><td class="num"><input class="moneyin" value="0.0" style="width:70px;text-align:right"> %</td><td class="num newcol"><input class="moneyin" value="10.0" style="width:70px;text-align:right"> pts</td><td><span class="sub" style="margin:0">default</span></td></tr><tr><td>HVAC</td><td class="num"><input class="moneyin" value="25.0" style="width:70px;text-align:right"> %</td><td class="num"><input class="moneyin" value="0.0" style="width:70px;text-align:right"> %</td><td class="num newcol"><input class="moneyin" value="10.0" style="width:70px;text-align:right"> pts</td><td><span class="sub" style="margin:0">default</span></td></tr><tr><td>Janitorial</td><td class="num"><input class="moneyin" value="25.0" style="width:70px;text-align:right"> %</td><td class="num"><input class="moneyin" value="0.0" style="width:70px;text-align:right"> %</td><td class="num newcol"><input class="moneyin" value="10.0" style="width:70px;text-align:right"> pts</td><td><span class="sub" style="margin:0">default</span></td></tr><tr><td>Handyman</td><td class="num"><input class="moneyin" value="25.0" style="width:70px;text-align:right"> %</td><td class="num"><input class="moneyin" value="0.0" style="width:70px;text-align:right"> %</td><td class="num newcol"><input class="moneyin" value="10.0" style="width:70px;text-align:right"> pts</td><td><span class="sub" style="margin:0">default</span></td></tr><tr><td>Pressure Washing</td><td class="num"><input class="moneyin" value="25.0" style="width:70px;text-align:right"> %</td><td class="num"><input class="moneyin" value="0.0" style="width:70px;text-align:right"> %</td><td class="num newcol"><input class="moneyin" value="10.0" style="width:70px;text-align:right"> pts</td><td><span class="sub" style="margin:0">default</span></td></tr><tr><td>Fire Life Safety</td><td class="num"><input class="moneyin" value="25.0" style="width:70px;text-align:right"> %</td><td class="num"><input class="moneyin" value="0.0" style="width:70px;text-align:right"> %</td><td class="num newcol"><input class="moneyin" value="10.0" style="width:70px;text-align:right"> pts</td><td><span class="sub" style="margin:0">default</span></td></tr><tr><td>Inspections</td><td class="num"><input class="moneyin" value="25.0" style="width:70px;text-align:right"> %</td><td class="num"><input class="moneyin" value="0.0" style="width:70px;text-align:right"> %</td><td class="num newcol"><input class="moneyin" value="10.0" style="width:70px;text-align:right"> pts</td><td><span class="sub" style="margin:0">default</span></td></tr><tr><td>Refrigeration</td><td class="num"><input class="moneyin" value="25.0" style="width:70px;text-align:right"> %</td><td class="num"><input class="moneyin" value="0.0" style="width:70px;text-align:right"> %</td><td class="num newcol"><input class="moneyin" value="10.0" style="width:70px;text-align:right"> pts</td><td><span class="sub" style="margin:0">default</span></td></tr><tr><td>Plumbing</td><td class="num"><input class="moneyin" value="25.0" style="width:70px;text-align:right"> %</td><td class="num"><input class="moneyin" value="0.0" style="width:70px;text-align:right"> %</td><td class="num newcol"><input class="moneyin" value="10.0" style="width:70px;text-align:right"> pts</td><td><span class="sub" style="margin:0">default</span></td></tr><tr><td>Electrical</td><td class="num"><input class="moneyin" value="25.0" style="width:70px;text-align:right"> %</td><td class="num"><input class="moneyin" value="0.0" style="width:70px;text-align:right"> %</td><td class="num newcol"><input class="moneyin" value="10.0" style="width:70px;text-align:right"> pts</td><td><span class="sub" style="margin:0">default</span></td></tr><tr><td>Window Cleaning</td><td class="num"><input class="moneyin" value="25.0" style="width:70px;text-align:right"> %</td><td class="num"><input class="moneyin" value="0.0" style="width:70px;text-align:right"> %</td><td class="num newcol"><input class="moneyin" value="10.0" style="width:70px;text-align:right"> pts</td><td><span class="sub" style="margin:0">default</span></td></tr><tr><td>Security</td><td class="num"><input class="moneyin" value="25.0" style="width:70px;text-align:right"> %</td><td class="num"><input class="moneyin" value="0.0" style="width:70px;text-align:right"> %</td><td class="num newcol"><input class="moneyin" value="10.0" style="width:70px;text-align:right"> pts</td><td><span class="sub" style="margin:0">default</span></td></tr></tbody>
+          </table>
+        </div>
+        <div class="card-b" style="border-top:1px solid var(--line-2)">
+          <div class="two" style="gap:12px">
+            <div class="field"><label>Send-back notice</label><select><option>Email</option><option>SMS</option><option>Email and SMS</option></select><div class="hint">To the District Manager and Regional Manager. Channel open with field.</div></div>
+            <div class="field"><label>Loss approved at Level 2<span class="v2tag">V2</span></label><select><option>FYI to RFP team (does not hold signature)</option><option>No FYI</option></select><div class="hint">To confirm with field.</div></div>
+          </div>
+          <div class="field" style="max-width:320px"><label>Effective from</label><input value="To be set"><div class="hint">Agreements already sent for approval keep the thresholds in force then.</div></div>
+          <div class="hint" style="margin:0 0 10px">Only admins can change these; everyone else can view them. Level 2 must be lower than Level 1, or Save is blocked. Year-on-year drop: when this year&rsquo;s property margin is this many points or more below last season&rsquo;s, the PSA goes to Level 1, then Level 2, even at 25% or more. No last season: the drop rule does not apply.</div><div class="btnrow right"><button class="btn ghost">Cancel</button><button class="btn newb">Save</button></div></div><div class="card-b" style="border-top:1px solid var(--line-2)"><h3 style="margin:0 0 8px;font-size:14px">Change log</h3><table class="grid" style="width:100%"><thead><tr><th>When</th><th>Who</th><th>Trade</th><th>Setting</th><th>Old</th><th>New</th></tr></thead><tbody><tr><td colspan="6" style="color:var(--muted)">No changes yet: every trade is on the defaults. Each Save adds a row here.</td></tr></tbody></table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  </div>
+</div>
+
+<!-- ══════════════════ MODALS ══════════════════ -->
+<div class="modal-wrap" id="m-range" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="modal-h">Price Outside of Recommended Range</div>
+    <div class="modal-b">
+      
+      <div class="field"><label>Why is this price outside of the recommended range?</label>
+        <select><option>Fair market value</option><option>Current rates and spec over target</option><option>Difficulty of service</option><option>Drive time</option><option>Incorrect measurements</option><option>Incorrect specs</option><option>Parcel added</option><option>Pocket area with different rates</option><option>Provider bench strength needed</option><option>Provider costing sheet updates needed</option><option>Provider increase district wide</option><option>Remote location</option><option>Other</option></select></div>
+      <div class="field"><label>Additional Comments</label>
+        <textarea placeholder="Tell us anything else pertaining to the reason this price is outside of the range"></textarea></div>
+      
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn" onclick="closeM()">Save price and reason</button></div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="m-dev" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="modal-h">Expected over-service &mdash; Visits <span class="sub" style="margin-top:4px">Routine Landscaping &middot; Pilot Flying J (0137) &middot; PSA-260514-00138</span></div>
+    <div class="modal-b">
+      
+      <div style="font-size:13px;color:var(--muted);margin:0 0 4px">Visits for each service type on this agreement are compared with the same service type on the customer&rsquo;s signed term sheet, for the same months. Only more provider visits are flagged.</div>
+      <div style="margin:0 0 16px">
+        <div class="dvrow"><span>Customer signed</span><b>Weekly, Mar &ndash; Feb &middot; 41 visits in this PSA&rsquo;s term</b></div>
+        <div class="dvrow"><span>Configured on this agreement</span><b id="mdcfg">Weekly &times; 2, May &ndash; Feb</b></div>
+        <div class="dvrow"><span>Direction</span><b><span class="tag tag-over">Expected over-service</span></b></div>
+        <div class="dvrow"><span>Difference</span><b class="d-diff" id="mddiff">+41 visits</b></div>
+        <div class="dvrow"><span>Cost of the difference</span><b id="mdcost">at $450/visit</b></div>
+        <div class="dvrow"><span>Rule</span><b>Reason required at Draft, before Ready for Negotiation</b></div>
+      </div>
+      <div class="field"><label>Reason <span style="color:var(--coral)">*</span></label>
+        <select><option>Select a reason</option><option>Expected over-service</option><option>Customer to be billed separately</option><option>Correction pending</option><option>Other</option></select><div class="hint">Draft list, to confirm.</div><div class="hint devro" style="display:none">Recorded at Draft by Contract Admin. Read-only from Ready for Negotiation.</div>
+        </div>
+      <div class="field"><label>Note <span style="color:var(--coral)">*</span></label>
+        <textarea placeholder="Required. Why does the provider visit more than the customer contracted?"></textarea></div>
+      
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn newb devack" onclick="closeM()">Save reason</button></div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="m-rfp" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="modal-h">Send to RFP review<span class="sub" style="margin-top:4px" data-fill="head"></span></div>
+    <div class="modal-b">
+      <table class="grid" style="width:100%;margin-bottom:16px">
+        <thead><tr><th>Line</th><th class="num">Margin</th><th>Pricer&rsquo;s reason</th></tr></thead>
+        <tbody data-fill="lines"></tbody>
+      </table>
+      <div class="field"><label>What do you want them to check? <span style="color:var(--coral)">*</span></label>
+        <textarea placeholder="The costing team sees the prices, the margin and the pricer&rsquo;s reason. Tell them what you doubt."></textarea></div>
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn newb" onclick="closeM();go('s5')">Send to RFP review</button></div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="m-l1up" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="modal-h">Move to Level 2<span class="sub" style="margin-top:4px" data-fill="head"></span></div>
+    <div class="modal-b">
+      <div style="margin:0 0 16px">
+        <div class="dvrow"><span>Lowest property</span><b data-fill="worst"></b></div>
+        <div class="dvrow"><span>Over-service</span><b data-fill="devs"></b></div>
+        <div class="dvrow"><span>Goes to</span><b>Level 2 &mdash; leadership</b></div>
+        <div class="dvrow"><span>Recorded against</span><b>Prices as submitted</b></div>
+      </div>
+      <div class="field"><label>Comment</label><textarea placeholder="Why should Leadership see this?"></textarea></div>
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn out" onclick="closeM()">Move to Level 2</button></div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="m-back" onclick="if(event.target===this)closeM()">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-h">Send back<span class="sub" style="margin-top:4px" id="bkh"></span></div>
+    <div class="modal-b">
+      <div style="margin:0 0 14px">Send this agreement back if you don&rsquo;t agree with it. Tell them why and what needs to change.</div><div class="dvrow newf" id="bkg" style="margin:0 0 14px"><span>Goes back to</span><b>Ready for Negotiation &middot; District Manager</b></div>
+      <span data-fill="head" style="display:none"></span><b data-fill="worst" style="display:none"></b><table style="display:none"><tbody data-fill="lines"></tbody></table>
+      <div class="field newf"><label>Reason <span style="color:var(--coral)">*</span></label>
+        <select id="bkr"><option value="">Select a reason</option><option>Only one provider in a remote area, setting the price</option><option>Property measured wrong or an out lot missed</option><option>RFP costing error</option><option>Other</option></select></div>
+      <div class="field newf"><label>Comment <span style="color:var(--coral)">*</span></label>
+        <textarea id="bkt" placeholder="What needs to change?"></textarea><div class="hint">Posted to this PSA&rsquo;s comments, so they can reply there.</div></div>
+      <div class="hint newf" id="bkn" style="margin-top:2px">The District Manager and Regional Manager are notified by email or SMS.</div>
+      <div class="hint" id="bke" style="color:var(--bad);display:none">Pick a reason and add a comment.</div>
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn" onclick="doBack()">Send back</button></div>
+  </div>
+</div>
+<div class="modal-wrap" id="m-backsent" onclick="if(event.target===this)closeM()">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-h">Sent back &mdash; this is what they receive<span class="sub" style="margin-top:4px">Email shown. SMS, email or both is still open (field review 12:30).</span></div>
+    <div class="modal-b">
+      <div class="mail">
+        <div class="mail-h"><b data-fill="msubj"></b>To: <span data-fill="mto"></span> (District Manager) &middot; Cc: Regional Manager</div>
+        <div class="mail-b">
+          <div data-fill="mbody"></div>
+          <a class="mail-cta">Open in Ready for Negotiation</a>
+        </div>
+      </div>
+      <div style="font-size:12.5px;color:var(--muted)">Today nobody is told, so District Managers &ldquo;think they&rsquo;re done&rdquo; and it sits for days (field review 11:34). The Regional Manager is copied so field and the national team can talk it through (4:20).</div>
+    </div>
+    <div class="modal-f"><button class="btn" onclick="closeM()">Done</button></div>
+  </div>
+</div>
+<div class="modal-wrap" id="m-active" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="modal-h">Send to Active<span class="sub" style="margin-top:4px" data-fill="head"></span></div>
+    <div class="modal-b">
+      <div style="margin:0 0 16px">
+        <div class="dvrow"><span>Lowest property</span><b data-fill="worst"></b></div>
+        <div class="dvrow"><span>Required by the gate</span><b data-fill="gate"></b></div>
+        <div class="dvrow"><span>Over-service</span><b data-fill="devs"></b></div>
+      </div>
+      <table class="grid sm"><thead><tr><th>Line</th><th class="num">Margin</th></tr></thead>
+        <tbody data-fill="lines"></tbody></table>
+      <div class="field" style="margin-top:14px"><label>Comment</label><textarea placeholder="Optional"></textarea></div>
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn" onclick="closeM()">Send To Active</button></div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="m-apv" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="modal-h">Approve and send to provider<span class="sub" style="margin-top:4px" data-fill="head"></span></div>
+    <div class="modal-b">
+      <div style="margin:0 0 16px">
+        <div class="dvrow"><span>Lowest property</span><b data-fill="worst"></b></div>
+        <div class="dvrow"><span>Required by the gate</span><b data-fill="gate"></b></div>
+        <div class="dvrow"><span>Goes to</span><b data-fill="next"></b></div>
+        <div class="dvrow"><span>Over-service</span><b data-fill="devs"></b></div>
+        <div class="dvrow"><span>Recorded against</span><b>Prices as submitted</b></div>
+      </div>
+      <div class="field"><label>Comment</label><textarea placeholder="Optional"></textarea></div>
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn" onclick="closeM()">Approve &amp; send to provider</button></div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="m-l2ok" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="modal-h">Approve at Level 2 and send to provider<span class="sub" style="margin-top:4px" data-fill="head"></span></div>
+    <div class="modal-b">
+      <div style="margin:0 0 16px">
+        <div class="dvrow"><span>Lowest property</span><b data-fill="worst"></b></div>
+        <div class="dvrow"><span>Level 1</span><b class="mg-ok">&check; Regional Manager (Level 1)</b></div>
+        <div class="dvrow"><span>Over-service</span><b data-fill="devs"></b></div>
+        <div class="dvrow"><span>Recorded against</span><b>Prices as submitted</b></div>
+      </div>
+      <div data-fill="loss">
+        <div class="notice n-amber" style="margin:0 0 14px"><span class="ic">&#9432;</span><div><b>This approves a loss.</b>If the FYI is switched on in Thresholds, the RFP team is told so they can check their costing. It does not hold signature.</div></div>
+      </div>
+      <div class="field"><label>Comment</label><textarea placeholder="Optional"></textarea></div>
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn" onclick="closeM()">Approve &amp; send to provider</button></div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="m-rfpdone" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="modal-h" data-fill="title">Return verdict<span class="sub" style="margin-top:4px" data-fill="head"></span></div>
+    <div class="modal-b">
+      <table class="grid" style="width:100%;margin-bottom:16px">
+        <thead><tr><th>Line</th><th>Verdict</th><th>Goes to</th></tr></thead>
+        <tbody data-fill="verdicts"></tbody>
+      </table>
+      <div style="font-size:13px;color:var(--muted)">The verdict and comment are added to the PSA&rsquo;s comment thread.</div>
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn newb" onclick="closeM()" data-fill="cta">Return verdict</button></div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="m-submit" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="modal-h">Send for approval<span class="sub" style="margin-top:4px">7-Eleven, Inc Landscaping - PUoW 12M &middot; 4 PSAs</span></div>
+    <div class="modal-b">
+      <table class="grid sm" style="width:100%;margin-bottom:14px"><thead><tr><th>Property (PSA)</th><th class="num">Property margin</th><th>Needs</th></tr></thead><tbody><tr><td>7-Eleven (22724) - 3101 W Gandy Blvd<span class="sub">PSA-261106-00076</span></td><td class="num" data-sm="1"><span class="mg-ok">35.0%</span></td><td data-sg="1"><span class="badge b-ok">None &middot; to signature</span></td></tr><tr><td>7-Eleven (34962) - 4691 W Sunrise Blvd<span class="sub">PSA-261106-00075</span></td><td class="num" data-sm="2"><span class="mg-ok">39.0%</span></td><td data-sg="2"><span class="badge b-ok">None &middot; to signature</span></td></tr><tr><td>7-Eleven (38750) - 940 S Broad St<span class="sub">PSA-261106-00077</span></td><td class="num" data-sm="3"><span class="mg-ok">40.4%</span></td><td data-sg="3"><span class="badge b-ok">None &middot; to signature</span></td></tr><tr><td>7-Eleven (43405) - 14361 Gulf Blvd<span class="sub">PSA-261106-00078</span></td><td class="num" data-sm="4"><span class="mg-ok">43.5%</span></td><td data-sg="4"><span class="badge b-ok">None &middot; to signature</span></td></tr></tbody></table>
+      <div id="subnote" class="notice n-ok" style="margin:0"><span class="ic">&#10003;</span><div><b>No approval needed.</b>Every property is at or above 25% (lowest 35.0%). All 4 PSAs go straight to Awaiting Signature and providers get the signature email. Each PSA routes on its own property&rsquo;s margin.</div></div>
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn" id="subgo" onclick="closeM();go(window.__subTo||'s2c')">Send for approval</button></div>
+  </div>
+</div>
+<div class="modal-wrap" id="m-cmt" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="modal-h" style="position:relative;padding-right:48px">Comments<span class="sub" style="margin-top:4px" id="cmthead"></span><button onclick="closeM()" aria-label="Close" style="position:absolute;right:16px;top:14px;border:0;background:none;font-size:20px;cursor:pointer;color:#5A626A">&times;</button></div>
+    <div class="modal-b">
+      <div class="cmtlist" id="cmtlist"></div>
+      <div class="field" style="margin-top:12px"><label>Add a comment</label>
+        <textarea id="cmttxt" placeholder="E.g. what you checked, what needs to change, or why the price stands"></textarea>
+        <div class="hint">For the people working on this PSA to talk it through. Every comment is also recorded in the PSA&rsquo;s Activity log, with the rest of what was done.</div>
+        <div class="hint" id="cmterr" style="color:var(--bad);display:none">Write a comment first.</div></div>
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Close</button><button class="btn" onclick="addCmt()">Add comment</button></div>
+  </div>
+</div>
+<div class="modal-wrap" id="m-cfg" onclick="if(event.target===this)closeM()">
+  <div class="modal">
+    <div class="modal-h">Save a new configuration version</div>
+    <div class="modal-b">
+      
+      <div class="field"><label>Effective from</label><input value="01 Sep 2026"><div class="hint">Agreements assessed before this date keep the thresholds in force then.</div></div>
+      
+    </div>
+    <div class="modal-f"><button class="btn ghost" onclick="closeM()">Cancel</button><button class="btn newb" onclick="closeM()">Append version</button></div>
+  </div>
+</div>
+
+<script>
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));
+  document.querySelectorAll('.rail a').forEach(a=>a.classList.toggle('on',a.dataset.s===id));
+  window.scrollTo(0,0);
+  document.querySelectorAll('#'+id+' .tab.on').forEach(t=>{
+    const s=t.parentElement; s.scrollLeft=Math.max(0,t.offsetLeft-s.clientWidth/2+t.offsetWidth/2);
+    syncArrows(s);
+  });
+}
+function syncArrows(strip){
+  const wrap=strip.closest('.tabstrip'); if(!wrap)return;
+  const [left,right]=wrap.querySelectorAll('.tabarrow');
+  const max=strip.scrollWidth-strip.clientWidth;
+  if(left) left.classList.toggle('off',strip.scrollLeft<=1);
+  if(right)right.classList.toggle('off',strip.scrollLeft>=max-1);
+}
+function bandOf(v){ return v<0?'lt0' : v<25?'0-25' : v<30?'25-30' : 'gte30'; }
+function rowBands(tr){
+  const out=new Set();
+  if(tr.dataset.worst!==undefined) out.add(bandOf(parseFloat(tr.dataset.worst)));
+  tr.querySelectorAll('.mg-ok,.mg-low').forEach(e=>{
+    const m=e.textContent.replace(/[−–—]/g,'-').match(/-?\d+(\.\d+)?(?=\s*%)/);
+    if(m) out.add(bandOf(parseFloat(m[0])));
+  });
+  return out;
+}
+function picked(wrap, key){
+  return [...wrap.querySelectorAll('.fdrop label')]
+    .filter(l=>l.querySelector('.cbx').classList.contains('on'))
+    .map(l=>l.dataset[key]);
+}
+function rowDevs(tr){ return new Set((tr.dataset.dev||'').split(' ').filter(Boolean)); }
+// Margin and Deviation filter the same grid, so one pass decides each row.
+function applyFilters(sec){
+  if(!sec) return;
+  let bands=[], devs=[];
+  sec.querySelectorAll('.fwrap').forEach(w=>{
+    if(w.querySelector('.fmargin')){
+      bands=picked(w,'band');
+      const c=w.querySelector('.fmargin');
+      c.textContent = bands.length ? 'Margin ('+bands.length+')' : 'Margin';
+      c.classList.toggle('applied', bands.length>0);
+    }
+    if(w.querySelector('.fdev')){
+      devs=picked(w,'dev');
+      const c=w.querySelector('.fdev');
+      c.textContent = devs.length ? 'Deviation ('+devs.length+')' : 'Deviation';
+      c.classList.toggle('applied', devs.length>0);
+    }
+  });
+  const tbl=sec.querySelector('table.grid[data-filterable]');
+  if(tbl){
+    let shown=0;
+    tbl.querySelectorAll('tbody tr').forEach(tr=>{
+      if(tr.classList.contains('norows')) return;
+      const okB = !bands.length || bands.some(b=>rowBands(tr).has(b));
+      const d=rowDevs(tr);
+      const okD = !devs.length || devs.some(x=>d.has(x));
+      tr.style.display = (okB && okD) ? '' : 'none';
+      if(okB && okD) shown++;
+    });
+    let empty=tbl.querySelector('tr.norows');
+    if(!shown && !empty){
+      empty=document.createElement('tr'); empty.className='norows';
+      empty.innerHTML='<td colspan="'+tbl.rows[0].cells.length+'" style="text-align:center;color:var(--muted);padding:26px 12px">No rows match the filters applied.</td>';
+      tbl.tBodies[0].appendChild(empty);
+    }
+    if(empty) empty.style.display = shown ? 'none' : '';
+  }
+  syncSel(sec);
+}
+function markScrollable(){
+  document.querySelectorAll('.card-b.flush').forEach(w=>{
+    if(w.offsetParent===null && w.clientWidth===0) return;   // hidden — measurement is meaningless
+    const over = w.scrollWidth > w.clientWidth + 1;
+    w.classList.toggle('scrollx', over);
+    let hint = w.previousElementSibling;
+    const has = hint && hint.classList && hint.classList.contains('scrollhint');
+    if(over && !has){
+      const h=document.createElement('div'); h.className='scrollhint';
+      h.innerHTML='<b>&#8596;</b> more columns to the right'
+        +'<button class="btn out sm sxb" data-dir="-1" title="Scroll left">&#9664;</button>'
+        +'<button class="btn out sm sxb" data-dir="1" title="Scroll right">&#9654;</button>'
+        +'<span style="color:var(--muted)">or Shift + mouse wheel</span>';
+      w.parentNode.insertBefore(h,w);
+    } else if(!over && has){ hint.remove(); }
+  });
+}
+window.addEventListener('load',markScrollable);
+window.addEventListener('resize',markScrollable);
+const _go=go; go=function(id){_go(id);setTimeout(markScrollable,0);};
+document.querySelectorAll('.lytoggle').forEach(c=>c.addEventListener('click',e=>{
+  e.stopPropagation();
+  const on=document.body.classList.toggle('showly');
+  document.querySelectorAll('.lytoggle').forEach(x=>{
+    x.classList.toggle('newb',on);
+    x.textContent = on ? 'Hide last season' : 'Compare to last season';
+  });
+  setTimeout(markScrollable,0);
+}));
+document.querySelectorAll('.fwrap').forEach(wrap=>{
+  const chip=wrap.querySelector('.fmargin') || wrap.querySelector('.fdev'); if(!chip) return;
+  const sec=wrap.closest('.screen');
+  chip.addEventListener('click',e=>{e.stopPropagation();
+    document.querySelectorAll('.fwrap.open').forEach(o=>{if(o!==wrap)o.classList.remove('open')});
+    wrap.classList.toggle('open');});
+  wrap.querySelectorAll('.fdrop label').forEach(l=>l.addEventListener('click',e=>{
+    e.stopPropagation(); l.querySelector('.cbx').classList.toggle('on'); applyFilters(sec);}));
+  wrap.querySelector('.fclear').addEventListener('click',e=>{e.stopPropagation();
+    wrap.querySelectorAll('.fdrop .cbx').forEach(c=>c.classList.remove('on'));
+    applyFilters(sec); wrap.classList.remove('open');});
+});
+document.addEventListener('click',()=>document.querySelectorAll('.fwrap.open').forEach(o=>o.classList.remove('open')));
+document.querySelectorAll('.tabstrip').forEach(wrap=>{
+  const strip=wrap.querySelector('.tabs');
+  const [left,right]=wrap.querySelectorAll('.tabarrow');
+  const step=()=>Math.max(160,strip.clientWidth*0.7);
+  const nudge=d=>{strip.scrollLeft=Math.max(0,Math.min(strip.scrollWidth-strip.clientWidth,strip.scrollLeft+d*step()));syncArrows(strip);};
+  if(left) left.addEventListener('click',()=>nudge(-1));
+  if(right)right.addEventListener('click',()=>nudge(1));
+  strip.addEventListener('scroll',()=>syncArrows(strip));
+  syncArrows(strip);
+});
+function verdictScope(tr){
+  const sel=tr.querySelector('.gridsel'); if(!sel) return null;
+  if(sel.value==='Select verdict') return 'none';
+  return sel.value==='Correction supplied' ? 'pricing' : 'approver';
+}
+function syncSel(sec){
+  const boxes=[...sec.querySelectorAll('.cbx[data-row]')].filter(c=>c.closest('tr').style.display!=='none');
+  const n=boxes.filter(c=>c.classList.contains('on')).length;
+  const all=sec.querySelector('.cbx[data-all]');
+  if(all) all.classList.toggle('on', n>0 && n===boxes.length);
+  const chosen=[...sec.querySelectorAll('tr')].filter(r=>r.style.display!=='none'&&r.querySelector('.cbx[data-row].on'));
+  sec.querySelectorAll('[data-sel]').forEach(b=>{
+    const scope=b.dataset.scope;
+    const count = scope ? chosen.filter(r=>verdictScope(r)===scope).length : n;
+    b.innerHTML=b.dataset.base + (scope ? ' ('+count+')' : (n ? ' ('+n+')' : ''));
+    b.classList.toggle('dis', count===0 || b.hasAttribute('data-blocked'));
+  });
+}
+document.addEventListener('change',e=>{
+  if(e.target.classList && e.target.classList.contains('gridsel')){
+    const sec=e.target.closest('.screen'); if(sec) syncSel(sec);
+  }
+});
+document.querySelectorAll('.cbx[data-row],.cbx[data-all]').forEach(c=>c.addEventListener('click',e=>{
+  e.stopPropagation();
+  const sec=c.closest('.screen');
+  if(c.hasAttribute('data-all')){
+    const on=!c.classList.contains('on');
+    sec.querySelectorAll('.cbx[data-row]').forEach(r=>r.classList.toggle('on',on));
+  } else { c.classList.toggle('on'); }
+  syncSel(sec);
+}));
+document.querySelectorAll('.screen').forEach(sec=>{ if(sec.querySelector('[data-sel]')) syncSel(sec); });
+document.querySelectorAll('.rail a').forEach(a=>a.addEventListener('click',()=>go(a.dataset.s)));
+document.querySelectorAll('.prow').forEach(r=>r.addEventListener('click',e=>{
+  if(e.target.closest('button'))return;
+  const g=r.dataset.g, open=!r.classList.contains('collapsed');
+  r.classList.toggle('collapsed',open);
+  r.querySelector('.chev').textContent = open?'\u203a':'\u2304';
+  document.querySelectorAll('.crow.'+g).forEach(c=>c.classList.toggle('hid',open));
+}));
+document.querySelectorAll('.tabs').forEach(g=>g.addEventListener('click',e=>{
+  if(!e.target.closest('.tab'))return;
+  g.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  e.target.closest('.tab').classList.add('on');
+}));
+function selectedRows(){
+  const sec=[...document.querySelectorAll('.screen')].find(s=>s.classList.contains('on'));
+  if(!sec) return {sec:null,rows:[]};
+  return {sec, rows:[...sec.querySelectorAll('tr')].filter(r=>r.querySelector('.cbx[data-row].on'))};
+}
+function fillModal(id){
+  const m=document.getElementById(id), {sec,rows}=selectedRows();
+  if(!m||!sec) return;
+  const title=m.querySelector('[data-fill="title"]');
+  if(title){const t=window.__scope==='pricing'?'Send back to pricing':window.__scope==='approver'?'Return to Level 2':'Return verdict';
+    title.childNodes[0].nodeValue=t;}
+  const head=m.querySelector('[data-fill="head"]');
+  const scoped=window.__scope?rows.filter(r=>verdictScope(r)===window.__scope):rows;
+  const who = sec.dataset.agreement || (sec.querySelector('h1') ? sec.querySelector('h1').childNodes[0].nodeValue.trim() : '');
+  if(head) head.innerHTML=who+' &middot; '+scoped.length+' line'+(scoped.length===1?'':'s');
+  const num = r => parseFloat(String(r.dataset.site||r.dataset.margin).replace(/[−–—]/g,'-').replace('%',''));
+  const worst = m.querySelector('[data-fill="worst"]');
+  if(worst){
+    if(!scoped.length){ worst.textContent='\u2014'; worst.className=''; }
+    else{
+      const w = scoped.reduce((a,b)=> num(b)<num(a)?b:a);
+      const no = w.querySelector('.rowno') ? w.querySelector('.rowno').textContent.trim() : '';
+      worst.className = num(w)<30 ? 'mg-low' : 'mg-ok';
+      worst.innerHTML = (w.dataset.site||w.dataset.margin) + ' &middot; row ' + no + ', ' + w.dataset.line;
+    }
+  }
+  const devs = m.querySelector('[data-fill="devs"]');
+  if(devs){
+    const k = scoped.filter(r=>(r.dataset.dev||'').trim()).length;
+    devs.innerHTML = k ? k+' of '+scoped.length+' selected line'+(scoped.length===1?'':'s')
+                       : 'none on the selected line'+(scoped.length===1?'':'s');
+  }
+  const gate = m.querySelector('[data-fill="gate"]');
+  if(gate){
+    const lo = scoped.length ? Math.min(...scoped.map(num)) : null;
+    gate.innerHTML = lo===null ? '&mdash;'
+      : (lo < 0 || sec.id==='s3') ? 'Level 1, then Level 2'
+      : lo < 25  ? 'Level 1 &mdash; Regional Manager'
+      :            'None &mdash; auto-approved at or above 25%';
+  }
+  const next = m.querySelector('[data-fill="next"]');
+  if(next){
+    const lo = scoped.length ? Math.min(...scoped.map(num)) : null;
+    next.innerHTML = lo===null ? '&mdash;' : (lo<0 || sec.id==='s3') && sec.id!=='s4' ? 'Level 2 &mdash; leadership'
+      : 'Awaiting Signature &mdash; provider gets the signature email';
+  }
+  const loss = m.querySelector('[data-fill="loss"]');
+  if(loss){ loss.style.display = scoped.some(r=>num(r)<0) ? '' : 'none'; }
+  if(id==='m-dev'){
+    const ro = sec.id!=='s1t';
+    m.querySelectorAll('select,textarea').forEach(x=>x.disabled=ro);
+    m.querySelector('.devro').style.display = ro?'':'none';
+    m.querySelector('.devack').style.display = ro?'none':'';
+  }
+  if(id==='m-back'){
+    m.querySelector('#bkr').value=''; m.querySelector('#bkt').value=''; m.querySelector('#bke').style.display='none';
+  }
+  const lines=m.querySelector('[data-fill="lines"]');
+  if(lines) lines.innerHTML=rows.filter(r=>r.dataset.line).map(r=>{const d=r.dataset;
+    const neg = num(r) < 30;
+    return '<tr><td>'+d.line+'<span class="sub">'+d.svc+(d.site?' &middot; worst line '+d.margin:'')+'</span></td>'
+      +'<td class="num"><span class="'+(neg?'mg-low':'mg-ok')+'">'+(d.site||d.margin)+'</span>'
+      +(d.risk?'<span class="sub">'+d.risk+'</span>':'')+'</td>'
+      +'<td>'+d.reason+'</td></tr>';}).join('');
+  const cta=m.querySelector('[data-fill="cta"]');
+  if(cta) cta.textContent = window.__scope==='pricing'?'Send back to pricing':window.__scope==='approver'?'Return to Level 2':'Return verdict';
+  const vd=m.querySelector('[data-fill="verdicts"]');
+  if(vd) vd.innerHTML=(window.__scope?rows.filter(r=>verdictScope(r)===window.__scope):rows).map(r=>{const sel=r.querySelector('.gridsel');
+    const v=sel?sel.value:'Select verdict';
+    const dest=v==='Correction supplied'?'Pricing &mdash; re-price at the corrected value'
+      :v==='Select verdict'?'<span style="color:var(--bad)">No verdict chosen</span>'
+      :'Back to <b>Leadership</b> at Level 2 approval';
+    return '<tr><td>'+r.dataset.line+'</td><td><b style="font-size:12px">'+v+'</b></td>'
+      +'<td><span class="sub" style="margin:0;margin:0">'+dest+'</span></td></tr>';}).join('');
+}
+
+function doBack(){
+  const r=document.getElementById('bkr').value, t=document.getElementById('bkt').value.trim();
+  if(!r||!t){document.getElementById('bke').style.display='';return;}
+  const {sec,rows}=selectedRows();
+  const who=sec?sec.dataset.agreement:'';
+  const fo=rows.length?rows[0].querySelectorAll('td')[3].textContent.trim():'District Manager';
+  const lv=sec&&sec.id==='s4'?'Level 2 (leadership)':'Level 1 (Regional Manager)';
+  closeM();
+  const m=document.getElementById('m-backsent');
+  m.querySelector('[data-fill="msubj"]').textContent='Sent back: '+who+' — '+r;
+  m.querySelector('[data-fill="mto"]').textContent=fo;
+  const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  m.querySelector('[data-fill="mbody"]').innerHTML='<p>'+lv+' sent '+rows.length+' line'+(rows.length===1?'':'s')+' back to Ready for Negotiation.</p>'
+    +'<table><tr><th>Line</th><th>Property margin</th></tr>'+rows.map(x=>'<tr><td>'+x.dataset.line+'</td><td>'+(x.dataset.site||x.dataset.margin)+'</td></tr>').join('')+'</table>'
+    +'<p><b>Reason:</b> '+esc(r)+'</p><p><b>Comment:</b> '+esc(t)+'</p>';
+  rows.forEach(x=>{const ps=(x.querySelector('.sub')||{}).textContent||''; const k=(ps.match(/PSA-\d{6}-\d{5}/)||[])[0]; if(k){const at=new Date().toLocaleString([], {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}); (CMT[k]=CMT[k]||[]).push({t:esc(t),who:lv,at}); (window.SBK=window.SBK||{}); (SBK[k]=SBK[k]||[]).push('<b>Sent back</b> by '+lv+', '+at+'<br>Reason: '+esc(r)+'<br>Comment: &ldquo;'+esc(t)+'&rdquo;'); document.querySelectorAll('.cmtbtn[data-ck='+JSON.stringify(k)+']').forEach(b=>{b.classList.add('has');const n=b.querySelector('.cmtn');n.textContent=CMT[k].length;n.style.display='block';});}});
+  m.classList.add('on');
+}
+const RU=[{"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "TruGreen (Germantown, TN)", "fo": "Kevin McKenzie", "st": "WV", "prop": "CBRE/Amtrak (AMT-CHW)", "psa": "PSA-251218-00278 \u00b7 AMT-CHW", "stt": "Active", "c": 166.16, "p": 108.0, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "Burgess Mowing & Lot Cleaning LLC", "fo": "Kevin McKenzie", "st": "WV", "prop": "CBRE/Amtrak (AMT-CHW)", "psa": "PSA-251218-00652 \u00b7 AMT-CHW", "stt": "Active", "c": 4061.26, "p": 2457.5, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "Burgess Mowing & Lot Cleaning LLC", "fo": "Kevin McKenzie", "st": "WV", "prop": "CBRE/Amtrak (AMT-CHW)", "psa": "PSA-251218-00661 \u00b7 AMT-CHW", "stt": "Active", "c": 523.07, "p": 325.0, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "Lance Landscaping LLC", "fo": "Jason Gaona", "st": "CO", "prop": "CBRE/Amtrak (AMT-FMG)", "psa": "PSA-260302-00012 \u00b7 AMT-FMG", "stt": "Terminated", "c": 69.23, "p": 45.0, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "Lance Landscaping LLC", "fo": "Jason Gaona", "st": "CO", "prop": "CBRE/Amtrak (AMT-FMG)", "psa": "PSA-260302-00013 \u00b7 AMT-FMG", "stt": "Terminated", "c": 215.38, "p": 140.0, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "Lance Landscaping LLC", "fo": "Jason Gaona", "st": "CO", "prop": "CBRE/Amtrak (AMT-FMG)", "psa": "PSA-260406-00850 \u00b7 AMT-FMG", "stt": "Terminated", "c": 83.08, "p": 54.0, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "Grace Tree Care", "fo": "Jason Gaona", "st": "CO", "prop": "CBRE/Amtrak (AMT-FMG)", "psa": "PSA-260904-00777 \u00b7 AMT-FMG", "stt": "Active", "c": 83.08, "p": 54.0, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "Grace Tree Care", "fo": "Jason Gaona", "st": "CO", "prop": "CBRE/Amtrak (AMT-FMG)", "psa": "PSA-260904-00778 \u00b7 AMT-FMG", "stt": "Active", "c": 307.69, "p": 140.0, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "Grace Tree Care", "fo": "Jason Gaona", "st": "CO", "prop": "CBRE/Amtrak (AMT-FMG)", "psa": "PSA-260904-00779 \u00b7 AMT-FMG", "stt": "Active", "c": 230.77, "p": 145.0, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "Burgess Mowing & Lot Cleaning LLC", "fo": "Kevin McKenzie", "st": "WV", "prop": "CBRE/Amtrak (AMT-HIN)", "psa": "PSA-251218-00650 \u00b7 AMT-HIN", "stt": "Active", "c": 4061.26, "p": 2457.5, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "Burgess Mowing & Lot Cleaning LLC", "fo": "Kevin McKenzie", "st": "WV", "prop": "CBRE/Amtrak (AMT-HIN)", "psa": "PSA-251218-00663 \u00b7 AMT-HIN", "stt": "Active", "c": 523.07, "p": 325.0, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "Burgess Mowing & Lot Cleaning LLC", "fo": "Kevin McKenzie", "st": "WV", "prop": "CBRE/Amtrak (AMT-HIN)", "psa": "PSA-260406-00849 \u00b7 AMT-HIN", "stt": "Active", "c": 178.46, "p": 150.0, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "(no provider)", "fo": "&mdash;", "st": "NE", "prop": "CBRE/Amtrak (AMT-HLD)", "psa": "(no PSA) \u00b7 AMT-HLD", "stt": "No PSA", "c": 0.0, "p": 0.0, "cu": 4291.66}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "TruGreen (Germantown, TN)", "fo": "Austin Ureste", "st": "NE", "prop": "CBRE/Amtrak (AMT-HLD)", "psa": "PSA-251030-00263 \u00b7 AMT-HLD", "stt": "Active", "c": 180.0, "p": 108.0, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "(no provider)", "fo": "Austin Ureste", "st": "NE", "prop": "CBRE/Amtrak (AMT-HLD)", "psa": "PSA-260902-00915 \u00b7 AMT-HLD", "stt": "ReadyForNegotiation", "c": 0.0, "p": 0.0, "cu": 2016.67}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "TruGreen (Germantown, TN)", "fo": "Jason Wise", "st": "PA", "prop": "CBRE/Amtrak (AMT-PAR)", "psa": "PSA-251218-00273 \u00b7 AMT-PAR", "stt": "Active", "c": 583.56, "p": 379.32, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "Landmark Solutions of PA, LLC", "fo": "Jason Wise", "st": "PA", "prop": "CBRE/Amtrak (AMT-PAR)", "psa": "PSA-251218-00648 \u00b7 AMT-PAR", "stt": "Active", "c": 4421.53, "p": 2665.0, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "Landmark Solutions of PA, LLC", "fo": "Jason Wise", "st": "PA", "prop": "CBRE/Amtrak (AMT-PAR)", "psa": "PSA-251218-00659 \u00b7 AMT-PAR", "stt": "Active", "c": 523.07, "p": 310.0, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "(no provider)", "fo": "&mdash;", "st": "VA", "prop": "CBRE/Amtrak (AMT-PTB)", "psa": "(no PSA) \u00b7 AMT-PTB", "stt": "No PSA", "c": 0.0, "p": 0.0, "cu": 307.69}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "TruGreen (Germantown, TN)", "fo": "Joshua Moses", "st": "VA", "prop": "CBRE/Amtrak (AMT-PTB)", "psa": "PSA-251218-00275 \u00b7 AMT-PTB", "stt": "Active", "c": 939.18, "p": 610.46, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "JB's Automotive, LLC", "fo": "Joshua Moses", "st": "VA", "prop": "CBRE/Amtrak (AMT-PTB)", "psa": "PSA-251218-00653 \u00b7 AMT-PTB", "stt": "Terminated", "c": 2668.7, "p": 1615.0, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "JB's Automotive, LLC", "fo": "Joshua Moses", "st": "VA", "prop": "CBRE/Amtrak (AMT-PTB)", "psa": "PSA-251218-00655 \u00b7 AMT-PTB", "stt": "Terminated", "c": 215.38, "p": 140.0, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "Legendary Lawn Care, LLC", "fo": "Joshua Moses", "st": "VA", "prop": "CBRE/Amtrak (AMT-PTB)", "psa": "PSA-260715-01042 \u00b7 AMT-PTB", "stt": "Active", "c": 3799.97, "p": 4280.0, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "(no provider)", "fo": "&mdash;", "st": "MI", "prop": "CBRE/Amtrak (AMT-PTH)", "psa": "(no PSA) \u00b7 AMT-PTH", "stt": "No PSA", "c": 0.0, "p": 0.0, "cu": 307.69}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "TruGreen (Germantown, TN)", "fo": "Richard Buzzard", "st": "MI", "prop": "CBRE/Amtrak (AMT-PTH)", "psa": "PSA-251218-00276 \u00b7 AMT-PTH", "stt": "Active", "c": 190.76, "p": 124.0, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "Kingdom Lawn & Landscape LLC", "fo": "Richard Buzzard", "st": "MI", "prop": "CBRE/Amtrak (AMT-PTH)", "psa": "PSA-251218-00651 \u00b7 AMT-PTH", "stt": "Active", "c": 4061.26, "p": 2415.0, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "(no provider)", "fo": "Richard Buzzard", "st": "MI", "prop": "CBRE/Amtrak (AMT-PTH)", "psa": "PSA-251218-00656 \u00b7 AMT-PTH", "stt": "WillNotPrice", "c": 0.0, "p": 0.0, "cu": 215.38}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "TruGreen (Germantown, TN)", "fo": "Andy Nucci", "st": "IN", "prop": "CBRE/Amtrak (AMT-SOB)", "psa": "PSA-251218-00269 \u00b7 AMT-SOB", "stt": "Active", "c": 240.0, "p": 156.0, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "SPS", "fo": "Andy Nucci", "st": "IN", "prop": "CBRE/Amtrak (AMT-SOB)", "psa": "PSA-251218-00646 \u00b7 AMT-SOB", "stt": "Active", "c": 4061.26, "p": 2273.0, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "SPS", "fo": "Andy Nucci", "st": "IN", "prop": "CBRE/Amtrak (AMT-SOB)", "psa": "PSA-251218-00664 \u00b7 AMT-SOB", "stt": "Active", "c": 523.07, "p": 300.0, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "(no provider)", "fo": "&mdash;", "st": "KY", "prop": "CBRE/Amtrak (AMT-SPM)", "psa": "(no PSA) \u00b7 AMT-SPM", "stt": "No PSA", "c": 0.0, "p": 0.0, "cu": 307.69}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "TruGreen (Germantown, TN)", "fo": "Al Scunziano", "st": "KY", "prop": "CBRE/Amtrak (AMT-SPM)", "psa": "PSA-251218-00277 \u00b7 AMT-SPM", "stt": "Active", "c": 412.3, "p": 268.0, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "Tri-State Lawn Care, Inc.", "fo": "Al Scunziano", "st": "KY", "prop": "CBRE/Amtrak (AMT-SPM)", "psa": "PSA-251218-00654 \u00b7 AMT-SPM", "stt": "Active", "c": 4061.26, "p": 2453.0, "cu": 0.0}, {"cust": "CBRE/Amtrak", "sl": "Landscaping", "ts": "R25-00000DRK", "prv": "(no provider)", "fo": "Al Scunziano", "st": "KY", "prop": "CBRE/Amtrak (AMT-SPM)", "psa": "PSA-251218-00662 \u00b7 AMT-SPM", "stt": "WillNotPrice", "c": 0.0, "p": 0.0, "cu": 215.38}];
+function renderRU(){
+  const sel=document.getElementById('rugrp'); if(!sel) return;
+  const k=sel.value, props={};
+  RU.forEach(r=>{const q=(props[r.prop]=props[r.prop]||{c:0,p:0}); q.c+=r.c; q.p+=r.p;});
+  const $=v=>(v<0?'&minus;$':'$')+Math.abs(Math.round(v)).toLocaleString('en-US');
+  const pc=v=>(v<0?'&minus;':'')+Math.abs(v).toFixed(1)+'%';
+  const esc=s=>String(s).replace(/&(?!(amp|mdash|minus|middot);)/g,'&amp;');
+  const grp=(L,key)=>{const g={}; L.forEach(r=>{(g[r[key]]=g[r[key]]||[]).push(r);}); return g;};
+  const cells=L=>{
+    const c=L.reduce((a,r)=>a+r.c,0), p=L.reduce((a,r)=>a+r.p,0), cu=L.reduce((a,r)=>a+(r.cu||0),0), m=c?100*(c-p)/c:null;
+    const los=[...new Set(L.map(r=>r.prop))].filter(n=>props[n].c>0).map(n=>100*(props[n].c-props[n].p)/props[n].c);
+    const lo=los.length?Math.min(...los):null;
+    const st=[...new Set(L.map(r=>r.stt))].map(x=>'<span class="badge '+(x==='Active'?'b-ok':'b-grey')+'">'+x+'</span>').join(' ');
+    const sl=[...new Set(L.map(r=>r.sl))].join(', ');
+    return '<td>'+sl+'</td><td class="num">'+L.filter(r=>!r.psa.startsWith('(no PSA)')).length+'</td><td class="num">'+$(c)+'</td><td class="num">'+$(p)+'</td>'
+      +'<td class="newcol num">'+(c?$(c-p):'&mdash;')+'</td><td class="newcol num">'+(m===null?'&mdash;':'<span class="'+(m<25?'mg-low':'mg-ok')+'">'+pc(m)+'</span>')+'</td>'
+      +'<td class="num">'+(lo===null?'&mdash;':'<span class="'+(lo<25?'mg-low':'mg-ok')+'">'+pc(lo)+'</span>')+'</td><td class="num">'+(cu?$(cu):'&mdash;')+'</td><td>'+st+'</td>';
+  };
+  // levels below the chosen grouping: property, then PSA
+  const levels=k==='psa'?[]:k==='prop'?['psa']:['prop','psa'];
+  let html='', id=0;
+  const emit=(L,key,name,depth,parent)=>{
+    const me='ru'+(id++), next=levels[depth];
+    const chev=next?'<span class="chev" style="display:inline-block;width:14px;color:var(--blue)">&rsaquo;</span>':'<span style="display:inline-block;width:14px"></span>';
+    const sty=[parent?'display:none':'',next?'cursor:pointer':''].filter(Boolean).join(';');
+    html+='<tr data-id="'+me+'" data-p="'+(parent||'')+'"'+(next?' class="ruexp"':'')+(sty?' style="'+sty+'"':'')+'>'
+      +'<td style="padding-left:'+(12+depth*22)+'px">'+chev+(depth?'<span style="color:var(--muted)">':'<b>')+esc(name)+(depth?'</span>':'</b>')+'</td>'+cells(L)+'</tr>';
+    if(next) Object.entries(grp(L,next)).forEach(([n,LL])=>emit(LL,next,n,depth+1,me));
+  };
+  Object.entries(grp(RU,k)).forEach(([n,L])=>emit(L,k,n,0,null));
+  document.getElementById('ruh').textContent=sel.options[sel.selectedIndex].text+(levels.length?' › '+levels.map(l=>l==='prop'?'Property':'PSA').join(' › '):'');
+  document.getElementById('rub').innerHTML=html;
+}
+document.addEventListener('click',e=>{
+  const tr=e.target.closest('#rub tr.ruexp'); if(!tr) return;
+  const open=tr.dataset.open!=='1'; tr.dataset.open=open?'1':'';
+  tr.querySelector('.chev').innerHTML=open?'&#8964;':'&rsaquo;';
+  const hide=id=>document.querySelectorAll('#rub tr[data-p="'+id+'"]').forEach(c=>{c.style.display='none'; if(c.dataset.open){c.dataset.open=''; const ch=c.querySelector('.chev'); if(ch) ch.innerHTML='&rsaquo;';} hide(c.dataset.id);});
+  if(open) document.querySelectorAll('#rub tr[data-p="'+tr.dataset.id+'"]').forEach(c=>c.style.display=''); else hide(tr.dataset.id);
+});
+function rfnDirty(){const e=document.getElementById('recalcAt'); if(e) e.innerHTML='<b style="color:var(--warn)">Prices changed &middot; press Recalculate</b>';}
+function rfnRecalc(){
+  const lvl=m=>m>=25?0:m>=0?1:2, LBL=['None &middot; to signature','Regional Manager','Regional Manager &rarr; Leadership'], CLS=['b-ok','b-l1','b-l2'];
+  const WORD=['none','Regional Manager','Regional Manager, then Leadership'];
+  const $=v=>(v<0?'&minus;$':'$')+Math.abs(Math.round(v)).toLocaleString('en-US');
+  const $c=v=>(v<0?'&minus;$':'$')+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const pc=m=>(m<0?'&minus;':'')+Math.abs(m).toFixed(1)+'%';
+  (window.RFN||[]).forEach(d=>{
+    const inp=document.querySelector('.rfnin[data-r="'+d.r+'"]'); const raw=(inp.value||'').trim(); const blank=raw==='';
+    const op=document.querySelector('[data-op="'+d.r+'"]'), ps=document.querySelector('[data-ops="'+d.r+'"]'),
+          om=document.querySelector('[data-om="'+d.r+'"]'), g=document.querySelector('[data-og="'+d.r+'"]');
+    if(blank){
+      const mLo=d.c?100*(d.c-(d.lo*d.v+d.sp))/d.c:0, mHi=d.c?100*(d.c-(d.hi*d.v+d.sp))/d.c:0;
+      op.innerHTML='<span class="sub" style="margin:0">Not entered</span>';
+      if(ps) ps.innerHTML='enter a price to calculate';
+      om.innerHTML='<b style="color:var(--muted)">&mdash;</b><span class="sub">range '+pc(mLo)+' &ndash; '+pc(mHi)+'</span>';
+      const a=lvl(mLo), b=lvl(mHi);
+      if(g) g.innerHTML='<span class="sub" style="margin:0"><b>&mdash;</b> enter price</span><span class="sub">'+(a===b?WORD[a]+' at either end of the range':WORD[a]+' at the bottom, '+WORD[b]+' at the top')+'</span>';
+      d.m=null; return;
+    }
+    const price=parseFloat(raw)||0;
+    const p=price*d.v+d.sp, m=d.c?100*(d.c-p)/d.c:0;
+    op.innerHTML=$c(p);
+    if(ps) ps.innerHTML='$'+price.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+' &times; '+d.v+' visits';
+    om.innerHTML='<b class="'+(m<25?'mg-low':'mg-ok')+'">'+pc(m)+'</b><span class="sub">'+$(d.c-p)+'</span>';
+    if(g) g.innerHTML='<span class="badge '+CLS[lvl(m)]+'">'+LBL[lvl(m)]+'</span>';
+    d.m=m;
+  });
+  const all=(window.RFN||[]), priced=all.filter(d=>d.m!==null), ms=priced.map(d=>d.m), nb=all.length-priced.length;
+  const n0=ms.filter(m=>m>=25).length, n1=ms.filter(m=>m>=0&&m<25).length, n2=ms.filter(m=>m<0).length;
+  const parts=[n0?n0+' to signature':'',n1?n1+' to Regional Manager':'',n2?n2+' to Regional Manager &rarr; Leadership':'',nb?nb+' not priced yet':''].filter(Boolean).join(' &middot; ');
+  const rt=document.getElementById('rfnRoute');
+  if(rt) rt.innerHTML=priced.length?'<b>On Send for approval:</b> '+parts+' <span class="sub" style="display:inline;margin:0">&middot; each PSA routes on its own property</span>'
+                                   :'<b>Enter prices</b> to see where each PSA goes';
+  all.forEach(d=>{const sm=document.querySelector('[data-sm="'+d.r+'"]'),sg=document.querySelector('[data-sg="'+d.r+'"]'),og=document.querySelector('[data-og="'+d.r+'"]');
+    if(sm) sm.innerHTML=d.m===null?'<span style="color:var(--muted)">&mdash;</span>':'<span class="'+(d.m<25?'mg-low':'mg-ok')+'">'+pc(d.m)+'</span>'; if(sg&&og) sg.innerHTML=og.innerHTML;});
+  const sn=document.getElementById('subnote');
+  if(sn){const all=n0===ms.length; sn.className='notice '+(all?'n-ok':n2?'n-red':'n-amber');
+    sn.innerHTML='<span class="ic">'+(all?'&#10003;':'&#9873;')+'</span><div><b>'+(all?'No approval needed.':'Split by property.')+'</b>'
+      +(all?'Every property is at or above 25%. All '+ms.length+' PSAs go straight to Awaiting Signature.'
+           :(n0?n0+' PSA'+(n0>1?'s':'')+' go straight to Awaiting Signature. ':'')+(n1?n1+' wait'+(n1>1?'':'s')+' for the Regional Manager. ':'')+(n2?n2+' wait'+(n2>1?'':'s')+' for the Regional Manager, then Leadership. ':'')+'A losing property does not hold up the others.')+(nb?' '+nb+' not priced yet: enter a price before sending.':'')+'</div>';}
+  window.__subTo=n0===ms.length?'s2c':'s2';
+  const e=document.getElementById('recalcAt'); if(e) e.textContent='Calculated just now';
+}
+function ovCheck(){
+  const f=Math.max(1,parseInt(document.getElementById('ovf').value)||1), v=41*f, d=v-41;
+  document.getElementById('ovv').textContent=v;
+  document.getElementById('ovchk').innerHTML=d>0?'<span class="tag tag-over">Expected over-service +'+d+' visits</span>':'<span class="badge b-ok">Matches term sheet</span>';
+  document.getElementById('ovrow').style.background=d>0?'#FFFAF6':'';
+  const n=document.getElementById('ovnote'); n.style.display=d>0?'':'none';
+  document.getElementById('ovtxt').innerHTML='Configured '+v+' visits (weekly &times; '+f+', May&ndash;Feb) against 41 on the customer term sheet for the same months: <b>+'+d+' visits, $'+(d*450).toLocaleString('en-US')+' at $450/visit</b> with no customer charge.';
+  const c=document.getElementById('mdcfg'); if(c){c.innerHTML='Weekly &times; '+f+', May &ndash; Feb &middot; '+v+' visits'; document.getElementById('mddiff').textContent='+'+d+' visits'; document.getElementById('mdcost').textContent='$'+(d*450).toLocaleString('en-US')+' at $450/visit';}
+}
+window.CMT={};
+function openCmt(b){
+  window.__cmtBtn=b; const k=b.dataset.ck;
+  document.getElementById('cmthead').innerHTML=b.dataset.cl;
+  document.getElementById('cmttxt').value=''; document.getElementById('cmterr').style.display='none';
+  renderCmt(k); document.getElementById('m-cmt').classList.add('on');
+}
+function renderCmt(k){
+  const L=CMT[k]||[];
+  document.getElementById('cmtlist').innerHTML=L.length?L.map(c=>'<div class="ci">'+c.t+'<span class="sub">'+c.who+' &middot; '+c.at+'</span></div>').join('')
+    :'<div class="sub" style="margin:0">No comments yet.</div>';
+}
+function addCmt(){
+  const v=document.getElementById('cmttxt').value.trim(); if(!v){document.getElementById('cmterr').style.display='';return;}
+  const b=window.__cmtBtn, k=b.dataset.ck, sec=b.closest('.screen');
+  const u=sec.querySelector('.cc-user'), who=u?u.querySelector('b').textContent+(u.querySelector('span')?' ('+u.querySelector('span').textContent.split('·')[0].trim()+')':''):'';
+  const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const at=new Date().toLocaleString([], {day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  (CMT[k]=CMT[k]||[]).push({t:esc(v),who:esc(who),at});
+  document.querySelectorAll('.cmtbtn[data-ck="'+k+'"]').forEach(x=>{x.classList.add('has');const n=x.querySelector('.cmtn');n.textContent=CMT[k].length;n.style.display='block';});
+  document.querySelectorAll('.screen .histbody').forEach(hb=>{ if(hb.closest('.screen').querySelector('.cmtbtn[data-ck="'+k+'"]')){
+    const tr=document.createElement('tr'); tr.innerHTML='<td>Comment</td><td>'+esc(who)+'</td><td>'+esc(v)+'<span class="sub">'+at+'</span></td>'; hb.appendChild(tr);} });
+  document.getElementById('cmttxt').value=''; renderCmt(k);
+}
+// Deep links for the sign-off pack: #screen&clean=1&f=2&price=1:230&lines=1&modal=id&back=1&co=1:selector|2:selector
+function deepLink(){
+  const h=decodeURIComponent(location.hash.slice(1)); if(!h) return;
+  const [scr,...kv]=h.split('&'), P={};
+  kv.forEach(x=>{const i=x.indexOf('='); P[x.slice(0,i)]=x.slice(i+1);});
+  if(P.clean) document.body.classList.add('clean');
+  go(scr);
+  if(P.f){document.getElementById('ovf').value=P.f; ovCheck();}
+  if(P.price){P.price.split(',').forEach(pr=>{const [r,v]=pr.split(':'); const i=document.querySelector('.rfnin[data-r="'+r+'"]'); if(i) i.value=v;}); rfnRecalc();}
+  if(P.lines){const b=document.querySelector('#'+scr+' button[onclick^="toggleLines"]'); if(b) b.click();}
+  if(P.modal){openM(P.modal);}
+  if(P.back){openM('m-back'); const _r=document.querySelector('#'+scr+' tbody tr .sub'); if(_r) document.getElementById('bkh').textContent=(_r.textContent.match(/PSA-\d{6}-\d{5}/)||[''])[0]; document.getElementById('bkr').selectedIndex=+P.back; document.getElementById('bkt').value=P.bkt||''; if(P.sent) doBack();}
+  if(P.tl){const tb=document.querySelector('#'+scr+' .tlbtn'); if(tb) openTl({stopPropagation(){}},tb);}
+  if(P.co){P.co.split('|').forEach(s=>{const i=s.indexOf(':'); const n=s.slice(0,i), sel=s.slice(i+1);
+    const el=[...document.querySelectorAll(sel)].find(e=>e.offsetParent!==null||e.closest('.modal-wrap.on'));
+    if(el){const host=(el.tagName==='INPUT'||el.tagName==='SELECT'||el.tagName==='TEXTAREA')?el.parentElement:el;
+      if(getComputedStyle(host).position==='static') host.style.position='relative';
+      const b=document.createElement('span'); b.className='coBadge'+(getComputedStyle(host).display.startsWith('inline')?' coL':''); b.textContent=n; host.appendChild(b);}});}
+  if(P.clean&&!P.back&&!P.modal&&!P.tl){/* screenshot mode: scale the page so the widest grid shows every column */
+    const sc=document.getElementById(scr); let need=0;
+    sc.querySelectorAll('.card-b.flush, .tblwrap, [style*="overflow"]').forEach(w=>{need=Math.max(need,w.scrollWidth-w.clientWidth);});
+    if(need>0){document.body.style.zoom=(innerWidth/(innerWidth+need+24)).toFixed(3);}}
+}
+window.addEventListener('load',()=>setTimeout(deepLink,60));
+function toggleLines(b){const tr=b.closest('tr').nextElementSibling; if(tr&&tr.classList.contains('linedet')){const on=tr.style.display==='none'; tr.style.display=on?'':'none'; b.classList.toggle('newb',on);}}
+renderRU();
+function openM(id,scope){window.__scope=scope||null;fillModal(id);document.getElementById(id).classList.add('on')}
+
+function closeM(){document.querySelectorAll('.modal-wrap').forEach(m=>m.classList.remove('on'))}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
+document.addEventListener('click',e=>{
+  const b=e.target.closest('.sxb'); if(!b) return;
+  const w=b.closest('.scrollhint').nextElementSibling; if(!w) return;
+  w.scrollBy({left:(+b.dataset.dir)*Math.max(300,w.clientWidth*0.7),behavior:'smooth'});
+});
+</script>
+<div id="tlpop" role="dialog" aria-label="Activity log"></div>
+<script id="tl-js">
+(function(){
+  const W = '<i>name, date and time</i>';
+  const S = {
+    draft:{t:'Draft', d:'Contract Admin.', e:['Created by Contract Admin &middot; '+W]},
+    rfn:{t:'Ready for Negotiation', d:'District Manager.', e:['Price changed: line, old &rarr; new &middot; '+W]},
+    sent:{t:'Sent for approval', d:'Routed on the property margin.', e:['Property margin and the route it set &middot; System']},
+    l1:{t:'Awaiting Level 1 Approval', d:'Regional Manager.', e:['<b>Approved</b> by the Regional Manager &middot; '+W]},
+    l2:{t:'Awaiting Level 2 Approval', d:'Leadership.', e:['<b>Approved</b> by Leadership &middot; '+W]},
+    rfp:{t:'Awaiting RFP Review', d:'Costing team, sent by hand from Level 2.', e:['Verdict returned to Level 2 &middot; '+W]},
+    sig:{t:'Awaiting Signature', d:'Sent to the provider.', e:['Signature email sent &middot; System']},
+    act:{t:'Active', d:'Signed by the provider.', e:['Signed &middot; '+W]}
+  };
+  const ROUTE = {
+    'PSA-260423-00011':['draft','rfn','sent','l1','sig','act'],
+    'PSA-260715-01042':['draft','rfn','sent','l1','l2','rfp','sig','act'],
+    'default':['draft','rfn','sent','sig','act']
+  };
+  const NOTE = {
+    'PSA-260423-00011':'Property margin 23.9% &rarr; Level 1 (Regional Manager) &middot; System',
+    'PSA-260715-01042':'Property margin &minus;6.9% &rarr; Level 1, then Level 2 &middot; System'
+  };
+  const BKT = 'Ask Legendary to bring routine nearer the customer rate of $168.46 a visit, or explain why not.';
+  const EV = {
+    'PSA-260715-01042': {
+      draft:['Created by Contract Admin &middot; '+W],
+      rfn:['Price entered: Routine Landscaping $200.00/visit, reason Fair market value &middot; District Manager, '+W,
+           '<b>Comment</b> &middot; District Manager, '+W+'<br>&ldquo;Comment text as entered&rdquo;'],
+      sent:['Property margin &minus;6.9% &rarr; Level 1, then Level 2 &middot; System'],
+      l1:['<b>Sent back</b> by the Regional Manager, '+W+'<br>Reason: Other<br>Comment: &ldquo;'+BKT+'&rdquo;',
+          'Re-sent for approval by the District Manager, '+W+' &middot; margin &minus;6.9%',
+          '<b>Approved</b> by the Regional Manager, '+W],
+      l2:['<b>Comment</b> &middot; Leadership, '+W+'<br>&ldquo;Comment text as entered&rdquo;']
+    }
+  };
+  let cur=null, all=true;
+  function render(){
+    const b=cur, psa=b.dataset.psa, stage=b.dataset.stage;
+    let route=(ROUTE[psa]||ROUTE['default']).slice();
+    if(stage==='l2') route=route.filter(x=>x!=='rfp');
+    const ci=route.indexOf(stage);
+    const items=route.map((k,i)=>{
+      const st=i<ci?'done':i===ci?'cur':'todo', s=S[k];
+      if(!all && st!=='cur') return '';
+      let ev='';
+      let list=((EV[psa]&&EV[psa][k])||(k==='sent'&&NOTE[psa]?[NOTE[psa]]:(st==='cur'?[]:s.e))).slice();
+      if(st==='cur'&&window.SBK&&SBK[psa]) SBK[psa].forEach(x=>list.push(x));
+      if(st==='cur'&&window.CMT&&CMT[psa]) CMT[psa].filter(c=>!/^Level/.test(c.who)||!(window.SBK&&SBK[psa])).forEach(c=>list.push('<b>Comment</b> &middot; '+c.who+', '+c.at+'<br>&ldquo;'+c.t+'&rdquo;'));
+      if(st!=='todo'){ ev=list.map(x=>'<div class="tl-e">'+x+'</div>').join(''); }
+      const title=st==='todo'?('Not yet: '+s.t):s.t;
+      return '<li class="'+st+'"><span class="tl-n">'+(st==='done'?'&#10003;':(i+1))+'</span><div class="tl-t">'+title+'</div>'+(st!=='todo'?'<div class="tl-d">'+(st==='cur'?'Waiting on: ':'')+s.d+'</div>':'')+ev+'</li>';
+    }).join('');
+    const p=document.getElementById('tlpop');
+    p.innerHTML='<div class="tl-h">Activity log<button onclick="closeTl()" aria-label="Close">&times;</button></div>'
+      +'<div class="tl-sub">'+psa+'</div>'
+      +'<div class="tl-chips"><span class="'+(all?'on':'')+'" onclick="tlAll(true)">All</span><span class="'+(all?'':'on')+'" onclick="tlAll(false)">Active</span></div>'
+      +'<ol>'+items+'</ol>'
+      +'<div class="tl-f">Illustration. Everything done on the PSA is logged with who did it and when: comments, send-backs with reason and comment, approvals, price changes and routing.</div>';
+  }
+  window.openTl=function(ev,b){ ev.stopPropagation(); cur=b; all=true; render(); const p=document.getElementById('tlpop'); p.classList.add('on');
+    const r=b.getBoundingClientRect(), M=56, H=window.innerHeight; let left=Math.min(r.left, window.innerWidth-416);
+    const below=H-r.bottom-14, above=r.top-6-M; let top;
+    if(below>=Math.min(p.scrollHeight,420)||below>=above){ top=r.bottom+6; p.style.maxHeight=(H-top-8)+'px'; }
+    else { const hgt=Math.min(p.scrollHeight, above); top=r.top-6-hgt; p.style.maxHeight=hgt+'px'; }
+    p.style.left=Math.max(8,left)+'px'; p.style.top=top+'px'; };
+  window.closeTl=function(){ document.getElementById('tlpop').classList.remove('on'); };
+  window.tlAll=function(v){ all=v; render(); };
+  document.addEventListener('click',e=>{ const p=document.getElementById('tlpop'); if(p.classList.contains('on')&&!p.contains(e.target)) closeTl(); });
+  window.addEventListener('scroll',()=>closeTl(),true);
+})();
+</script><script id="bk-js">(function(){const oa=window.addCmt; window.addCmt=function(){const k=(window.__cmtBtn||{}).dataset?window.__cmtBtn.dataset.ck:''; const n0=(CMT[k]||[]).length; oa(); if((CMT[k]||[]).length>n0){closeM(); let t=document.getElementById('cmttoast'); if(!t){t=document.createElement('div'); t.id='cmttoast'; t.style.cssText='position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1D2329;color:#fff;padding:10px 16px;border-radius:6px;font-size:13px;z-index:700;box-shadow:0 6px 20px rgba(0,0,0,.25)'; document.body.appendChild(t);} t.textContent='Comment added to '+k+'. Also recorded in its Activity log.'; t.style.display='block'; clearTimeout(window.__ct); window.__ct=setTimeout(()=>{t.style.display='none'},3000);}};const o=window.openM; window.openM=function(id,sc){o(id,sc); if(id==='m-back'){try{const {rows}=selectedRows(); const ks=rows.map(x=>((x.querySelector('.sub')||{}).textContent||'').match(/PSA-\d{6}-\d{5}/)).filter(Boolean).map(m=>m[0]); document.getElementById('bkh').textContent=ks.join(', ');}catch(e){}}};})();</script></body>
+</html>
